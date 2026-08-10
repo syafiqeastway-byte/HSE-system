@@ -114,6 +114,7 @@ export const TelemetryHub: React.FC = () => {
           </div>
           <div>
             <div className="flex items-center gap-1.5 text-[10px] font-bold text-blue-400 uppercase tracking-widest">
+              <span>DATE/TIME</span>
               <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
             </div>
             <div className="text-sm sm:text-base font-bold font-mono text-slate-900 dark:text-white mt-1 tracking-tight">
