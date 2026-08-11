@@ -5,7 +5,6 @@ import {defineConfig} from 'vite';
 
 export default defineConfig(() => {
   return {
-    base: './', // Ensures relative paths for assets on GitHub Pages/Vercel
     plugins: [react(), tailwindcss()],
     resolve: {
       alias: {

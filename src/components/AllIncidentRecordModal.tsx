@@ -171,18 +171,21 @@ useEffect(() => {
               <table className="w-full text-left border-collapse text-xs">
                 <thead>
                   <tr className="bg-slate-900/90 text-slate-400 font-bold uppercase text-[10px] tracking-wider border-b border-slate-800">
-                    <th className="py-3 px-3">Inc ID</th>
-                    <th className="py-3 px-3">Date</th>
-                    <th className="py-3 px-3">Location</th>
-                    <th className="py-3 px-3">Category</th>
-                    <th className="py-3 px-3">Classification</th>
-                    <th className="py-3 px-3">Injury Type</th>
-                    <th className="py-3 px-3">Person Involved</th>
-                    <th className="py-3 px-3">Experience</th>
-                    <th className="py-3 px-3">Investigator</th>
-                    <th className="py-3 px-3">Description</th>
-                    <th className="py-3 px-3">Document</th>
-                    <th className="py-3 px-3 text-center">Status</th>
+                    <th className="py-3 px-3 whitespace-nowrap">NO</th>
+                    <th className="py-3 px-3 whitespace-nowrap">DATE</th>
+                    <th className="py-3 px-3 whitespace-nowrap">YEAR</th>
+                    <th className="py-3 px-3 min-w-[120px]">LOCATION</th>
+                    <th className="py-3 px-3 min-w-[200px]">DESCRIPTION</th>
+                    <th className="py-3 px-3 text-center whitespace-nowrap">OCCUPATIONAL INCIDENT?</th>
+                    <th className="py-3 px-3 min-w-[140px]">INCIDENT CATEGORY</th>
+                    <th className="py-3 px-3 text-center whitespace-nowrap">PROPERTY DAMAGE</th>
+                    <th className="py-3 px-3 whitespace-nowrap">DAMAGE LEVEL</th>
+                    <th className="py-3 px-3 min-w-[140px]">CLASSIFICATION</th>
+                    <th className="py-3 px-3 min-w-[120px]">INJURY TYPE</th>
+                    <th className="py-3 px-3 min-w-[120px]">PERSON INVOLVE</th>
+                    <th className="py-3 px-3 whitespace-nowrap">WORK EXPERIENCE</th>
+                    <th className="py-3 px-3 min-w-[110px]">REPORTED BY</th>
+                    <th className="py-3 px-3 text-center whitespace-nowrap">PDF</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-800/60 bg-slate-950/40 font-medium text-slate-300">
@@ -194,45 +197,61 @@ useEffect(() => {
                       <td className="py-3 px-3 font-mono whitespace-nowrap text-slate-400">
                         {inc.date}
                       </td>
+                      <td className="py-3 px-3 font-mono whitespace-nowrap text-slate-400">
+                        {inc.year || '-'}
+                      </td>
                       <td className="py-3 px-3 font-bold text-slate-200 whitespace-nowrap">
                         {inc.location}
                       </td>
-                      <td className="py-3 px-3">
-                        <span className="px-2 py-0.5 rounded-md bg-slate-800 text-slate-300 border border-slate-700 text-[10px] font-bold">
-                          {inc.category}
+                      <td className="py-3 px-3 min-w-[200px] text-slate-400" title={(inc as any).rootCause || inc.description || (inc as any).root_cause || ''}>
+                        <div className="line-clamp-2">
+                          {(inc as any).rootCause || inc.description || (inc as any).root_cause || '-'}
+                        </div>
+                      </td>
+                      <td className="py-3 px-3 text-center whitespace-nowrap">
+                        <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${
+                          inc.occupationalIncident?.toUpperCase() === 'YES'
+                            ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
+                            : 'bg-slate-800 text-slate-400 border border-slate-700'
+                        }`}>
+                          {inc.occupationalIncident || '-'}
                         </span>
                       </td>
-                      <td className="py-3 px-3 font-semibold text-slate-300">
-                        {inc.classification}
+                      <td className="py-3 px-3 whitespace-nowrap">
+                        <span className="px-2 py-0.5 rounded-md bg-slate-800 text-slate-300 border border-slate-700 text-[10px] font-bold">
+                          {inc.category || '-'}
+                        </span>
                       </td>
-                      <td className="py-3 px-3 text-slate-400">
-                        {inc.injuryType || '-'}
+                      <td className="py-3 px-3 text-center whitespace-nowrap text-slate-400">
+                        {inc.propertyDamage || '-'}
+                      </td>
+                      <td className="py-3 px-3 whitespace-nowrap text-slate-400">
+                        {inc.damageLevel || '-'}
+                      </td>
+                      <td className="py-3 px-3 font-semibold text-slate-300 whitespace-nowrap">
+                        {inc.classification || '-'}
                       </td>
                       <td className="py-3 px-3 text-slate-400 whitespace-nowrap">
-                        {(inc as any).personInvolved || '-'}
+                        {inc.injuryType || '-'}
+                      </td>
+                      <td className="py-3 px-3 text-slate-300 font-medium whitespace-nowrap">
+                        {inc.personInvolved || (inc as any).person_involved || '-'}
                       </td>
                       <td className="py-3 px-3 text-slate-400 whitespace-nowrap">
                         {inc.experienceLevel || '-'}
                       </td>
                       <td className="py-3 px-3 text-slate-400 whitespace-nowrap">
-                        {(inc as any).investigator || '-'}
-                      </td>
-                      <td className="py-3 px-3 max-w-xs truncate text-slate-400" title={(inc as any).rootCause || inc.description || (inc as any).root_cause || ''}>
-                        {(inc as any).rootCause || inc.description || (inc as any).root_cause || '-'}
-                      </td>
-                      <td className="py-3 px-3 max-w-xs truncate text-slate-400">
-                        {(inc as any).documentUrl && (inc as any).documentUrl !== '-' && (inc as any).documentUrl !== '' ? (
-                          <a href={(inc as any).documentUrl} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:text-blue-300 underline">View</a>
-                        ) : '-'}
+                        {inc.reportedBy || (inc as any).investigator || '-'}
                       </td>
                       <td className="py-3 px-3 text-center whitespace-nowrap">
-                        <span className={`px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wider ${
-                          inc.status?.toLowerCase() === 'open'
-                            ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30'
-                            : 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
-                        }`}>
-                          {inc.status || 'Closed'}
-                        </span>
+                        {(inc as any).documentUrl && (inc as any).documentUrl !== '-' && (inc as any).documentUrl !== '' ? (
+                          <a href={(inc as any).documentUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center px-2.5 py-1 rounded-md bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 text-xs font-bold gap-1 transition-colors">
+                            <span className="material-symbols-outlined text-[14px]">description</span>
+                            <span>Open Doc</span>
+                          </a>
+                        ) : (
+                          <span className="text-slate-600">-</span>
+                        )}
                       </td>
                     </tr>
                   ))}

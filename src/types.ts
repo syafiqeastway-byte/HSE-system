@@ -1,4 +1,4 @@
-export type PageType = 'homePage' | 'analyticsPage' | 'documentViewPage' | 'minuteMeetingPage' | 'emergencyPlanPage' | 'hirarcPage' | 'sopPage';
+export type PageType = 'homePage' | 'analyticsPage' | 'documentViewPage' | 'minuteMeetingPage' | 'emergencyPlanPage' | 'hirarcPage' | 'sopPage' | 'allIncidentsPage';
 
 export interface SOPItem {
   id: string;
@@ -36,16 +36,23 @@ export interface CompetentPerson {
 
 export interface IncidentRecord {
   id: string;
-  incidentCode: string;
+  incidentCode?: string;
   date: string;
+  year?: string;
   location: string;
-  category: string;
-  classification: string;
-  injuryType: string;
-  experienceLevel: string;
-  status: 'Closed' | 'Under Investigation' | 'Corrective Action';
   description: string;
-  actionPlan: string;
+  occupationalIncident?: string;
+  category: string;
+  propertyDamage?: string;
+  damageLevel?: string;
+  classification: string;
+  injuryType?: string;
+  personInvolved?: string;
+  experienceLevel?: string;
+  reportedBy?: string;
+  documentUrl?: string;
+  status?: string;
+  actionPlan?: string;
 }
 
 export interface DemeritRecord {

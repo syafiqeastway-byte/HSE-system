@@ -31,7 +31,13 @@ export const HomePage: React.FC<HomePageProps> = ({
   return (
     <div className="space-y-8">
       
-      {/* SECTION 1 & 2 GRID: SAFETY DOCUMENTATION & COMMITTEE OVERSIGHT */}
+      {/* SECTION 1: INCIDENT RECORDS & SAFETY PERFORMANCE */}
+      <IncidentChartsAndTables
+        isDarkMode={isDarkMode}
+        onOpenAllIncidentsModal={onOpenAllIncidentsModal}
+      />
+
+      {/* SECTION 2 & 3 GRID: SAFETY DOCUMENTATION & COMMITTEE OVERSIGHT */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         
         {/* SECTION 1: SAFETY DOCUMENTATION */}
@@ -40,7 +46,7 @@ export const HomePage: React.FC<HomePageProps> = ({
             <span className="material-symbols-outlined text-blue-600 dark:text-blue-400 text-2xl">menu_book</span>
             <div>
               <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white">
-                1. SAFETY DOCUMENTATION
+                SAFETY DOCUMENTATION
               </h2>
             </div>
           </div>
@@ -156,7 +162,7 @@ export const HomePage: React.FC<HomePageProps> = ({
             <span className="material-symbols-outlined text-indigo-600 dark:text-indigo-400 text-2xl">groups</span>
             <div>
               <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white">
-                2. COMMITTEE & OVERSIGHT MANAGEMENT
+                COMMITTEE & OVERSIGHT MANAGEMENT
               </h2>
               
             </div>
@@ -218,7 +224,7 @@ export const HomePage: React.FC<HomePageProps> = ({
           <span className="material-symbols-outlined text-amber-500 text-2xl">assignment_turned_in</span>
           <div>
             <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white">
-              3. SAFETY PROCEDURES, RISK ASSESSMENT & INSPECTIONS
+              SAFETY PROCEDURES, RISK ASSESSMENT & INSPECTIONS
             </h2>
             
           </div>
@@ -275,12 +281,6 @@ export const HomePage: React.FC<HomePageProps> = ({
 
         </div>
       </div>
-
-      {/* SECTION 4: INCIDENT RECORDS & SAFETY PERFORMANCE */}
-      <IncidentChartsAndTables
-        isDarkMode={isDarkMode}
-        onOpenAllIncidentsModal={onOpenAllIncidentsModal}
-      />
 
     </div>
   );

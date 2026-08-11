@@ -67,8 +67,8 @@ export async function fetchDaysWithoutIncident(): Promise<number> {
 }
 
 // 2. All Incidents
-export function fetchAllIncidents(): Promise<any[]> {
-  return callGasFunction<any[]>('getAllIncident', MOCK_INCIDENT_RECORDS);
+export async function fetchAllIncidents(): Promise<any[]> {
+  return fetchLiveIncidentRecords();
 }
 
 // 3. Location breakdown
@@ -198,7 +198,7 @@ export async function fetchFirstAidCertData(requireAuth: boolean = false): Promi
 // 11. Live Incident Records
 export async function fetchLiveIncidentRecords(requireAuth: boolean = false): Promise<any[]> {
   const SPREADSHEET_ID = '1o9P6GnlsAwSJEUYHxITt1Opz973uX37MLBiv0LdFdIs';
-  const url = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:csv&gid=88563672&range=A4:O60`;
+  const url = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:csv&gid=88563672&range=A4:O`;
 
   try {
     const res = await fetch(url);
@@ -212,20 +212,26 @@ export async function fetchLiveIncidentRecords(requireAuth: boolean = false): Pr
         complete: (results) => {
           const records: any[] = [];
           if (results.data && results.data.length > 0) {
-            results.data.forEach((row: any, index: number) => {
+            // Row 4 is index 0 (header row), so skip it using slice(1)
+            const dataRows = results.data.slice(1);
+            dataRows.forEach((row: any) => {
               if (row.length > 0 && row[0]?.trim() !== '') {
                 records.push({
-                  id: `${row[0]}-${index}`, // Ensure uniqueness
-                  date: row[1] || '-',
-                  location: row[3] || '-',
-                  description: row[4] || '-',
-                  classification: row[6] || '-',
-                  category: row[9] || '-',
-                  injuryType: row[10] || '-',
-                  personInvolved: row[11] || '-',
-                  experienceLevel: row[12] || '-',
-                  investigator: row[13] || '-',
-                  documentUrl: row[14] || '',
+                  id: row[0].trim(), // Column A: NO
+                  date: row[1] || '-', // Column B: DATE
+                  year: row[2] || '-', // Column C: YEAR
+                  location: row[3] || '-', // Column D: LOCATION
+                  description: row[4] || '-', // Column E: DESCRIPTION
+                  occupationalIncident: row[5] || '-', // Column F: OCCUPATIONAL INCIDENT?
+                  category: row[6] || '-', // Column G: INCIDENT CATEGORY
+                  propertyDamage: row[7] || '-', // Column H: PROPERTY DAMAGE
+                  damageLevel: row[8] || '-', // Column I: DAMAGE LEVEL
+                  classification: row[9] || '-', // Column J: CLASSIFICATION
+                  injuryType: row[10] || '-', // Column K: INJURY TYPE
+                  personInvolved: row[11] || '-', // Column L: PERSON INVOLVE
+                  experienceLevel: row[12] || '-', // Column M: WORK EXPERIENCE
+                  reportedBy: row[13] || '-', // Column N: REPORTED BY
+                  documentUrl: row[14] || '', // Column O: PDF
                   status: 'Closed' // Default status
                 });
               }

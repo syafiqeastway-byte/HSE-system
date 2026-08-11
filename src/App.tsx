@@ -14,7 +14,7 @@ import { CompetentPersonModal } from './components/CompetentPersonModal';
 import { InspectionModal } from './components/InspectionModal';
 import { ExportGasModal } from './components/ExportGasModal';
 import { SupabaseModal } from './components/SupabaseModal';
-import { AllIncidentRecordModal } from './components/AllIncidentRecordModal';
+import { AllIncidentsPage } from './components/AllIncidentsPage';
 
 export default function App() {
   const [showSplash, setShowSplash] = useState(false);
@@ -38,8 +38,7 @@ export default function App() {
   const [inspectionFilterType, setInspectionFilterType] = useState<'Workplace' | 'First Aid Box' | 'Fire Extinguisher' | 'All'>('All');
   const [exportGasModalOpen, setExportGasModalOpen] = useState(false);
   const [supabaseModalOpen, setSupabaseModalOpen] = useState(false);
-  const [allIncidentsModalOpen, setAllIncidentsModalOpen] = useState(false);
-
+  
   // Sync Theme with HTML element
   useEffect(() => {
     if (isDarkMode) {
@@ -101,7 +100,7 @@ export default function App() {
               onNavigateMinuteMeetings={() => setActivePage('minuteMeetingPage')}
               onNavigateHIRARC={() => setActivePage('hirarcPage')}
               onNavigateSOP={() => setActivePage('sopPage')}
-              onOpenAllIncidentsModal={() => setAllIncidentsModalOpen(true)}
+              onOpenAllIncidentsModal={() => setActivePage('allIncidentsPage')}
               isDarkMode={isDarkMode}
             />
           )}
@@ -123,7 +122,7 @@ export default function App() {
               </div>
               <IncidentChartsAndTables
                 isDarkMode={isDarkMode}
-                onOpenAllIncidentsModal={() => setAllIncidentsModalOpen(true)}
+                onOpenAllIncidentsModal={() => setActivePage('allIncidentsPage')}
               />
             </div>
           )}
@@ -163,12 +162,19 @@ export default function App() {
               }}
             />
           )}
-        </main>
+        
+          {activePage === 'allIncidentsPage' && (
+            <AllIncidentsPage
+              onBackToHome={() => setActivePage('homePage')}
+              isDarkMode={isDarkMode}
+            />
+          )}
+</main>
 
         {/* Footer */}
         <footer className="mt-8 py-6 border-t border-slate-200 dark:border-slate-800/80 text-center text-xs text-slate-500 dark:text-slate-400">
-          <p className="font-extrabold uppercase tracking-wider text-slate-700 dark:text-slate-300">
-            EASTWAY ENGINEERING MYSAFETY • HSE INTEGRATED MANAGEMENT SYSTEM
+          <p className="font-semibold text-slate-700 dark:text-slate-300">
+            © 2026 Eastway Engineering Sdn. Bhd. All Rights Reserved.
           </p>
         </footer>
 
@@ -196,10 +202,7 @@ export default function App() {
         onClose={() => setSupabaseModalOpen(false)}
       />
 
-      <AllIncidentRecordModal
-        isOpen={allIncidentsModalOpen}
-        onClose={() => setAllIncidentsModalOpen(false)}
-      />
+      
 
     </div>
   );
