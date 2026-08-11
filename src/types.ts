@@ -77,13 +77,21 @@ export interface DemeritMatrix {
 export interface InspectionRecord {
   id: string;
   date: string;
-  locationFacility: string;
-  inspectorName: string;
-  type: 'Workplace' | 'First Aid Box' | 'Fire Extinguisher';
-  totalChecked: number;
-  compliantCount: number;
-  complianceRate: string;
-  status: 'Passed' | 'Action Required';
+  day?: string;
+  location?: string;
+  typeOfInspection?: string;
+  inspector?: string;
+  remark?: string;
+  documentUrl?: string;
+
+  // Compatibility fields for legacy items
+  locationFacility?: string;
+  inspectorName?: string;
+  type?: string;
+  totalChecked?: number;
+  compliantCount?: number;
+  complianceRate?: string;
+  status?: string;
 }
 
 export interface FirstAidCert {

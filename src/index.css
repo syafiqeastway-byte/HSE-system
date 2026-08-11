@@ -15,11 +15,11 @@
 .modern-bg-light {
   background-color: #eef2ff;
   background-image: 
-    linear-gradient(rgba(79, 70, 229, 0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(79, 70, 229, 0.05) 1px, transparent 1px),
-    radial-gradient(at 10% 10%, rgba(147, 51, 234, 0.1) 0px, transparent 40%),
-    radial-gradient(at 90% 15%, rgba(59, 130, 246, 0.1) 0px, transparent 40%),
-    radial-gradient(at 50% 90%, rgba(168, 85, 247, 0.08) 0px, transparent 50%);
+    linear-gradient(rgba(79, 70, 229, 0.12) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(79, 70, 229, 0.12) 1px, transparent 1px),
+    radial-gradient(at 10% 10%, rgba(124, 58, 237, 0.28) 0px, transparent 45%),
+    radial-gradient(at 90% 15%, rgba(29, 78, 216, 0.28) 0px, transparent 45%),
+    radial-gradient(at 50% 90%, rgba(139, 92, 246, 0.22) 0px, transparent 55%);
   background-size: 40px 40px, 40px 40px, 100% 100%, 100% 100%, 100% 100%;
   background-attachment: fixed;
 }
@@ -75,8 +75,8 @@
 }
 
 .kpi-card-blue {
-  background: rgba(59, 130, 246, 0.08);
-  border: 1px solid rgba(59, 130, 246, 0.3);
+  background: rgba(29, 78, 216, 0.16);
+  border: 1px solid rgba(29, 78, 216, 0.5);
 }
 
 .kpi-card-amber {
@@ -90,8 +90,8 @@
 }
 
 .kpi-card-purple {
-  background: rgba(168, 85, 247, 0.08);
-  border: 1px solid rgba(168, 85, 247, 0.3);
+  background: rgba(109, 40, 217, 0.16);
+  border: 1px solid rgba(109, 40, 217, 0.5);
 }
 
 /* Custom Scrollbar */

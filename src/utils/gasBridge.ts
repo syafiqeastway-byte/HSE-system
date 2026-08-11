@@ -8,7 +8,7 @@ import {
   INITIAL_DAYS_WITHOUT_INCIDENT
 } from '../data/mockData';
 import Papa from 'papaparse';
-import { FirstAidCert } from '../types';
+import { FirstAidCert, InspectionRecord } from '../types';
 
 declare global {
   interface Window {
@@ -147,8 +147,80 @@ export function fetchDemeritData(): Promise<{ logs: typeof MOCK_DEMERIT_LOGS; ma
 }
 
 // 9. Inspection Data
-export function fetchInspectionData(): Promise<typeof MOCK_INSPECTION_RECORDS> {
-  return callGasFunction<typeof MOCK_INSPECTION_RECORDS>('getInspectionData', MOCK_INSPECTION_RECORDS);
+export async function fetchInspectionData(): Promise<InspectionRecord[]> {
+  const SPREADSHEET_ID = '1o9P6GnlsAwSJEUYHxITt1Opz973uX37MLBiv0LdFdIs';
+  const GID = '582761149';
+  const url = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:csv&gid=${GID}&range=B3:I`;
+
+  try {
+    const res = await fetch(url);
+    if (!res.ok) throw new Error('Network response was not ok');
+    const csvText = await res.text();
+    
+    // Check if it returned general HTML instead of actual CSV data (e.g., error or sign-in walls)
+    if (csvText.includes('<!DOCTYPE html>') || csvText.includes('google-signin-button')) {
+      throw new Error('Returned HTML instead of CSV data');
+    }
+
+    const records: InspectionRecord[] = await new Promise((resolve) => {
+      Papa.parse(csvText, {
+        header: false,
+        skipEmptyLines: true,
+        complete: (results) => {
+          const parsed: InspectionRecord[] = [];
+          if (results.data && results.data.length > 1) {
+            // Row 3 is the header row, so we slice it out to only parse real records
+            const dataRows = results.data.slice(1);
+            dataRows.forEach((row: any, index: number) => {
+              if (row.length > 0 && (row[1]?.trim() !== '' || row[0]?.trim() !== '')) {
+                const sheetNo = (row[0] || '').trim();
+                const date = (row[1] || '').trim();
+                const day = (row[2] || '').trim();
+                const location = (row[3] || '').trim();
+                const typeOfInspection = (row[4] || '').trim();
+                const inspector = (row[5] || '').trim();
+                const remark = (row[6] || '').trim();
+                const documentUrl = (row[7] || '').trim();
+
+                parsed.push({
+                  id: `INSP-DYN-${index}-${sheetNo || index}`,
+                  date,
+                  day,
+                  location,
+                  typeOfInspection,
+                  inspector,
+                  remark,
+                  documentUrl,
+                  
+                  // Compatibility fallbacks
+                  locationFacility: location,
+                  inspectorName: inspector,
+                  type: typeOfInspection,
+                  totalChecked: 0,
+                  compliantCount: 0,
+                  complianceRate: '-',
+                  status: 'Passed'
+                });
+              }
+            });
+          }
+          resolve(parsed);
+        },
+        error: () => {
+          resolve([]);
+        }
+      });
+    });
+
+    if (records.length > 0) {
+      return records;
+    }
+  } catch (err) {
+    console.warn(`Error fetching inspection data with GID: ${GID}`, err);
+  }
+
+  // Fallback to callGasFunction or mock data
+  return callGasFunction<InspectionRecord[]>('getInspectionData', MOCK_INSPECTION_RECORDS);
 }
 
 

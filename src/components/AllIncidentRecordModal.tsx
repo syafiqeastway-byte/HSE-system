@@ -48,18 +48,47 @@ useEffect(() => {
 
   // Filtered incidents
   const filteredIncidents = incidents.filter(item => {
-    const root = (item as any).rootCause || item.description || (item as any).root_cause || '';
-    const matchesSearch =
-      item.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.location.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.classification.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      root.toLowerCase().includes(searchQuery.toLowerCase());
-
     const matchesStatus =
       statusFilter === 'All' ? true : item.status?.toLowerCase() === statusFilter.toLowerCase();
 
-    return matchesSearch && matchesStatus;
+    if (!matchesStatus) return false;
+    if (!searchQuery.trim()) return true;
+
+    const query = searchQuery.toLowerCase();
+    
+    const id = item.id || '';
+    const date = item.date || '';
+    const year = item.year || '';
+    const location = item.location || '';
+    const desc = (item as any).rootCause || item.description || (item as any).root_cause || '';
+    const occupationalIncident = item.occupationalIncident || '';
+    const category = item.category || '';
+    const propertyDamage = item.propertyDamage || '';
+    const damageLevel = item.damageLevel || '';
+    const classification = item.classification || '';
+    const injuryType = item.injuryType || '';
+    const person = item.personInvolved || (item as any).person_involved || '';
+    const experienceLevel = item.experienceLevel || '';
+    const reported = item.reportedBy || (item as any).investigator || '';
+    const status = item.status || '';
+
+    return (
+      id.toLowerCase().includes(query) ||
+      date.toLowerCase().includes(query) ||
+      year.toLowerCase().includes(query) ||
+      location.toLowerCase().includes(query) ||
+      desc.toLowerCase().includes(query) ||
+      occupationalIncident.toLowerCase().includes(query) ||
+      category.toLowerCase().includes(query) ||
+      propertyDamage.toLowerCase().includes(query) ||
+      damageLevel.toLowerCase().includes(query) ||
+      classification.toLowerCase().includes(query) ||
+      injuryType.toLowerCase().includes(query) ||
+      person.toLowerCase().includes(query) ||
+      experienceLevel.toLowerCase().includes(query) ||
+      reported.toLowerCase().includes(query) ||
+      status.toLowerCase().includes(query)
+    );
   });
 
   return (
@@ -153,13 +182,10 @@ useEffect(() => {
         {/* Table Content */}
         <div className="flex-1 overflow-auto p-4">
           {loading ? (
-            <div className="flex flex-col items-center justify-center h-64 text-slate-400 space-y-3">
+            <div className="flex flex-col items-center justify-center h-64 text-slate-400">
               <span className="material-symbols-outlined text-4xl text-blue-500 animate-spin">
                 sync
               </span>
-              <p className="text-xs font-bold uppercase tracking-wider">
-                Fetching Incident Records from Google Sheets...
-              </p>
             </div>
           ) : filteredIncidents.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-64 text-slate-500 space-y-2">

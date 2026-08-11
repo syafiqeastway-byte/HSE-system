@@ -44,19 +44,42 @@ export const AllIncidentsPage: React.FC<AllIncidentsPageProps> = ({ onBackToHome
   }, []);
 
   const filteredIncidents = incidents.filter(inc => {
+    if (!searchQuery.trim()) return true;
+    const query = searchQuery.toLowerCase();
+    
+    const id = inc.id || '';
+    const date = inc.date || '';
+    const year = inc.year || '';
+    const location = inc.location || '';
     const desc = (inc as any).rootCause || inc.description || (inc as any).root_cause || '';
+    const occupationalIncident = inc.occupationalIncident || '';
+    const category = inc.category || '';
+    const propertyDamage = inc.propertyDamage || '';
+    const damageLevel = inc.damageLevel || '';
+    const classification = inc.classification || '';
+    const injuryType = inc.injuryType || '';
     const person = inc.personInvolved || (inc as any).person_involved || '';
+    const experienceLevel = inc.experienceLevel || '';
     const reported = inc.reportedBy || (inc as any).investigator || '';
-    const matchesSearch = 
-      inc.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      inc.location.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      inc.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      inc.classification.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      person.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      reported.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      desc.toLowerCase().includes(searchQuery.toLowerCase());
-      
-    return matchesSearch;
+    const status = inc.status || '';
+
+    return (
+      id.toLowerCase().includes(query) ||
+      date.toLowerCase().includes(query) ||
+      year.toLowerCase().includes(query) ||
+      location.toLowerCase().includes(query) ||
+      desc.toLowerCase().includes(query) ||
+      occupationalIncident.toLowerCase().includes(query) ||
+      category.toLowerCase().includes(query) ||
+      propertyDamage.toLowerCase().includes(query) ||
+      damageLevel.toLowerCase().includes(query) ||
+      classification.toLowerCase().includes(query) ||
+      injuryType.toLowerCase().includes(query) ||
+      person.toLowerCase().includes(query) ||
+      experienceLevel.toLowerCase().includes(query) ||
+      reported.toLowerCase().includes(query) ||
+      status.toLowerCase().includes(query)
+    );
   });
 
   return (
@@ -115,13 +138,10 @@ export const AllIncidentsPage: React.FC<AllIncidentsPageProps> = ({ onBackToHome
         {/* Table Content */}
         <div className="flex-1 overflow-auto p-0 sm:p-4">
           {loading ? (
-            <div className="flex flex-col items-center justify-center h-64 text-slate-500 dark:text-slate-400 space-y-3">
+            <div className="flex flex-col items-center justify-center h-64 text-slate-500 dark:text-slate-400">
               <span className="material-symbols-outlined text-4xl text-blue-500 animate-spin">
                 sync
               </span>
-              <p className="text-sm font-bold uppercase tracking-wider">
-                Fetching Incident Records...
-              </p>
             </div>
           ) : filteredIncidents.length === 0 ? (
             <div className="flex flex-col items-center justify-center h-64 text-slate-500 space-y-2">

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { InspectionRecord } from '../types';
 import { fetchInspectionData } from '../utils/gasBridge';
+import { formatToPreviewUrl } from '../utils/formatDriveUrl';
 
 interface InspectionModalProps {
   isOpen: boolean;
@@ -37,16 +38,21 @@ export const InspectionModal: React.FC<InspectionModalProps> = ({ isOpen, filter
 
   if (!isOpen) return null;
 
-  const filteredData = inspections.filter(
-    (item) =>
-      item.locationFacility.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.inspectorName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.type.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredData = inspections.filter((item) => {
+    const query = searchQuery.toLowerCase();
+    return (
+      (item.date || '').toLowerCase().includes(query) ||
+      (item.day || '').toLowerCase().includes(query) ||
+      (item.location || '').toLowerCase().includes(query) ||
+      (item.typeOfInspection || '').toLowerCase().includes(query) ||
+      (item.inspector || '').toLowerCase().includes(query) ||
+      (item.remark || '').toLowerCase().includes(query)
+    );
+  });
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="glass-card max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col shadow-2xl">
+      <div className="glass-card max-w-6xl w-full max-h-[90vh] overflow-hidden flex flex-col shadow-2xl">
         
         {/* Header */}
         <div className="p-4 sm:p-5 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between bg-slate-50 dark:bg-slate-900/50">
@@ -56,11 +62,8 @@ export const InspectionModal: React.FC<InspectionModalProps> = ({ isOpen, filter
             </div>
             <div>
               <h2 className="text-lg font-bold text-slate-900 dark:text-white">
-                INSPECTION RECORDS & AUDIT LOGS ({filterType.toUpperCase()})
+                WORKPLACE & WORKSHOP INSPECTION RECORDS
               </h2>
-              <p className="text-xs text-slate-500 dark:text-slate-400">
-                Fetched via Google Apps Script bridge (getInspectionData)
-              </p>
             </div>
           </div>
           <button
@@ -89,22 +92,21 @@ export const InspectionModal: React.FC<InspectionModalProps> = ({ isOpen, filter
           </div>
 
           {loading ? (
-            <div className="p-8 text-center flex flex-col items-center gap-2">
+            <div className="p-8 text-center flex flex-col items-center">
               <span className="material-symbols-outlined text-3xl text-emerald-500 animate-spin">sync</span>
-              <p className="text-xs text-slate-500">Fetching inspection records...</p>
             </div>
           ) : (
             <div className="overflow-x-auto rounded-2xl border border-slate-200 dark:border-slate-700">
               <table className="w-full text-left text-xs text-slate-800 dark:text-slate-200">
                 <thead className="bg-slate-100 dark:bg-slate-800 uppercase font-bold text-slate-600 dark:text-slate-300">
                   <tr>
-                    <th className="p-3">Date</th>
-                    <th className="p-3">Type</th>
-                    <th className="p-3">Location / Facility</th>
-                    <th className="p-3">Inspector</th>
-                    <th className="p-3 text-center">Items Checked</th>
-                    <th className="p-3 text-center">Compliance Rate</th>
-                    <th className="p-3">Status</th>
+                    <th className="p-3 text-center w-12">NO</th>
+                    <th className="p-3">DATE</th>
+                    <th className="p-3">LOCATION</th>
+                    <th className="p-3">TYPE OF INSPECTION</th>
+                    <th className="p-3">INSPECTOR</th>
+                    <th className="p-3">REMARK</th>
+                    <th className="p-3 text-center">PDF</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-200 dark:divide-slate-700 bg-white dark:bg-slate-900">
@@ -115,28 +117,28 @@ export const InspectionModal: React.FC<InspectionModalProps> = ({ isOpen, filter
                       </td>
                     </tr>
                   ) : (
-                    filteredData.map((item) => (
+                    filteredData.map((item, index) => (
                       <tr key={item.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/60 transition-colors">
+                        <td className="p-3 text-center font-mono font-semibold text-slate-500">{index + 1}</td>
                         <td className="p-3 whitespace-nowrap font-mono">{item.date}</td>
-                        <td className="p-3 font-semibold text-emerald-600 dark:text-emerald-400">{item.type}</td>
-                        <td className="p-3 font-bold">{item.locationFacility}</td>
-                        <td className="p-3">{item.inspectorName}</td>
-                        <td className="p-3 text-center font-mono">
-                          {item.compliantCount} / {item.totalChecked}
-                        </td>
-                        <td className="p-3 text-center font-bold text-blue-600 dark:text-blue-400">
-                          {item.complianceRate}
-                        </td>
-                        <td className="p-3">
-                          <span
-                            className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${
-                              item.status === 'Passed'
-                                ? 'bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300'
-                                : 'bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-300'
-                            }`}
-                          >
-                            {item.status}
-                          </span>
+                        <td className="p-3 font-bold text-slate-900 dark:text-white">{item.location || '-'}</td>
+                        <td className="p-3 font-semibold text-emerald-600 dark:text-emerald-400">{item.typeOfInspection || '-'}</td>
+                        <td className="p-3 text-slate-700 dark:text-slate-300">{item.inspector || '-'}</td>
+                        <td className="p-3 text-slate-600 dark:text-slate-400 max-w-xs truncate" title={item.remark}>{item.remark || '-'}</td>
+                        <td className="p-3 text-center">
+                          {item.documentUrl ? (
+                            <a
+                              href={formatToPreviewUrl(item.documentUrl)}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-[11px] font-bold transition-colors shadow-sm shadow-blue-500/20"
+                            >
+                              <span className="material-symbols-outlined text-[13px]">open_in_new</span>
+                              View PDF
+                            </a>
+                          ) : (
+                            <span className="text-[10px] text-slate-400 italic">No PDF</span>
+                          )}
                         </td>
                       </tr>
                     ))

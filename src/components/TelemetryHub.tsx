@@ -156,7 +156,7 @@ export const TelemetryHub: React.FC = () => {
           </div>
           <div className="text-3xl sm:text-4xl font-extrabold text-emerald-400 flex items-baseline gap-2 mt-0.5 font-mono">
             {loadingDays ? (
-              <span className="text-slate-400 text-lg animate-pulse">Updating...</span>
+              <span className="text-slate-400 text-lg">--</span>
             ) : (
               <span>{daysCount}</span>
             )}

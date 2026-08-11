@@ -165,9 +165,8 @@ export const EmergencyPlanPage: React.FC<EmergencyPlanPageProps> = ({
         </div>
 
         {loading ? (
-          <div className="p-8 text-center flex flex-col items-center gap-2">
+          <div className="p-8 text-center flex flex-col items-center">
             <span className="material-symbols-outlined text-3xl text-emerald-500 animate-spin">sync</span>
-            <p className="text-xs text-slate-500">Loading certified first aiders...</p>
           </div>
         ) : (
           <div className="overflow-x-auto rounded-2xl border border-slate-200 dark:border-slate-700">

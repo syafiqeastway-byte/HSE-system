@@ -150,14 +150,6 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
   useEffect(() => {
     if (loading || typeof Chart === 'undefined' || incidents.length === 0) return;
 
-    // Set default animation for all charts
-    if (typeof Chart !== 'undefined' && Chart.defaults) {
-      Chart.defaults.animation = {
-        duration: 1500,
-        easing: 'easeOutQuart'
-      };
-    }
-
     // Register plugin if supported
     if (typeof Chart !== 'undefined' && Chart.register) {
       try {
@@ -218,7 +210,7 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
               },
             ],
           },
-          options: {
+          options: { animation: { duration: 1500, easing: 'easeOutQuart' },
             responsive: true,
             maintainAspectRatio: false,
             scales: {
@@ -257,7 +249,7 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
               },
             ],
           },
-          options: {
+          options: { animation: { duration: 1500, easing: 'easeOutQuart' },
             responsive: true,
             maintainAspectRatio: false,
             scales: {
@@ -296,7 +288,7 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
               },
             ],
           },
-          options: {
+          options: { animation: { duration: 1500, easing: 'easeOutQuart' },
             indexAxis: 'y',
             responsive: true,
             maintainAspectRatio: false,
@@ -365,7 +357,7 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
               },
             ],
           },
-          options: {
+          options: { animation: { duration: 1500, easing: 'easeOutQuart' },
             responsive: true,
             maintainAspectRatio: false,
             scales: {
@@ -404,7 +396,7 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
               },
             ],
           },
-          options: {
+          options: { animation: { duration: 1500, easing: 'easeOutQuart' },
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
@@ -439,7 +431,7 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
               },
             ],
           },
-          options: {
+          options: { animation: { duration: 1500, easing: 'easeOutQuart' },
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
@@ -474,7 +466,7 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
               },
             ],
           },
-          options: {
+          options: { animation: { duration: 1500, easing: 'easeOutQuart' },
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
@@ -509,7 +501,7 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
               },
             ],
           },
-          options: {
+          options: { animation: { duration: 1500, easing: 'easeOutQuart' },
             responsive: true,
             maintainAspectRatio: false,
             scales: {
@@ -548,7 +540,7 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
               },
             ],
           },
-          options: {
+          options: { animation: { duration: 1500, easing: 'easeOutQuart' },
             responsive: true,
             maintainAspectRatio: false,
             scales: {
@@ -587,7 +579,7 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
               },
             ],
           },
-          options: {
+          options: { animation: { duration: 1500, easing: 'easeOutQuart' },
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
@@ -622,7 +614,7 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
               },
             ],
           },
-          options: {
+          options: { animation: { duration: 1500, easing: 'easeOutQuart' },
             responsive: true,
             maintainAspectRatio: false,
             scales: {
@@ -659,7 +651,7 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
               },
             ],
           },
-          options: {
+          options: { animation: { duration: 1500, easing: 'easeOutQuart' },
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
@@ -781,11 +773,8 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
 
       {/* Loading State */}
       {loading ? (
-        <div className="p-12 text-center flex flex-col items-center justify-center gap-3">
+        <div className="p-12 text-center flex flex-col items-center justify-center">
           <span className="material-symbols-outlined text-4xl text-blue-500 animate-spin">sync</span>
-          <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-            Fetching Live Incident Analytics...
-          </p>
         </div>
       ) : (
         <div>

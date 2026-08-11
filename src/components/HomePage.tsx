@@ -2,7 +2,6 @@ import React from 'react';
 import { DocumentViewContext } from '../types';
 
 
-import { InspectionDropdown } from './InspectionDropdown';
 import { IncidentChartsAndTables } from './IncidentChartsAndTables';
 
 interface HomePageProps {
@@ -239,7 +238,7 @@ export const HomePage: React.FC<HomePageProps> = ({
           >
             <div className="flex items-center gap-2 truncate">
               <span className="material-symbols-outlined text-blue-600 dark:text-blue-400 text-xl">description</span>
-              <span className="truncate">Standard Operating Procedures (SOP)</span>
+              <span className="truncate">SOP</span>
             </div>
             <span className="material-symbols-outlined text-slate-400 group-hover:text-blue-500 group-hover:translate-x-1 transition-transform">
               arrow_forward
@@ -260,8 +259,19 @@ export const HomePage: React.FC<HomePageProps> = ({
             </span>
           </button>
 
-          {/* Inspection Records Dropdown */}
-          <InspectionDropdown onOpenInspectionModal={onOpenInspectionModal} />
+          {/* Inspection Records Button */}
+          <button
+            onClick={() => onOpenInspectionModal('All')}
+            className="w-full px-4 py-3.5 rounded-xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-slate-800 dark:text-zinc-100 font-semibold text-xs sm:text-sm flex items-center justify-between hover:border-emerald-500 dark:hover:border-emerald-400 transition-all shadow-sm group min-h-[44px]"
+          >
+            <div className="flex items-center gap-2 truncate">
+              <span className="material-symbols-outlined text-emerald-600 dark:text-emerald-400 text-xl">fact_check</span>
+              <span className="truncate">INSPECTION RECORDS</span>
+            </div>
+            <span className="material-symbols-outlined text-slate-400 group-hover:text-emerald-500 group-hover:translate-x-1 transition-transform">
+              arrow_forward
+            </span>
+          </button>
 
           {/* External Inspection Form Button */}
           <a

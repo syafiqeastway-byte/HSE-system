@@ -79,16 +79,10 @@ export const DocumentViewPage: React.FC<DocumentViewPageProps> = ({ docContext, 
         {/* Full Height Skeleton Loader */}
         {loading && (
           <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-white/95 dark:bg-slate-900/95 backdrop-blur-sm transition-opacity duration-300">
-            <div className="relative flex items-center justify-center mb-4">
+            <div className="relative flex items-center justify-center">
               <div className="w-16 h-16 rounded-full border-4 border-blue-200 border-t-blue-600 animate-spin"></div>
               <span className="material-symbols-outlined absolute text-2xl text-blue-600">article</span>
             </div>
-            <p className="text-sm font-bold text-slate-800 dark:text-slate-100">
-              Memuatkan Preview Document Google Drive...
-            </p>
-            <p className="text-xs text-slate-400 mt-1">
-              Establishing secure connection frame with Google Drive
-            </p>
           </div>
         )}
 

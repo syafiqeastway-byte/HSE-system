@@ -76,9 +76,8 @@ export const HIRARCPage: React.FC<HIRARCPageProps> = ({
 
       {/* Records Table */}
       {loading ? (
-        <div className="p-12 text-center flex flex-col items-center justify-center gap-3 glass-card">
+        <div className="p-12 text-center flex flex-col items-center justify-center glass-card">
           <span className="material-symbols-outlined text-4xl text-amber-500 animate-spin">sync</span>
-          <p className="text-xs text-slate-500">Loading dynamic HIRARC records via GAS bridge...</p>
         </div>
       ) : (
         <div className="glass-card overflow-hidden">

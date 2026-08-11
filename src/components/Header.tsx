@@ -40,22 +40,6 @@ export const Header: React.FC<HeaderProps> = ({
               </p>
             </div>
           </div>
-
-          {/* Theme Toggle Button for Mobile */}
-          <button
-            onClick={toggleTheme}
-            className="lg:hidden px-3 py-1.5 rounded-xl border border-slate-200 dark:border-zinc-800 bg-slate-100/80 dark:bg-zinc-900 text-slate-700 dark:text-zinc-200 hover:bg-slate-200 dark:hover:bg-zinc-800 transition-colors flex items-center gap-2"
-            title="Toggle Light/Dark Theme"
-          >
-            <span className={`material-symbols-outlined text-lg ${isDarkMode ? 'text-amber-400' : 'text-blue-600'}`}>
-              {isDarkMode ? 'dark_mode' : 'light_mode'}
-            </span>
-            <div className="text-left leading-none">
-              <div className="text-[10px] font-black uppercase text-slate-900 dark:text-white tracking-wide">
-                {isDarkMode ? 'Dark Mode' : 'Light Mode'}
-              </div>
-            </div>
-          </button>
         </div>
 
         {/* Navigation Tabs */}
@@ -121,25 +105,6 @@ export const Header: React.FC<HeaderProps> = ({
               <span className="material-symbols-outlined text-xl">refresh</span>
             </button>
           )}
-
-          {/* Light / Dark Mode Toggle Button with Small Text */}
-          <button
-            onClick={toggleTheme}
-            className="px-3 py-1.5 rounded-xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-slate-700 dark:text-zinc-200 hover:bg-slate-100 dark:hover:bg-zinc-800 transition-all shadow-sm flex items-center gap-2 group"
-            title="Toggle Light/Dark Theme"
-          >
-            <span className={`material-symbols-outlined text-xl group-hover:scale-110 transition-transform ${isDarkMode ? 'text-amber-400' : 'text-blue-600'}`}>
-              {isDarkMode ? 'dark_mode' : 'light_mode'}
-            </span>
-            <div className="text-left leading-none">
-              <div className="text-[11px] font-black uppercase text-slate-900 dark:text-white tracking-wide">
-                {isDarkMode ? 'Dark Mode' : 'Light Mode'}
-              </div>
-              <div className="text-[9px] font-medium text-slate-500 dark:text-zinc-400 mt-0.5">
-                {isDarkMode ? 'Dark Theme' : 'Light Theme'}
-              </div>
-            </div>
-          </button>
         </div>
 
       </div>
