@@ -188,7 +188,7 @@ export const EmergencyPlanPage: React.FC<EmergencyPlanPageProps> = ({
                   </tr>
                 ) : (
                   filteredCerts.map((cert) => (
-                    <tr key={cert.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/60 transition-colors">
+                    <tr key={cert.id} className="hover:bg-slate-100 dark:hover:bg-slate-800/80 active:bg-slate-200 dark:active:bg-slate-700/60 transition-colors cursor-pointer">
                       <td className="p-3 font-semibold text-slate-900 dark:text-slate-100">{cert.name}</td>
                       <td className="p-3 text-slate-700 dark:text-slate-300">{cert.department}</td>
                       <td className="p-3 font-mono font-bold text-emerald-600 dark:text-emerald-400">{cert.expiryDate}</td>

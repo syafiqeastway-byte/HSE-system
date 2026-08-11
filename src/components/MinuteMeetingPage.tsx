@@ -105,7 +105,7 @@ export const MinuteMeetingPage: React.FC<MinuteMeetingPageProps> = ({
                   </tr>
                 ) : (
                   filteredMeetings.map((m) => (
-                    <tr key={m.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/20 transition-colors">
+                    <tr key={m.id} className="hover:bg-slate-100 dark:hover:bg-slate-800/80 active:bg-slate-200 dark:active:bg-slate-700/60 transition-colors cursor-pointer">
                       <td className="py-4 px-6 font-medium text-slate-900 dark:text-slate-200">
                         {m.id}
                       </td>

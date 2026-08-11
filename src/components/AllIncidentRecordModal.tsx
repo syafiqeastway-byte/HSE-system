@@ -209,7 +209,7 @@ useEffect(() => {
                 </thead>
                 <tbody className="divide-y divide-slate-800/60 bg-slate-950/40 font-medium text-slate-300">
                   {filteredIncidents.map((inc) => (
-                    <tr key={inc.id} className="hover:bg-slate-900/50 transition-colors">
+                    <tr key={inc.id} className="hover:bg-slate-900 dark:hover:bg-slate-900/80 active:bg-slate-850/60 transition-colors cursor-pointer">
                       <td className="py-3 px-3 font-mono font-bold text-blue-400 whitespace-nowrap">
                         {inc.id}
                       </td>

@@ -118,7 +118,7 @@ export const InspectionModal: React.FC<InspectionModalProps> = ({ isOpen, filter
                     </tr>
                   ) : (
                     filteredData.map((item, index) => (
-                      <tr key={item.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/60 transition-colors">
+                      <tr key={item.id} className="hover:bg-slate-100 dark:hover:bg-slate-800/80 active:bg-slate-200 dark:active:bg-slate-700/60 transition-colors cursor-pointer">
                         <td className="p-3 text-center font-mono font-semibold text-slate-500">{index + 1}</td>
                         <td className="p-3 whitespace-nowrap font-mono">{item.date}</td>
                         <td className="p-3 font-bold text-slate-900 dark:text-white">{item.location || '-'}</td>

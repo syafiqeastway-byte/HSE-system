@@ -168,7 +168,7 @@ export const AllIncidentsPage: React.FC<AllIncidentsPageProps> = ({ onBackToHome
                 </thead>
                 <tbody className="divide-y divide-slate-200 dark:divide-slate-800/60 bg-white dark:bg-transparent text-slate-700 dark:text-slate-300">
                   {filteredIncidents.map((inc) => (
-                    <tr key={inc.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                    <tr key={inc.id} className="hover:bg-slate-100 dark:hover:bg-slate-800/80 active:bg-slate-200 dark:active:bg-slate-700/60 transition-colors cursor-pointer">
                       {/* 1. NO */}
                       <td className="py-3 px-3 font-mono font-bold text-blue-600 dark:text-blue-400 whitespace-nowrap">
                         {inc.id}
