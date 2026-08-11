@@ -142,6 +142,7 @@ export const InspectionModal: React.FC<InspectionModalProps> = ({ isOpen, filter
                                 href={formatToPreviewUrl(item.documentUrl)}
                                 target="_blank"
                                 rel="noopener noreferrer"
+                                onClick={(e) => e.stopPropagation()}
                                 className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-[11px] font-bold transition-colors shadow-sm shadow-blue-500/20"
                               >
                                 <span className="material-symbols-outlined text-[13px]">open_in_new</span>

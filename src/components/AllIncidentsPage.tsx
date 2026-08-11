@@ -248,7 +248,13 @@ export const AllIncidentsPage: React.FC<AllIncidentsPageProps> = ({ onBackToHome
                       {/* 15. PDF / DOCUMENT */}
                       <td className="py-3 px-3 text-center whitespace-nowrap">
                          {(inc as any).documentUrl && (inc as any).documentUrl !== '-' && (inc as any).documentUrl !== '' ? (
-                           <a href={(inc as any).documentUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center px-3 py-1.5 rounded-lg bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-500/20 transition-colors text-xs font-bold gap-1.5">
+                           <a 
+                             href={(inc as any).documentUrl} 
+                             target="_blank" 
+                             rel="noopener noreferrer" 
+                             onClick={(e) => e.stopPropagation()}
+                             className="inline-flex items-center justify-center px-3 py-1.5 rounded-lg bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-500/20 transition-colors text-xs font-bold gap-1.5"
+                           >
                              <span className="material-symbols-outlined text-[16px]">description</span>
                              <span>Open Doc</span>
                            </a>

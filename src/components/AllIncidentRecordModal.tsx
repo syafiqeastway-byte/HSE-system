@@ -275,7 +275,13 @@ useEffect(() => {
                       </td>
                       <td className="py-3 px-3 text-center whitespace-nowrap">
                         {(inc as any).documentUrl && (inc as any).documentUrl !== '-' && (inc as any).documentUrl !== '' ? (
-                          <a href={(inc as any).documentUrl} target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center px-2.5 py-1 rounded-md bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 text-xs font-bold gap-1 transition-colors">
+                          <a 
+                            href={(inc as any).documentUrl} 
+                            target="_blank" 
+                            rel="noopener noreferrer" 
+                            onClick={(e) => e.stopPropagation()}
+                            className="inline-flex items-center justify-center px-2.5 py-1 rounded-md bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 text-xs font-bold gap-1 transition-colors"
+                          >
                             <span className="material-symbols-outlined text-[14px]">description</span>
                             <span>Open Doc</span>
                           </a>

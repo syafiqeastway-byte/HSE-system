@@ -131,6 +131,7 @@ export const SOPPage: React.FC<SOPPageProps> = ({
                               href={formatToPreviewUrl(r.documentUrl)}
                               target="_blank" 
                               rel="noopener noreferrer"
+                              onClick={(e) => e.stopPropagation()}
                               className="inline-flex items-center justify-center gap-1.5 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold transition-colors shadow-sm shadow-blue-500/20"
                             >
                               <span className="material-symbols-outlined text-sm">open_in_new</span>

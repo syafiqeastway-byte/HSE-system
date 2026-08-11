@@ -131,6 +131,7 @@ export const HIRARCPage: React.FC<HIRARCPageProps> = ({
                               href={formatToPreviewUrl(r.documentUrl)}
                               target="_blank" 
                               rel="noopener noreferrer"
+                              onClick={(e) => e.stopPropagation()}
                               className="inline-flex items-center justify-center gap-1.5 px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-lg text-xs font-bold transition-colors shadow-sm shadow-amber-500/20"
                             >
                               <span className="material-symbols-outlined text-sm">open_in_new</span>
