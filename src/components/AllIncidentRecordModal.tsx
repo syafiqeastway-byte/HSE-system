@@ -11,9 +11,10 @@ interface AllIncidentRecordModalProps {
 export const AllIncidentRecordModal: React.FC<AllIncidentRecordModalProps> = ({ isOpen, onClose }) => {
   const [incidents, setIncidents] = useState<IncidentRecord[]>([]);
   const [loading, setLoading] = useState(false);
-    const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('All');
   const [source, setSource] = useState<'Google Sheets Live' | 'Local Cache Fallback'>('Google Sheets Live');
+  const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
 
   const fetchIncidents = async () => {
     setLoading(true);
@@ -208,8 +209,18 @@ useEffect(() => {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-800/60 bg-slate-950/40 font-medium text-slate-300">
-                  {filteredIncidents.map((inc) => (
-                    <tr key={inc.id} className="hover:bg-slate-900 dark:hover:bg-slate-900/80 active:bg-slate-850/60 transition-colors cursor-pointer">
+                  {filteredIncidents.map((inc) => {
+                    const isSelected = selectedRowId === inc.id;
+                    return (
+                      <tr 
+                        key={inc.id} 
+                        onClick={() => setSelectedRowId(isSelected ? null : inc.id)}
+                        className={`transition-colors cursor-pointer ${
+                          isSelected 
+                            ? 'bg-slate-900/95 dark:bg-slate-900 text-white font-semibold shadow-inner' 
+                            : 'hover:bg-slate-900 dark:hover:bg-slate-900/80 active:bg-slate-850/60'
+                        }`}
+                      >
                       <td className="py-3 px-3 font-mono font-bold text-blue-400 whitespace-nowrap">
                         {inc.id}
                       </td>
@@ -273,7 +284,8 @@ useEffect(() => {
                         )}
                       </td>
                     </tr>
-                  ))}
+                  );
+                })}
                 </tbody>
               </table>
             </div>

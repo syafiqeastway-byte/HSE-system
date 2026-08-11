@@ -13,6 +13,7 @@ export const HIRARCPage: React.FC<HIRARCPageProps> = ({
   const [records, setRecords] = useState<HIRARCRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
 
   useEffect(() => {
     let isMounted = true;
@@ -100,37 +101,48 @@ export const HIRARCPage: React.FC<HIRARCPageProps> = ({
                     </td>
                   </tr>
                 ) : (
-                  filteredRecords.map((r) => (
-                    <tr key={r.id} className="hover:bg-slate-100 dark:hover:bg-slate-800/80 active:bg-slate-200 dark:active:bg-slate-700/60 transition-colors cursor-pointer">
-                      <td className="py-4 px-6 font-medium text-slate-900 dark:text-slate-200">
-                        {r.id}
-                      </td>
-                      <td className="py-4 px-6 font-semibold text-slate-800 dark:text-slate-300">
-                        {r.title}
-                      </td>
-                      <td className="py-4 px-6 font-mono text-slate-600 dark:text-slate-400 text-xs">
-                        {r.date}
-                      </td>
-                      <td className="py-4 px-6 font-mono text-slate-600 dark:text-slate-400 text-xs">
-                        {r.revDate}
-                      </td>
-                      <td className="py-4 px-6 text-center">
-                        {r.documentUrl ? (
-                          <a 
-                            href={formatToPreviewUrl(r.documentUrl)}
-                            target="_blank" 
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center justify-center gap-1.5 px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-lg text-xs font-bold transition-colors shadow-sm shadow-amber-500/20"
-                          >
-                            <span className="material-symbols-outlined text-sm">open_in_new</span>
-                            Open Doc
-                          </a>
-                        ) : (
-                          <span className="text-xs text-slate-400 italic">No Document</span>
-                        )}
-                      </td>
-                    </tr>
-                  ))
+                  filteredRecords.map((r) => {
+                    const isSelected = selectedRowId === String(r.id);
+                    return (
+                      <tr 
+                        key={r.id} 
+                        onClick={() => setSelectedRowId(isSelected ? null : String(r.id))}
+                        className={`transition-colors cursor-pointer ${
+                          isSelected 
+                            ? 'bg-slate-200/80 dark:bg-slate-800 text-slate-900 dark:text-white font-semibold shadow-inner' 
+                            : 'hover:bg-slate-100 dark:hover:bg-slate-800/80 active:bg-slate-200 dark:active:bg-slate-700/60'
+                        }`}
+                      >
+                        <td className="py-4 px-6 font-medium text-slate-900 dark:text-slate-200">
+                          {r.id}
+                        </td>
+                        <td className="py-4 px-6 font-semibold text-slate-800 dark:text-slate-300">
+                          {r.title}
+                        </td>
+                        <td className="py-4 px-6 font-mono text-slate-600 dark:text-slate-400 text-xs">
+                          {r.date}
+                        </td>
+                        <td className="py-4 px-6 font-mono text-slate-600 dark:text-slate-400 text-xs">
+                          {r.revDate}
+                        </td>
+                        <td className="py-4 px-6 text-center">
+                          {r.documentUrl ? (
+                            <a 
+                              href={formatToPreviewUrl(r.documentUrl)}
+                              target="_blank" 
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center justify-center gap-1.5 px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-lg text-xs font-bold transition-colors shadow-sm shadow-amber-500/20"
+                            >
+                              <span className="material-symbols-outlined text-sm">open_in_new</span>
+                              Open Doc
+                            </a>
+                          ) : (
+                            <span className="text-xs text-slate-400 italic">No Document</span>
+                          )}
+                        </td>
+                      </tr>
+                    );
+                  })
                 )}
               </tbody>
             </table>

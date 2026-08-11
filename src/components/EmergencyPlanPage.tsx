@@ -13,7 +13,8 @@ export const EmergencyPlanPage: React.FC<EmergencyPlanPageProps> = ({
 }) => {
   const [certs, setCerts] = useState<FirstAidCert[]>([]);
   const [loading, setLoading] = useState(true);
-    const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
 
   useEffect(() => {
     let isMounted = true;
@@ -187,27 +188,41 @@ export const EmergencyPlanPage: React.FC<EmergencyPlanPageProps> = ({
                     </td>
                   </tr>
                 ) : (
-                  filteredCerts.map((cert) => (
-                    <tr key={cert.id} className="hover:bg-slate-100 dark:hover:bg-slate-800/80 active:bg-slate-200 dark:active:bg-slate-700/60 transition-colors cursor-pointer">
-                      <td className="p-3 font-semibold text-slate-900 dark:text-slate-100">{cert.name}</td>
-                      <td className="p-3 text-slate-700 dark:text-slate-300">{cert.department}</td>
-                      <td className="p-3 font-mono font-bold text-emerald-600 dark:text-emerald-400">{cert.expiryDate}</td>
-                      <td className="p-3">
-                        <button
-                          onClick={() => onOpenDocument({
-                            title: `First Aid & CPR Certificate - ${cert.name}`,
-                            subtitle: `Department: ${cert.department}`,
-                            url: cert.certLink,
-                            type: 'pdf'
-                          })}
-                          className="px-3 py-1.5 rounded-lg bg-blue-100 hover:bg-blue-200 dark:bg-blue-900/40 dark:hover:bg-blue-900/60 text-blue-700 dark:text-blue-300 font-semibold text-[10px] uppercase tracking-wider flex items-center gap-1.5 transition-colors"
-                        >
-                          <span className="material-symbols-outlined text-[14px]">visibility</span>
-                          View Cert
-                        </button>
-                      </td>
-                    </tr>
-                  ))
+                  filteredCerts.map((cert) => {
+                    const isSelected = selectedRowId === String(cert.id);
+                    return (
+                      <tr 
+                        key={cert.id} 
+                        onClick={() => setSelectedRowId(isSelected ? null : String(cert.id))}
+                        className={`transition-colors cursor-pointer ${
+                          isSelected 
+                            ? 'bg-slate-200/80 dark:bg-slate-800 text-slate-900 dark:text-white font-semibold shadow-inner' 
+                            : 'hover:bg-slate-100 dark:hover:bg-slate-800/80 active:bg-slate-200 dark:active:bg-slate-700/60'
+                        }`}
+                      >
+                        <td className="p-3 font-semibold text-slate-900 dark:text-slate-100">{cert.name}</td>
+                        <td className="p-3 text-slate-700 dark:text-slate-300">{cert.department}</td>
+                        <td className="p-3 font-mono font-bold text-emerald-600 dark:text-emerald-400">{cert.expiryDate}</td>
+                        <td className="p-3">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation(); // Avoid triggering row selection when clicking the view button
+                              onOpenDocument({
+                                title: `First Aid & CPR Certificate - ${cert.name}`,
+                                subtitle: `Department: ${cert.department}`,
+                                url: cert.certLink,
+                                type: 'pdf'
+                              });
+                            }}
+                            className="px-3 py-1.5 rounded-lg bg-blue-100 hover:bg-blue-200 dark:bg-blue-900/40 dark:hover:bg-blue-900/60 text-blue-700 dark:text-blue-300 font-semibold text-[10px] uppercase tracking-wider flex items-center gap-1.5 transition-colors"
+                          >
+                            <span className="material-symbols-outlined text-[14px]">visibility</span>
+                            View Cert
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })
                 )}
               </tbody>
             </table>

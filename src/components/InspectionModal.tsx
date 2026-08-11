@@ -13,6 +13,7 @@ export const InspectionModal: React.FC<InspectionModalProps> = ({ isOpen, filter
   const [inspections, setInspections] = useState<InspectionRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -117,31 +118,42 @@ export const InspectionModal: React.FC<InspectionModalProps> = ({ isOpen, filter
                       </td>
                     </tr>
                   ) : (
-                    filteredData.map((item, index) => (
-                      <tr key={item.id} className="hover:bg-slate-100 dark:hover:bg-slate-800/80 active:bg-slate-200 dark:active:bg-slate-700/60 transition-colors cursor-pointer">
-                        <td className="p-3 text-center font-mono font-semibold text-slate-500">{index + 1}</td>
-                        <td className="p-3 whitespace-nowrap font-mono">{item.date}</td>
-                        <td className="p-3 font-bold text-slate-900 dark:text-white">{item.location || '-'}</td>
-                        <td className="p-3 font-semibold text-emerald-600 dark:text-emerald-400">{item.typeOfInspection || '-'}</td>
-                        <td className="p-3 text-slate-700 dark:text-slate-300">{item.inspector || '-'}</td>
-                        <td className="p-3 text-slate-600 dark:text-slate-400 max-w-xs truncate" title={item.remark}>{item.remark || '-'}</td>
-                        <td className="p-3 text-center">
-                          {item.documentUrl ? (
-                            <a
-                              href={formatToPreviewUrl(item.documentUrl)}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-[11px] font-bold transition-colors shadow-sm shadow-blue-500/20"
-                            >
-                              <span className="material-symbols-outlined text-[13px]">open_in_new</span>
-                              View PDF
-                            </a>
-                          ) : (
-                            <span className="text-[10px] text-slate-400 italic">No PDF</span>
-                          )}
-                        </td>
-                      </tr>
-                    ))
+                    filteredData.map((item, index) => {
+                      const isSelected = selectedRowId === String(item.id);
+                      return (
+                        <tr 
+                          key={item.id} 
+                          onClick={() => setSelectedRowId(isSelected ? null : String(item.id))}
+                          className={`transition-colors cursor-pointer ${
+                            isSelected 
+                              ? 'bg-slate-200/80 dark:bg-slate-800 text-slate-900 dark:text-white font-semibold shadow-inner' 
+                              : 'hover:bg-slate-100 dark:hover:bg-slate-800/80 active:bg-slate-200 dark:active:bg-slate-700/60'
+                          }`}
+                        >
+                          <td className="p-3 text-center font-mono font-semibold text-slate-500">{index + 1}</td>
+                          <td className="p-3 whitespace-nowrap font-mono">{item.date}</td>
+                          <td className="p-3 font-bold text-slate-900 dark:text-white">{item.location || '-'}</td>
+                          <td className="p-3 font-semibold text-emerald-600 dark:text-emerald-400">{item.typeOfInspection || '-'}</td>
+                          <td className="p-3 text-slate-700 dark:text-slate-300">{item.inspector || '-'}</td>
+                          <td className="p-3 text-slate-600 dark:text-slate-400 max-w-xs truncate" title={item.remark}>{item.remark || '-'}</td>
+                          <td className="p-3 text-center">
+                            {item.documentUrl ? (
+                              <a
+                                href={formatToPreviewUrl(item.documentUrl)}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-[11px] font-bold transition-colors shadow-sm shadow-blue-500/20"
+                              >
+                                <span className="material-symbols-outlined text-[13px]">open_in_new</span>
+                                View PDF
+                              </a>
+                            ) : (
+                              <span className="text-[10px] text-slate-400 italic">No PDF</span>
+                            )}
+                          </td>
+                        </tr>
+                      );
+                    })
                   )}
                 </tbody>
               </table>

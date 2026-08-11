@@ -11,9 +11,9 @@ interface AllIncidentsPageProps {
 export const AllIncidentsPage: React.FC<AllIncidentsPageProps> = ({ onBackToHome, isDarkMode }) => {
   const [incidents, setIncidents] = useState<IncidentRecord[]>([]);
   const [loading, setLoading] = useState(false);
-  
   const [searchQuery, setSearchQuery] = useState('');
-    const [source, setSource] = useState<'Google Sheets Live' | 'Local Cache Fallback'>('Google Sheets Live');
+  const [source, setSource] = useState<'Google Sheets Live' | 'Local Cache Fallback'>('Google Sheets Live');
+  const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
 
   const fetchIncidents = async () => {
     setLoading(true);
@@ -167,8 +167,18 @@ export const AllIncidentsPage: React.FC<AllIncidentsPageProps> = ({ onBackToHome
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-200 dark:divide-slate-800/60 bg-white dark:bg-transparent text-slate-700 dark:text-slate-300">
-                  {filteredIncidents.map((inc) => (
-                    <tr key={inc.id} className="hover:bg-slate-100 dark:hover:bg-slate-800/80 active:bg-slate-200 dark:active:bg-slate-700/60 transition-colors cursor-pointer">
+                  {filteredIncidents.map((inc) => {
+                    const isSelected = selectedRowId === inc.id;
+                    return (
+                      <tr 
+                        key={inc.id} 
+                        onClick={() => setSelectedRowId(isSelected ? null : inc.id)}
+                        className={`transition-colors cursor-pointer ${
+                          isSelected 
+                            ? 'bg-slate-200 dark:bg-slate-800 text-slate-900 dark:text-white font-semibold shadow-inner' 
+                            : 'hover:bg-slate-100 dark:hover:bg-slate-800/80 active:bg-slate-200 dark:active:bg-slate-700/60'
+                        }`}
+                      >
                       {/* 1. NO */}
                       <td className="py-3 px-3 font-mono font-bold text-blue-600 dark:text-blue-400 whitespace-nowrap">
                         {inc.id}
@@ -247,7 +257,8 @@ export const AllIncidentsPage: React.FC<AllIncidentsPageProps> = ({ onBackToHome
                          )}
                       </td>
                     </tr>
-                  ))}
+                  );
+                })}
                 </tbody>
               </table>
             </div>

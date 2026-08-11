@@ -15,6 +15,7 @@ export const MinuteMeetingPage: React.FC<MinuteMeetingPageProps> = ({
   const [meetings, setMeetings] = useState<MinuteMeeting[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
 
   useEffect(() => {
     let isMounted = true;
@@ -104,39 +105,51 @@ export const MinuteMeetingPage: React.FC<MinuteMeetingPageProps> = ({
                     </td>
                   </tr>
                 ) : (
-                  filteredMeetings.map((m) => (
-                    <tr key={m.id} className="hover:bg-slate-100 dark:hover:bg-slate-800/80 active:bg-slate-200 dark:active:bg-slate-700/60 transition-colors cursor-pointer">
-                      <td className="py-4 px-6 font-medium text-slate-900 dark:text-slate-200">
-                        {m.id}
-                      </td>
-                      <td className="py-4 px-6 font-semibold text-slate-800 dark:text-slate-300">
-                        {m.title}
-                      </td>
-                      <td className="py-4 px-6 text-slate-600 dark:text-slate-400">
-                        <span className="px-2 py-1 rounded bg-slate-100 dark:bg-slate-800 text-xs font-semibold">
-                          {m.location}
-                        </span>
-                      </td>
-                      <td className="py-4 px-6 font-mono text-slate-600 dark:text-slate-400 text-xs">
-                        {m.date}
-                      </td>
-                      <td className="py-4 px-6 text-center">
-                        {m.documentUrl ? (
-                          <a 
-                            href={formatToPreviewUrl(m.documentUrl)} 
-                            target="_blank" 
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center justify-center gap-1.5 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold transition-colors shadow-sm shadow-blue-500/20"
-                          >
-                            <span className="material-symbols-outlined text-sm">open_in_new</span>
-                            Open Doc
-                          </a>
-                        ) : (
-                          <span className="text-xs text-slate-400 italic">No Document</span>
-                        )}
-                      </td>
-                    </tr>
-                  ))
+                  filteredMeetings.map((m) => {
+                    const isSelected = selectedRowId === String(m.id);
+                    return (
+                      <tr 
+                        key={m.id} 
+                        onClick={() => setSelectedRowId(isSelected ? null : String(m.id))}
+                        className={`transition-colors cursor-pointer ${
+                          isSelected 
+                            ? 'bg-slate-200/80 dark:bg-slate-800 text-slate-900 dark:text-white font-semibold shadow-inner' 
+                            : 'hover:bg-slate-100 dark:hover:bg-slate-800/80 active:bg-slate-200 dark:active:bg-slate-700/60'
+                        }`}
+                      >
+                        <td className="py-4 px-6 font-medium text-slate-900 dark:text-slate-200">
+                          {m.id}
+                        </td>
+                        <td className="py-4 px-6 font-semibold text-slate-800 dark:text-slate-300">
+                          {m.title}
+                        </td>
+                        <td className="py-4 px-6 text-slate-600 dark:text-slate-400">
+                          <span className="px-2 py-1 rounded bg-slate-100 dark:bg-slate-800 text-xs font-semibold">
+                            {m.location}
+                          </span>
+                        </td>
+                        <td className="py-4 px-6 font-mono text-slate-600 dark:text-slate-400 text-xs">
+                          {m.date}
+                        </td>
+                        <td className="py-4 px-6 text-center">
+                          {m.documentUrl ? (
+                            <a 
+                              href={formatToPreviewUrl(m.documentUrl)} 
+                              target="_blank" 
+                              rel="noopener noreferrer"
+                              className="inline-flex items-center justify-center gap-1.5 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold transition-colors shadow-sm shadow-blue-500/20"
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              <span className="material-symbols-outlined text-sm">open_in_new</span>
+                              Open Doc
+                            </a>
+                          ) : (
+                            <span className="text-xs text-slate-400 italic">No Document</span>
+                          )}
+                        </td>
+                      </tr>
+                    );
+                  })
                 )}
               </tbody>
             </table>

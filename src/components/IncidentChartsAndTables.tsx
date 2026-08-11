@@ -108,6 +108,7 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
   const [incidents, setIncidents] = useState<IncidentRecord[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [searchQuery, setSearchQuery] = useState<string>('');
+  const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
 
   // Canvas Refs for Charts
   const chartRef1 = useRef<HTMLCanvasElement | null>(null);
@@ -957,8 +958,18 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
                     </td>
                   </tr>
                 ) : (
-                  displayIncidents.map((inc) => (
-                    <tr key={inc.id} className="hover:bg-slate-100 dark:hover:bg-slate-800/80 active:bg-slate-200 dark:active:bg-slate-700/60 transition-colors cursor-pointer">
+                  displayIncidents.map((inc) => {
+                    const isSelected = selectedRowId === inc.id;
+                    return (
+                      <tr 
+                        key={inc.id} 
+                        onClick={() => setSelectedRowId(isSelected ? null : inc.id)}
+                        className={`transition-colors cursor-pointer ${
+                          isSelected 
+                            ? 'bg-slate-200/80 dark:bg-slate-800 text-slate-900 dark:text-white font-semibold shadow-inner' 
+                            : 'hover:bg-slate-100 dark:hover:bg-slate-800/80 active:bg-slate-200 dark:active:bg-slate-700/60'
+                        }`}
+                      >
                       {/* 1. NO */}
                       <td className="py-3 px-3 font-mono font-bold text-blue-600 dark:text-blue-400 whitespace-nowrap">
                         {inc.id}
@@ -1033,6 +1044,7 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
                             target="_blank"
                             rel="noopener noreferrer"
                             className="inline-flex items-center justify-center px-2.5 py-1 rounded-lg bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-500/20 transition-colors text-xs font-bold gap-1"
+                            onClick={(e) => e.stopPropagation()}
                           >
                             <span className="material-symbols-outlined text-[15px]">description</span>
                             <span>Open Doc</span>
@@ -1042,8 +1054,9 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
                         )}
                       </td>
                     </tr>
-                  ))
-                )}
+                  );
+                })
+              )}
               </tbody>
             </table>
           </div>
