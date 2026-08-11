@@ -174,7 +174,7 @@ export const HomePage: React.FC<HomePageProps> = ({
               onClick={() =>
                 onOpenDocument({
                   title: 'EASTWAY ENGINEERING SAFETY COMMITTEE ORGANIZATIONAL CHART 2026',
-                  subtitle: 'Chairman: Tan Eng Kiat | Secretary: Ir. Ahmad Razali (SHO)',
+                  subtitle: '',
                   url: 'https://docs.google.com/document/d/1DlrbuME45FA4z6g7-fVxUldxUD-qC67w/edit?usp=drive_link&ouid=106504427725302283723&rtpof=true&sd=true',
                   type: 'doc'
                 })

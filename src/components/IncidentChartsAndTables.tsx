@@ -112,8 +112,10 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
   // Canvas Refs for Charts
   const chartRef1 = useRef<HTMLCanvasElement | null>(null);
   const chartRef2 = useRef<HTMLCanvasElement | null>(null);
+  const occupationalChartRef = useRef<HTMLCanvasElement | null>(null);
   const chartInstance1 = useRef<any>(null);
   const chartInstance2 = useRef<any>(null);
+  const occupationalChartInstance = useRef<any>(null);
 
   // Fetch Live Incident Records from Google Sheets
   const loadData = async () => {
@@ -168,9 +170,101 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
       chartInstance2.current.destroy();
       chartInstance2.current = null;
     }
+    if (occupationalChartInstance.current) {
+      occupationalChartInstance.current.destroy();
+      occupationalChartInstance.current = null;
+    }
 
     const textColor = isDarkMode ? '#F8FAFC' : '#0F172A';
     const gridColor = isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(15, 23, 42, 0.08)';
+
+    // Render Occupational Incidents (YES only) Sharp Line Chart
+    if (occupationalChartRef.current) {
+      const occCtx = occupationalChartRef.current.getContext('2d');
+      if (occCtx) {
+        // Group by Year for OCCUPATIONAL INCIDENT? === 'YES'
+        const occCountsByYear: Record<string, number> = {};
+        incidents.forEach((r) => {
+          const isOcc = r.occupationalIncident?.trim().toUpperCase() === 'YES';
+          if (isOcc) {
+            let yr = r.year?.trim() || '';
+            if (!yr || yr === '-') {
+              if (r.date && r.date.includes('/')) {
+                const parts = r.date.split('/');
+                if (parts.length === 3) {
+                  const possibleYear = parts[2].trim();
+                  if (possibleYear.length === 4) {
+                    yr = possibleYear;
+                  }
+                }
+              } else if (r.date && r.date.includes('-')) {
+                const parts = r.date.split('-');
+                if (parts.length === 3) {
+                  const possibleYear = parts[0].trim();
+                  if (possibleYear.length === 4) {
+                    yr = possibleYear;
+                  }
+                }
+              }
+            }
+            if (yr && yr !== '-') {
+              occCountsByYear[yr] = (occCountsByYear[yr] || 0) + 1;
+            }
+          }
+        });
+
+        const occYears = Object.keys(occCountsByYear).sort();
+        const occData = occYears.map((y) => occCountsByYear[y]);
+
+        occupationalChartInstance.current = new Chart(occCtx, {
+          type: 'line',
+          data: {
+            labels: occYears.length > 0 ? occYears : ['2022', '2023', '2024', '2025', '2026'],
+            datasets: [
+              {
+                label: 'Occupational Incidents',
+                data: occYears.length > 0 ? occData : [0, 0, 0, 0, 0],
+                borderColor: '#F59E0B',
+                backgroundColor: 'rgba(245, 158, 11, 0.08)',
+                borderWidth: 3.5,
+                tension: 0, // Sharp line segments ("jenis tajam")
+                pointBackgroundColor: '#F59E0B',
+                pointBorderColor: isDarkMode ? '#1E293B' : '#FFFFFF',
+                pointBorderWidth: 2,
+                pointRadius: 6,
+                pointHoverRadius: 8,
+                fill: true,
+              },
+            ],
+          },
+          options: {
+            animation: { duration: 1500, easing: 'easeOutQuart' },
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              x: {
+                ticks: { color: textColor, font: { weight: 'bold', size: 11 } },
+                grid: { color: gridColor },
+              },
+              y: {
+                ticks: { color: textColor, precision: 0 },
+                grid: { color: gridColor },
+                suggestedMin: 0,
+              },
+            },
+            plugins: {
+              legend: { display: false },
+              title: {
+                display: true,
+                text: 'OCCUPATIONAL INCIDENTS ANNUAL TREND',
+                color: textColor,
+                font: { size: 12, weight: 'extrabold' },
+              },
+            },
+          },
+        });
+      }
+    }
 
     if (!chartRef1.current) return;
     const ctx1 = chartRef1.current.getContext('2d');
@@ -784,29 +878,34 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
               <canvas ref={chartRef1}></canvas>
             </div>
 
-            <div className="p-5 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 flex flex-col justify-center space-y-4">
-              <div className="flex items-center gap-2 border-b border-slate-200 dark:border-slate-800 pb-3">
-                <span className="material-symbols-outlined text-blue-500 text-2xl">insights</span>
-                <h3 className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wider">
-                  HEADER KPI SUMMARY: {activeTab}
-                </h3>
+            <div className="p-5 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 flex flex-col justify-between space-y-4">
+              {/* Annual Occupational Incidents Sharp Line Chart */}
+              <div className="p-3 bg-white dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800/80 rounded-xl shadow-sm h-40">
+                <canvas ref={occupationalChartRef}></canvas>
               </div>
+
+              <div className="flex flex-col space-y-3">
+                <div className="flex items-center gap-2 border-b border-slate-200 dark:border-slate-800 pb-2">
+                  <span className="material-symbols-outlined text-blue-500 text-xl">insights</span>
+                  <h3 className="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider">
+                    HEADER KPI SUMMARY: {activeTab}
+                  </h3>
+                </div>
 
                 <div className="grid grid-cols-2 gap-3">
                   <div className="p-3 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
                     <p className="text-[10px] font-bold text-slate-400 uppercase">Total Records</p>
-                    <p className="text-xl font-extrabold text-blue-600 dark:text-blue-400">{incidents.length}</p>
+                    <p className="text-base font-extrabold text-blue-600 dark:text-blue-400">{incidents.length}</p>
                   </div>
                   <div className="p-3 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
                     <p className="text-[10px] font-bold text-slate-400 uppercase">Occupational</p>
-                    <p className="text-xl font-extrabold text-amber-600 dark:text-amber-400">
+                    <p className="text-base font-extrabold text-amber-600 dark:text-amber-400">
                       {incidents.filter((i) => i.occupationalIncident?.toUpperCase() === 'YES').length}
                     </p>
                   </div>
                 </div>
-
-
               </div>
+            </div>
           </div>
 
           {/* Search Toolbar */}

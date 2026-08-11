@@ -106,13 +106,6 @@ useEffect(() => {
                 <h2 className="text-base sm:text-xl font-black text-slate-900 dark:text-white tracking-wide uppercase">
                   ALL INCIDENT RECORD
                 </h2>
-                <span className={`text-[10px] font-extrabold px-2 py-0.5 rounded-full uppercase tracking-wider ${
-                  source === 'Google Sheets Live'
-                    ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
-                    : 'bg-amber-500/20 text-amber-400 border border-amber-500/30'
-                }`}>
-                  {source}
-                </span>
               </div>
               <p className="text-xs text-slate-500 dark:text-slate-400">
                 Connected Data Source: <code className="font-mono text-emerald-400">Google Sheets (NEW IR)</code>

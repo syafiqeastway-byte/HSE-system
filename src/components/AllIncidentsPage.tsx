@@ -97,10 +97,6 @@ export const AllIncidentsPage: React.FC<AllIncidentsPageProps> = ({ onBackToHome
               <span className="material-symbols-outlined text-blue-600 dark:text-blue-400">database</span>
               ALL INCIDENT RECORDS
             </h2>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 flex items-center gap-2">
-              <span className={`w-2 h-2 rounded-full ${source === 'Google Sheets Live' ? 'bg-emerald-500 animate-pulse' : 'bg-amber-500'}`}></span>
-              {source}
-            </p>
           </div>
         </div>
         <div className="flex items-center gap-2">
