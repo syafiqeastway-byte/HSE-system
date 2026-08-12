@@ -170,20 +170,20 @@ export const EmergencyPlanPage: React.FC<EmergencyPlanPageProps> = ({
             <span className="material-symbols-outlined text-3xl text-emerald-500 animate-spin">sync</span>
           </div>
         ) : (
-          <div className="overflow-x-auto rounded-2xl border border-slate-200 dark:border-slate-700">
-            <table className="w-full text-left text-xs text-slate-800 dark:text-slate-200">
-              <thead className="bg-slate-100 dark:bg-slate-800 uppercase font-bold text-slate-600 dark:text-slate-300">
+          <div className="overflow-x-auto rounded-2xl border border-slate-300 dark:border-zinc-700">
+            <table className="w-full border-collapse border border-slate-300 dark:border-zinc-700 text-left text-xs text-slate-800 dark:text-slate-200">
+              <thead className="bg-slate-100 dark:bg-zinc-800/80 text-slate-800 dark:text-zinc-100 uppercase border-b border-slate-300 dark:border-zinc-700">
                 <tr>
-                  <th className="p-3">Name</th>
-                  <th className="p-3">Department</th>
-                  <th className="p-3">CERT EXPIRED</th>
-                  <th className="p-3">CERT PDF</th>
+                  <th className="p-3 border border-slate-300 dark:border-zinc-700 font-extrabold tracking-wider">Name</th>
+                  <th className="p-3 border border-slate-300 dark:border-zinc-700 font-extrabold tracking-wider">Department</th>
+                  <th className="p-3 border border-slate-300 dark:border-zinc-700 font-extrabold tracking-wider">CERT EXPIRED</th>
+                  <th className="p-3 border border-slate-300 dark:border-zinc-700 font-extrabold tracking-wider text-center">CERT PDF</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-200 dark:divide-slate-700 bg-white dark:bg-slate-900">
+              <tbody className="divide-y divide-slate-300 dark:divide-zinc-700 bg-white dark:bg-transparent">
                 {filteredCerts.length === 0 ? (
                   <tr>
-                    <td colSpan={4} className="p-4 text-center text-slate-400">
+                    <td colSpan={4} className="p-4 text-center text-slate-400 border border-slate-300 dark:border-zinc-700">
                       No first aid cert found matching "{searchQuery}"
                     </td>
                   </tr>
@@ -200,12 +200,13 @@ export const EmergencyPlanPage: React.FC<EmergencyPlanPageProps> = ({
                             : 'hover:bg-slate-100 dark:hover:bg-slate-800/80 active:bg-slate-200 dark:active:bg-slate-700/60'
                         }`}
                       >
-                        <td className="p-3 font-semibold text-slate-900 dark:text-slate-100">{cert.name}</td>
-                        <td className="p-3 text-slate-700 dark:text-slate-300">{cert.department}</td>
-                        <td className="p-3 font-mono font-bold text-emerald-600 dark:text-emerald-400">{cert.expiryDate}</td>
-                        <td className="p-3">
-                          <button
-                            onClick={(e) => {
+                        <td className="p-3 font-semibold text-slate-900 dark:text-slate-100 border border-slate-300 dark:border-zinc-700">{cert.name}</td>
+                        <td className="p-3 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-zinc-700">{cert.department}</td>
+                        <td className="p-3 font-mono font-bold text-emerald-600 dark:text-emerald-400 border border-slate-300 dark:border-zinc-700">{cert.expiryDate}</td>
+                        <td className="p-3 border border-slate-300 dark:border-zinc-700 text-center">
+                          <div className="flex justify-center">
+                            <button
+                              onClick={(e) => {
                               e.stopPropagation(); // Avoid triggering row selection when clicking the view button
                               onOpenDocument({
                                 title: `First Aid & CPR Certificate - ${cert.name}`,
@@ -219,7 +220,8 @@ export const EmergencyPlanPage: React.FC<EmergencyPlanPageProps> = ({
                             <span className="material-symbols-outlined text-[14px]">visibility</span>
                             View Cert
                           </button>
-                        </td>
+                        </div>
+                      </td>
                       </tr>
                     );
                   })

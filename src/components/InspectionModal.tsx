@@ -97,23 +97,23 @@ export const InspectionModal: React.FC<InspectionModalProps> = ({ isOpen, filter
               <span className="material-symbols-outlined text-3xl text-emerald-500 animate-spin">sync</span>
             </div>
           ) : (
-            <div className="overflow-x-auto rounded-2xl border border-slate-200 dark:border-slate-700">
-              <table className="w-full text-left text-xs text-slate-800 dark:text-slate-200">
-                <thead className="bg-slate-100 dark:bg-slate-800 uppercase font-bold text-slate-600 dark:text-slate-300">
+            <div className="overflow-x-auto rounded-2xl border border-slate-300 dark:border-zinc-700">
+              <table className="w-full border-collapse border border-slate-300 dark:border-zinc-700 text-left text-xs text-slate-800 dark:text-slate-200">
+                <thead className="bg-slate-100 dark:bg-zinc-800/80 text-slate-800 dark:text-zinc-100 uppercase border-b border-slate-300 dark:border-zinc-700">
                   <tr>
-                    <th className="p-3 text-center w-12">NO</th>
-                    <th className="p-3">DATE</th>
-                    <th className="p-3">LOCATION</th>
-                    <th className="p-3">TYPE OF INSPECTION</th>
-                    <th className="p-3">INSPECTOR</th>
-                    <th className="p-3">REMARK</th>
-                    <th className="p-3 text-center">PDF</th>
+                    <th className="p-3 border border-slate-300 dark:border-zinc-700 font-extrabold tracking-wider text-center w-12">NO</th>
+                    <th className="p-3 border border-slate-300 dark:border-zinc-700 font-extrabold tracking-wider">DATE</th>
+                    <th className="p-3 border border-slate-300 dark:border-zinc-700 font-extrabold tracking-wider">LOCATION</th>
+                    <th className="p-3 border border-slate-300 dark:border-zinc-700 font-extrabold tracking-wider">TYPE OF INSPECTION</th>
+                    <th className="p-3 border border-slate-300 dark:border-zinc-700 font-extrabold tracking-wider">INSPECTOR</th>
+                    <th className="p-3 border border-slate-300 dark:border-zinc-700 font-extrabold tracking-wider">REMARK</th>
+                    <th className="p-3 border border-slate-300 dark:border-zinc-700 font-extrabold tracking-wider text-center">PDF</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-200 dark:divide-slate-700 bg-white dark:bg-slate-900">
+                <tbody className="divide-y divide-slate-300 dark:divide-zinc-700 bg-white dark:bg-transparent">
                   {filteredData.length === 0 ? (
                     <tr>
-                      <td colSpan={7} className="p-4 text-center text-slate-400">
+                      <td colSpan={7} className="p-4 text-center text-slate-400 border border-slate-300 dark:border-zinc-700">
                         No inspection records found matching "{searchQuery}"
                       </td>
                     </tr>
@@ -130,13 +130,13 @@ export const InspectionModal: React.FC<InspectionModalProps> = ({ isOpen, filter
                               : 'hover:bg-slate-100 dark:hover:bg-slate-800/80 active:bg-slate-200 dark:active:bg-slate-700/60'
                           }`}
                         >
-                          <td className="p-3 text-center font-mono font-semibold text-slate-500">{index + 1}</td>
-                          <td className="p-3 whitespace-nowrap font-mono">{item.date}</td>
-                          <td className="p-3 font-bold text-slate-900 dark:text-white">{item.location || '-'}</td>
-                          <td className="p-3 font-semibold text-emerald-600 dark:text-emerald-400">{item.typeOfInspection || '-'}</td>
-                          <td className="p-3 text-slate-700 dark:text-slate-300">{item.inspector || '-'}</td>
-                          <td className="p-3 text-slate-600 dark:text-slate-400 max-w-xs truncate" title={item.remark}>{item.remark || '-'}</td>
-                          <td className="p-3 text-center">
+                          <td className="p-3 text-center font-mono font-semibold text-slate-500 border border-slate-300 dark:border-zinc-700">{index + 1}</td>
+                          <td className="p-3 whitespace-nowrap font-mono border border-slate-300 dark:border-zinc-700">{item.date}</td>
+                          <td className="p-3 font-bold text-slate-900 dark:white border border-slate-300 dark:border-zinc-700">{item.location || '-'}</td>
+                          <td className="p-3 font-semibold text-emerald-600 dark:text-emerald-400 border border-slate-300 dark:border-zinc-700">{item.typeOfInspection || '-'}</td>
+                          <td className="p-3 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-zinc-700">{item.inspector || '-'}</td>
+                          <td className="p-3 text-slate-600 dark:text-slate-400 max-w-xs truncate border border-slate-300 dark:border-zinc-700" title={item.remark}>{item.remark || '-'}</td>
+                          <td className="p-3 text-center border border-slate-300 dark:border-zinc-700">
                             {item.documentUrl ? (
                               <a
                                 href={formatToPreviewUrl(item.documentUrl)}

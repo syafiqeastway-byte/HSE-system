@@ -103,6 +103,17 @@ export const TelemetryHub: React.FC = () => {
     return () => { isMounted = false; clearInterval(weatherInterval); };
   }, []);
 
+  const getWeatherIcon = (weatherDesc: string) => {
+    const desc = weatherDesc.toLowerCase();
+    if (desc.includes('clear') || desc.includes('sunny')) return 'wb_sunny';
+    if (desc.includes('partly') || desc.includes('mainly')) return 'partly_cloudy_day';
+    if (desc.includes('cloudy') || desc.includes('overcast')) return 'cloud';
+    if (desc.includes('rain') || desc.includes('drizzle') || desc.includes('shower')) return 'rainy';
+    if (desc.includes('thunderstorm') || desc.includes('storm')) return 'thunderstorm';
+    if (desc.includes('fog')) return 'foggy';
+    return 'wb_cloudy';
+  };
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
       
@@ -126,25 +137,40 @@ export const TelemetryHub: React.FC = () => {
 
       {/* 2. Live Weather Widget (Kuala Lumpur & Penang) */}
       <div className="bg-cyan-500/10 border border-cyan-500/30 rounded-2xl p-4 sm:p-5 flex items-center justify-between backdrop-blur-md">
-        <div className="flex items-center gap-3.5">
+        <div className="flex items-center gap-3.5 w-full">
           <div className="w-10 h-10 rounded-xl bg-cyan-500/20 text-cyan-400 flex items-center justify-center flex-shrink-0 border border-cyan-500/30">
             <span className="material-symbols-outlined text-2xl">thermostat</span>
           </div>
-          <div>
+          <div className="flex-1 min-w-0">
             <div className="text-[10px] font-bold text-cyan-400 uppercase tracking-widest flex items-center gap-1">
               <span>LIVE SITE WEATHER</span>
               {loadingWeather && <span className="material-symbols-outlined text-xs animate-spin">sync</span>}
             </div>
-            <div className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white mt-1">
-              KL: {weather.tempKL}°C • <span className="text-cyan-400 font-semibold">{weather.weatherKL}</span>
-            </div>
-            <div className="text-[11px] text-slate-500 dark:text-slate-400">
-              Penang: {weather.tempPenang}°C • {weather.weatherPenang}
+            
+            <div className="space-y-1 mt-1.5">
+              {/* KL Weather */}
+              <div className="flex items-center gap-1.5 text-xs sm:text-sm font-bold text-slate-900 dark:text-white">
+                <span>KL:</span>
+                <span className="text-cyan-500 dark:text-cyan-400 font-extrabold">{weather.tempKL}°C</span>
+                <span className="text-slate-400 dark:text-slate-600 font-normal">•</span>
+                <span className="text-slate-700 dark:text-slate-300 font-medium truncate">{weather.weatherKL}</span>
+                <span className="material-symbols-outlined text-cyan-400 text-lg animate-pulse ml-auto" title={weather.weatherKL}>
+                  {getWeatherIcon(weather.weatherKL)}
+                </span>
+              </div>
+              
+              {/* PENANG Weather */}
+              <div className="flex items-center gap-1.5 text-xs sm:text-sm font-bold text-slate-900 dark:text-white">
+                <span>PENANG:</span>
+                <span className="text-cyan-500 dark:text-cyan-400 font-extrabold">{weather.tempPenang}°C</span>
+                <span className="text-slate-400 dark:text-slate-600 font-normal">•</span>
+                <span className="text-slate-700 dark:text-slate-300 font-medium truncate">{weather.weatherPenang}</span>
+                <span className="material-symbols-outlined text-cyan-400 text-lg animate-pulse ml-auto" title={weather.weatherPenang}>
+                  {getWeatherIcon(weather.weatherPenang)}
+                </span>
+              </div>
             </div>
           </div>
-        </div>
-        <div className="text-cyan-400 hidden sm:block">
-          <span className="material-symbols-outlined text-3xl animate-pulse">partly_cloudy_day</span>
         </div>
       </div>
 

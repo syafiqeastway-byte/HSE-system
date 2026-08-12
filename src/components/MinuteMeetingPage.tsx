@@ -87,20 +87,20 @@ export const MinuteMeetingPage: React.FC<MinuteMeetingPageProps> = ({
       ) : (
         <div className="glass-card overflow-hidden">
           <div className="overflow-x-auto">
-            <table className="w-full text-left text-sm whitespace-nowrap">
-              <thead className="bg-slate-100/50 dark:bg-slate-800/50 text-slate-500 dark:text-slate-400 border-b border-slate-200 dark:border-slate-700">
+            <table className="w-full border-collapse border border-slate-300 dark:border-zinc-700 text-left text-sm whitespace-nowrap">
+              <thead className="bg-slate-100 dark:bg-zinc-800/80 text-slate-800 dark:text-zinc-100 border-b border-slate-300 dark:border-zinc-700">
                 <tr>
-                  <th className="py-4 px-6 font-semibold">No</th>
-                  <th className="py-4 px-6 font-semibold">Title</th>
-                  <th className="py-4 px-6 font-semibold">Location</th>
-                  <th className="py-4 px-6 font-semibold">Date</th>
-                  <th className="py-4 px-6 font-semibold text-center">Document</th>
+                  <th className="py-3 px-4 font-extrabold uppercase tracking-wider border border-slate-300 dark:border-zinc-700">No</th>
+                  <th className="py-3 px-4 font-extrabold uppercase tracking-wider border border-slate-300 dark:border-zinc-700">Title</th>
+                  <th className="py-3 px-4 font-extrabold uppercase tracking-wider border border-slate-300 dark:border-zinc-700">Location</th>
+                  <th className="py-3 px-4 font-extrabold uppercase tracking-wider border border-slate-300 dark:border-zinc-700">Date</th>
+                  <th className="py-3 px-4 font-extrabold uppercase tracking-wider border border-slate-300 dark:border-zinc-700 text-center">Document</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100 dark:divide-slate-800/50">
+              <tbody className="divide-y divide-slate-300 dark:divide-zinc-700">
                 {filteredMeetings.length === 0 ? (
                   <tr>
-                    <td colSpan={5} className="py-8 text-center text-xs text-slate-400">
+                    <td colSpan={5} className="py-8 text-center text-xs text-slate-400 border border-slate-300 dark:border-zinc-700">
                       No meeting records found matching "{searchQuery}"
                     </td>
                   </tr>
@@ -117,21 +117,21 @@ export const MinuteMeetingPage: React.FC<MinuteMeetingPageProps> = ({
                             : 'hover:bg-slate-100 dark:hover:bg-slate-800/80 active:bg-slate-200 dark:active:bg-slate-700/60'
                         }`}
                       >
-                        <td className="py-4 px-6 font-medium text-slate-900 dark:text-slate-200">
+                        <td className="py-3 px-4 font-medium text-slate-900 dark:text-slate-200 border border-slate-300 dark:border-zinc-700">
                           {m.id}
                         </td>
-                        <td className="py-4 px-6 font-semibold text-slate-800 dark:text-slate-300">
+                        <td className="py-3 px-4 font-semibold text-slate-800 dark:text-slate-300 border border-slate-300 dark:border-zinc-700">
                           {m.title}
                         </td>
-                        <td className="py-4 px-6 text-slate-600 dark:text-slate-400">
+                        <td className="py-3 px-4 text-slate-600 dark:text-slate-400 border border-slate-300 dark:border-zinc-700">
                           <span className="px-2 py-1 rounded bg-slate-100 dark:bg-slate-800 text-xs font-semibold">
                             {m.location}
                           </span>
                         </td>
-                        <td className="py-4 px-6 font-mono text-slate-600 dark:text-slate-400 text-xs">
+                        <td className="py-3 px-4 font-mono text-slate-600 dark:text-slate-400 text-xs border border-slate-300 dark:border-zinc-700">
                           {m.date}
                         </td>
-                        <td className="py-4 px-6 text-center">
+                        <td className="py-3 px-4 text-center border border-slate-300 dark:border-zinc-700">
                           {m.documentUrl ? (
                             <a 
                               href={formatToPreviewUrl(m.documentUrl)} 

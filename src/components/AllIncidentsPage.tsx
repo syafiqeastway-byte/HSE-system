@@ -146,24 +146,24 @@ export const AllIncidentsPage: React.FC<AllIncidentsPageProps> = ({ onBackToHome
             </div>
           ) : (
             <div className="overflow-x-auto sm:rounded-xl border-y sm:border border-slate-200 dark:border-slate-800">
-              <table className="w-full text-left border-collapse text-xs">
-                <thead>
-                  <tr className="bg-slate-50 dark:bg-slate-900/90 text-slate-600 dark:text-slate-400 font-bold uppercase text-[10px] tracking-wider border-b border-slate-200 dark:border-slate-800">
-                    <th className="py-3 px-3 whitespace-nowrap">NO</th>
-                    <th className="py-3 px-3 whitespace-nowrap">DATE</th>
-                    <th className="py-3 px-3 whitespace-nowrap">YEAR</th>
-                    <th className="py-3 px-3 min-w-[120px]">LOCATION</th>
-                    <th className="py-3 px-3 min-w-[200px]">DESCRIPTION</th>
-                    <th className="py-3 px-3 text-center whitespace-nowrap">OCCUPATIONAL INCIDENT?</th>
-                    <th className="py-3 px-3 min-w-[140px]">INCIDENT CATEGORY</th>
-                    <th className="py-3 px-3 text-center whitespace-nowrap">PROPERTY DAMAGE</th>
-                    <th className="py-3 px-3 whitespace-nowrap">DAMAGE LEVEL</th>
-                    <th className="py-3 px-3 min-w-[140px]">CLASSIFICATION</th>
-                    <th className="py-3 px-3 min-w-[120px]">INJURY TYPE</th>
-                    <th className="py-3 px-3 min-w-[120px]">PERSON INVOLVE</th>
-                    <th className="py-3 px-3 whitespace-nowrap">WORK EXPERIENCE</th>
-                    <th className="py-3 px-3 min-w-[110px]">REPORTED BY</th>
-                    <th className="py-3 px-3 text-center whitespace-nowrap">PDF</th>
+              <table className="w-full border-collapse border border-slate-300 dark:border-zinc-700 text-left text-xs whitespace-nowrap">
+                <thead className="bg-slate-100 dark:bg-zinc-800/80 text-slate-800 dark:text-zinc-100">
+                  <tr className="border-b border-slate-300 dark:border-zinc-700">
+                    <th className="py-3 px-3 border border-slate-300 dark:border-zinc-700 font-extrabold text-[10px] tracking-wider whitespace-nowrap text-center">NO</th>
+                    <th className="py-3 px-3 border border-slate-300 dark:border-zinc-700 font-extrabold text-[10px] tracking-wider whitespace-nowrap text-center">DATE</th>
+                    <th className="py-3 px-3 border border-slate-300 dark:border-zinc-700 font-extrabold text-[10px] tracking-wider whitespace-nowrap text-center">YEAR</th>
+                    <th className="py-3 px-3 border border-slate-300 dark:border-zinc-700 font-extrabold text-[10px] tracking-wider min-w-[120px]">LOCATION</th>
+                    <th className="py-3 px-3 border border-slate-300 dark:border-zinc-700 font-extrabold text-[10px] tracking-wider min-w-[200px]">DESCRIPTION</th>
+                    <th className="py-3 px-3 border border-slate-300 dark:border-zinc-700 font-extrabold text-[10px] tracking-wider whitespace-nowrap text-center">OCCUPATIONAL INCIDENT?</th>
+                    <th className="py-3 px-3 border border-slate-300 dark:border-zinc-700 font-extrabold text-[10px] tracking-wider min-w-[140px]">INCIDENT CATEGORY</th>
+                    <th className="py-3 px-3 border border-slate-300 dark:border-zinc-700 font-extrabold text-[10px] tracking-wider whitespace-nowrap text-center">PROPERTY DAMAGE</th>
+                    <th className="py-3 px-3 border border-slate-300 dark:border-zinc-700 font-extrabold text-[10px] tracking-wider whitespace-nowrap">DAMAGE LEVEL</th>
+                    <th className="py-3 px-3 border border-slate-300 dark:border-zinc-700 font-extrabold text-[10px] tracking-wider min-w-[140px]">CLASSIFICATION</th>
+                    <th className="py-3 px-3 border border-slate-300 dark:border-zinc-700 font-extrabold text-[10px] tracking-wider min-w-[120px]">INJURY TYPE</th>
+                    <th className="py-3 px-3 border border-slate-300 dark:border-zinc-700 font-extrabold text-[10px] tracking-wider min-w-[120px]">PERSON INVOLVE</th>
+                    <th className="py-3 px-3 border border-slate-300 dark:border-zinc-700 font-extrabold text-[10px] tracking-wider whitespace-nowrap">WORK EXPERIENCE</th>
+                    <th className="py-3 px-3 border border-slate-300 dark:border-zinc-700 font-extrabold text-[10px] tracking-wider min-w-[110px]">REPORTED BY</th>
+                    <th className="py-3 px-3 border border-slate-300 dark:border-zinc-700 font-extrabold text-[10px] tracking-wider text-center whitespace-nowrap">PDF</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-200 dark:divide-slate-800/60 bg-white dark:bg-transparent text-slate-700 dark:text-slate-300">
@@ -180,29 +180,29 @@ export const AllIncidentsPage: React.FC<AllIncidentsPageProps> = ({ onBackToHome
                         }`}
                       >
                       {/* 1. NO */}
-                      <td className="py-3 px-3 font-mono font-bold text-blue-600 dark:text-blue-400 whitespace-nowrap">
+                      <td className="py-3 px-3 font-mono font-bold text-blue-600 dark:text-blue-400 whitespace-nowrap border border-slate-300 dark:border-zinc-700 text-center">
                         {inc.id}
                       </td>
                       {/* 2. DATE */}
-                      <td className="py-3 px-3 font-mono whitespace-nowrap text-slate-500 dark:text-slate-400">
+                      <td className="py-3 px-3 font-mono whitespace-nowrap text-slate-500 dark:text-slate-400 border border-slate-300 dark:border-zinc-700">
                         {inc.date}
                       </td>
                       {/* 3. YEAR */}
-                      <td className="py-3 px-3 font-mono whitespace-nowrap text-slate-500 dark:text-slate-400">
+                      <td className="py-3 px-3 font-mono whitespace-nowrap text-slate-500 dark:text-slate-400 border border-slate-300 dark:border-zinc-700 text-center">
                         {inc.year || '-'}
                       </td>
                       {/* 4. LOCATION */}
-                      <td className="py-3 px-3 font-bold text-slate-900 dark:text-slate-200 whitespace-nowrap">
+                      <td className="py-3 px-3 font-bold text-slate-900 dark:text-slate-200 whitespace-nowrap border border-slate-300 dark:border-zinc-700">
                         {inc.location}
                       </td>
                       {/* 5. DESCRIPTION */}
-                      <td className="py-3 px-3 text-slate-600 dark:text-slate-400 min-w-[200px]" title={(inc as any).rootCause || inc.description || (inc as any).root_cause || ''}>
+                      <td className="py-3 px-3 text-slate-600 dark:text-slate-400 min-w-[200px] border border-slate-300 dark:border-zinc-700" title={(inc as any).rootCause || inc.description || (inc as any).root_cause || ''}>
                         <div className="line-clamp-2">
                           {(inc as any).rootCause || inc.description || (inc as any).root_cause || '-'}
                         </div>
                       </td>
                       {/* 6. OCCUPATIONAL INCIDENT? */}
-                      <td className="py-3 px-3 text-center whitespace-nowrap">
+                      <td className="py-3 px-3 text-center whitespace-nowrap border border-slate-300 dark:border-zinc-700">
                         <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${
                           inc.occupationalIncident?.toUpperCase() === 'YES'
                             ? 'bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400'
@@ -212,41 +212,41 @@ export const AllIncidentsPage: React.FC<AllIncidentsPageProps> = ({ onBackToHome
                         </span>
                       </td>
                       {/* 7. INCIDENT CATEGORY */}
-                      <td className="py-3 px-3 whitespace-nowrap">
+                      <td className="py-3 px-3 whitespace-nowrap border border-slate-300 dark:border-zinc-700">
                         <span className="px-2.5 py-1 rounded-md bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 text-[11px] font-bold">
                           {inc.category || '-'}
                         </span>
                       </td>
                       {/* 8. PROPERTY DAMAGE */}
-                      <td className="py-3 px-3 text-center whitespace-nowrap font-medium">
+                      <td className="py-3 px-3 text-center whitespace-nowrap font-medium border border-slate-300 dark:border-zinc-700">
                         {inc.propertyDamage || '-'}
                       </td>
                       {/* 9. DAMAGE LEVEL */}
-                      <td className="py-3 px-3 whitespace-nowrap font-medium text-slate-600 dark:text-slate-400">
+                      <td className="py-3 px-3 whitespace-nowrap font-medium text-slate-600 dark:text-slate-400 border border-slate-300 dark:border-zinc-700">
                         {inc.damageLevel || '-'}
                       </td>
                       {/* 10. CLASSIFICATION */}
-                      <td className="py-3 px-3 font-medium text-slate-800 dark:text-slate-300 whitespace-nowrap">
+                      <td className="py-3 px-3 font-medium text-slate-800 dark:text-slate-300 whitespace-nowrap border border-slate-300 dark:border-zinc-700">
                         {inc.classification || '-'}
                       </td>
                       {/* 11. INJURY TYPE */}
-                      <td className="py-3 px-3 text-slate-600 dark:text-slate-400 whitespace-nowrap">
+                      <td className="py-3 px-3 text-slate-600 dark:text-slate-400 whitespace-nowrap border border-slate-300 dark:border-zinc-700">
                         {inc.injuryType || '-'}
                       </td>
                       {/* 12. PERSON INVOLVE */}
-                      <td className="py-3 px-3 font-semibold text-slate-800 dark:text-slate-200 whitespace-nowrap">
+                      <td className="py-3 px-3 font-semibold text-slate-800 dark:text-slate-200 whitespace-nowrap border border-slate-300 dark:border-zinc-700">
                         {inc.personInvolved || (inc as any).person_involved || '-'}
                       </td>
                       {/* 13. WORK EXPERIENCE */}
-                      <td className="py-3 px-3 text-slate-600 dark:text-slate-400 whitespace-nowrap">
+                      <td className="py-3 px-3 text-slate-600 dark:text-slate-400 whitespace-nowrap border border-slate-300 dark:border-zinc-700">
                         {inc.experienceLevel || '-'}
                       </td>
                       {/* 14. REPORTED BY */}
-                      <td className="py-3 px-3 text-slate-600 dark:text-slate-400 whitespace-nowrap">
+                      <td className="py-3 px-3 text-slate-600 dark:text-slate-400 whitespace-nowrap border border-slate-300 dark:border-zinc-700">
                         {inc.reportedBy || (inc as any).investigator || '-'}
                       </td>
                       {/* 15. PDF / DOCUMENT */}
-                      <td className="py-3 px-3 text-center whitespace-nowrap">
+                      <td className="py-3 px-3 text-center whitespace-nowrap border border-slate-300 dark:border-zinc-700">
                          {(inc as any).documentUrl && (inc as any).documentUrl !== '-' && (inc as any).documentUrl !== '' ? (
                            <a 
                              href={(inc as any).documentUrl} 

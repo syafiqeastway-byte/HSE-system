@@ -1,4 +1,4 @@
-export type PageType = 'homePage' | 'analyticsPage' | 'documentViewPage' | 'minuteMeetingPage' | 'emergencyPlanPage' | 'hirarcPage' | 'sopPage' | 'allIncidentsPage';
+export type PageType = 'homePage' | 'analyticsPage' | 'documentViewPage' | 'minuteMeetingPage' | 'emergencyPlanPage' | 'hirarcPage' | 'sopPage' | 'allIncidentsPage' | 'safetyViolationPage';
 
 export interface SOPItem {
   id: string;

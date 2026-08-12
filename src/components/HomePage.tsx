@@ -13,6 +13,7 @@ interface HomePageProps {
   onNavigateHIRARC: () => void;
   onNavigateSOP: () => void;
   onOpenAllIncidentsModal?: () => void;
+  onNavigateSafetyViolation: () => void;
   isDarkMode: boolean;
 }
 
@@ -25,6 +26,7 @@ export const HomePage: React.FC<HomePageProps> = ({
   onNavigateHIRARC,
   onNavigateSOP,
   onOpenAllIncidentsModal,
+  onNavigateSafetyViolation,
   isDarkMode,
 }) => {
   return (
@@ -288,6 +290,36 @@ export const HomePage: React.FC<HomePageProps> = ({
               open_in_new
             </span>
           </a>
+
+        </div>
+      </div>
+
+      {/* NEW SECTION: SAFETY VIOLATIONS & PERFORMANCE */}
+      <div className="glass-card p-5 border-t-4 border-red-500">
+        <div className="flex items-center gap-2.5 mb-4 pb-3 border-b border-slate-200 dark:border-slate-700">
+          <span className="material-symbols-outlined text-red-500 text-2xl">gavel</span>
+          <div>
+            <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white uppercase">
+              Safety Violations & Demerit Monitoring
+            </h2>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-center">
+          
+          {/* Safety Violation Scoring System Button */}
+          <button
+            onClick={onNavigateSafetyViolation}
+            className="w-full px-4 py-3.5 rounded-xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-slate-800 dark:text-zinc-100 font-semibold text-xs sm:text-sm flex items-center justify-between hover:border-red-500 dark:hover:border-red-400 transition-all shadow-sm group min-h-[44px]"
+          >
+            <div className="flex items-center gap-2 truncate">
+              <span className="material-symbols-outlined text-red-600 dark:text-red-400 text-xl">gavel</span>
+              <span className="truncate uppercase font-bold text-xs sm:text-sm">SAFETY VIOLATION SCORING SYSTEM</span>
+            </div>
+            <span className="material-symbols-outlined text-slate-400 group-hover:text-red-500 group-hover:translate-x-1 transition-transform">
+              arrow_forward
+            </span>
+          </button>
 
         </div>
       </div>

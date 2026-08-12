@@ -15,6 +15,7 @@ import { InspectionModal } from './components/InspectionModal';
 import { ExportGasModal } from './components/ExportGasModal';
 import { SupabaseModal } from './components/SupabaseModal';
 import { AllIncidentsPage } from './components/AllIncidentsPage';
+import { SafetyViolationPage } from './components/SafetyViolationPage';
 
 export default function App() {
   const [showSplash, setShowSplash] = useState(false);
@@ -90,6 +91,7 @@ export default function App() {
               onNavigateHIRARC={() => setActivePage('hirarcPage')}
               onNavigateSOP={() => setActivePage('sopPage')}
               onOpenAllIncidentsModal={() => setActivePage('allIncidentsPage')}
+              onNavigateSafetyViolation={() => setActivePage('safetyViolationPage')}
               isDarkMode={isDarkMode}
             />
           )}
@@ -156,6 +158,12 @@ export default function App() {
             <AllIncidentsPage
               onBackToHome={() => setActivePage('homePage')}
               isDarkMode={isDarkMode}
+            />
+          )}
+
+          {activePage === 'safetyViolationPage' && (
+            <SafetyViolationPage
+              onBackToHome={() => setActivePage('homePage')}
             />
           )}
 </main>
