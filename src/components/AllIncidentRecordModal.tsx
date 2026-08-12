@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { IncidentRecord } from '../types';
 import { MOCK_INCIDENT_RECORDS } from '../data/mockData';
 import { fetchLiveIncidentRecords } from '../utils/gasBridge';
+import { formatToPreviewUrl } from '../utils/formatDriveUrl';
 
 interface AllIncidentRecordModalProps {
   isOpen: boolean;
@@ -276,7 +277,7 @@ useEffect(() => {
                       <td className="py-3 px-3 text-center whitespace-nowrap border border-slate-700">
                         {(inc as any).documentUrl && (inc as any).documentUrl !== '-' && (inc as any).documentUrl !== '' ? (
                           <a 
-                            href={(inc as any).documentUrl} 
+                            href={formatToPreviewUrl((inc as any).documentUrl)} 
                             target="_blank" 
                             rel="noopener noreferrer" 
                             onClick={(e) => e.stopPropagation()}

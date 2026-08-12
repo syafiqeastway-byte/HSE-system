@@ -9,13 +9,14 @@ import { MinuteMeetingPage } from './components/MinuteMeetingPage';
 import { HIRARCPage } from './components/HIRARCPage';
 import { SOPPage } from './components/SOPPage';
 import { EmergencyPlanPage } from './components/EmergencyPlanPage';
-import { DocumentViewPage } from './components/DocumentViewPage';
 import { CompetentPersonModal } from './components/CompetentPersonModal';
 import { InspectionModal } from './components/InspectionModal';
 import { ExportGasModal } from './components/ExportGasModal';
 import { SupabaseModal } from './components/SupabaseModal';
 import { AllIncidentsPage } from './components/AllIncidentsPage';
 import { SafetyViolationPage } from './components/SafetyViolationPage';
+
+import { formatToPreviewUrl } from './utils/formatDriveUrl';
 
 export default function App() {
   const [showSplash, setShowSplash] = useState(false);
@@ -46,8 +47,8 @@ export default function App() {
 
   // Open Document Viewer
   const handleOpenDocument = (doc: DocumentViewContext) => {
-    setDocViewContext(doc);
-    setActivePage('documentViewPage');
+    const previewUrl = formatToPreviewUrl(doc.url);
+    window.open(previewUrl, '_blank', 'noopener,noreferrer');
   };
 
   // Open Inspection Modal
@@ -70,7 +71,6 @@ export default function App() {
           activePage={activePage}
           setActivePage={(page) => {
             setActivePage(page);
-            if (page !== 'documentViewPage') setDocViewContext(null);
           }}
           isDarkMode={isDarkMode}
           toggleTheme={toggleTheme}
@@ -141,16 +141,6 @@ export default function App() {
             <EmergencyPlanPage
               onOpenDocument={handleOpenDocument}
               onBackToHome={() => setActivePage('homePage')}
-            />
-          )}
-
-          {activePage === 'documentViewPage' && docViewContext && (
-            <DocumentViewPage
-              docContext={docViewContext}
-              onBack={() => {
-                setActivePage('homePage');
-                setDocViewContext(null);
-              }}
             />
           )}
         

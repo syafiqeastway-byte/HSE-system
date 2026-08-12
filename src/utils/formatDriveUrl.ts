@@ -7,8 +7,15 @@ export function formatToPreviewUrl(url: string): string {
     // docs, sheets, presentations
     if (urlObj.hostname === 'docs.google.com') {
       const parts = urlObj.pathname.split('/');
+      
+      // If it is a published link (d/e/), leave it as is or handle it
+      if (parts.includes('e')) {
+        // usually pubhtml or pub, which are already preview-like.
+        // But if we want to ensure it, we can just return it.
+        return url;
+      }
+      
       // e.g. /document/d/12345/edit -> /document/d/12345/preview
-      // parts = ['', 'document', 'd', '12345', 'edit']
       const dIndex = parts.indexOf('d');
       if (dIndex !== -1 && parts.length > dIndex + 1) {
         // ID is at dIndex + 1
@@ -30,7 +37,7 @@ export function formatToPreviewUrl(url: string): string {
     
     return url;
   } catch (err) {
-    // If it's not a valid URL (e.g. "Buka File"), just return it as is or handle it
+    // If it's not a valid URL
     return url;
   }
 }

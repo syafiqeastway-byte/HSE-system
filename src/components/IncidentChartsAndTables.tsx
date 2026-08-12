@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { IncidentRecord } from '../types';
 import { fetchLiveIncidentRecords } from '../utils/gasBridge';
+import { formatToPreviewUrl } from '../utils/formatDriveUrl';
 
 declare const Chart: any;
 
@@ -804,7 +805,8 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
       }
       return 0;
     })
-    .slice(0, 10);
+    .slice(0, 10)
+    .reverse();
 
   return (
     <div className="glass-card p-4 sm:p-6 mb-8">
@@ -1040,7 +1042,7 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
                       <td className="py-3 px-3 text-center whitespace-nowrap border border-slate-300 dark:border-zinc-700">
                         {inc.documentUrl && inc.documentUrl !== '-' && inc.documentUrl !== '' ? (
                           <a
-                            href={inc.documentUrl}
+                            href={formatToPreviewUrl(inc.documentUrl)}
                             target="_blank"
                             rel="noopener noreferrer"
                             className="inline-flex items-center justify-center px-2.5 py-1 rounded-lg bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-500/20 transition-colors text-xs font-bold gap-1"
