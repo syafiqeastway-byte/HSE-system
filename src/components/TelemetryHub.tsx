@@ -176,23 +176,25 @@ export const TelemetryHub: React.FC = () => {
 
       {/* 3. Incident Counter Card */}
       <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-2xl p-4 sm:p-5 flex items-center justify-between backdrop-blur-md animate-pulse-glow">
-        <div>
-          <div className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest">
-            DAYS WITHOUT INCIDENT
+        <div className="flex items-center gap-3.5">
+          <div className="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center flex-shrink-0 border border-emerald-500/30">
+            <span className="material-symbols-outlined text-2xl">verified_user</span>
           </div>
-          <div className="text-3xl sm:text-4xl font-extrabold text-emerald-400 flex items-baseline gap-2 mt-0.5 font-mono">
-            {loadingDays ? (
-              <span className="text-slate-400 text-lg">--</span>
-            ) : (
-              <span>{daysCount}</span>
-            )}
-            <span className="text-[10px] font-bold text-emerald-500/80 uppercase tracking-widest">
-              DAYS SAFE
-            </span>
+          <div>
+            <div className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest">
+              DAYS WITHOUT INCIDENT
+            </div>
+            <div className="text-3xl sm:text-4xl font-extrabold text-emerald-400 flex items-baseline gap-2 mt-0.5 font-mono">
+              {loadingDays ? (
+                <span className="text-slate-400 text-lg">--</span>
+              ) : (
+                <span>{daysCount}</span>
+              )}
+              <span className="text-[10px] font-bold text-emerald-500/80 uppercase tracking-widest">
+                DAYS SAFE
+              </span>
+            </div>
           </div>
-        </div>
-        <div className="w-12 h-12 rounded-2xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center flex-shrink-0 border border-emerald-500/30 shadow-lg shadow-emerald-500/10">
-          <span className="material-symbols-outlined text-3xl">verified_user</span>
         </div>
       </div>
 
