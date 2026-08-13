@@ -104,7 +104,7 @@ export const HIRARCDropdown: React.FC<HIRARCDropdownProps> = ({ onSelectHIRARC }
                 >
                   <div className="flex-1">
                     <div className="flex items-center gap-2">
-                      <span className="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-zinc-800 text-slate-600 dark:text-zinc-300 text-[10px] font-mono font-bold">
+                      <span className="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-zinc-800 text-slate-600 dark:text-zinc-300 text-[9px] sm:text-[10px] font-mono font-bold">
                         {item.code}
                       </span>
                       <span className="text-xs font-bold text-slate-800 dark:text-zinc-100 group-hover:text-amber-600 dark:group-hover:text-amber-400">
@@ -117,7 +117,7 @@ export const HIRARCDropdown: React.FC<HIRARCDropdownProps> = ({ onSelectHIRARC }
                   </div>
 
                   <div className="flex flex-col items-end gap-1 flex-shrink-0">
-                    <span className={`text-[10px] font-bold px-2 py-0.5 rounded-md border ${getRiskBadgeClass(item.initialRisk)}`}>
+                    <span className={`text-[9px] sm:text-[10px] font-bold px-2 py-0.5 rounded-md border ${getRiskBadgeClass(item.initialRisk)}`}>
                       {item.initialRisk}
                     </span>
                     <span className="text-[9px] text-slate-400">

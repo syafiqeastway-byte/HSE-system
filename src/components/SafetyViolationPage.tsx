@@ -103,7 +103,7 @@ export const SafetyViolationPage: React.FC<SafetyViolationPageProps> = ({
           <div className="glass-card overflow-hidden">
             <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-slate-300 dark:scrollbar-thumb-zinc-700">
               {/* The table includes full column and row borders (grid lines) */}
-              <table className="w-full border-collapse border border-slate-300 dark:border-zinc-700 text-left text-xs whitespace-nowrap">
+              <table className="w-full border-collapse border border-slate-300 dark:border-zinc-700 text-left text-[10px] sm:text-xs whitespace-nowrap">
                 <thead className="bg-slate-100 dark:bg-zinc-800/80 text-slate-800 dark:text-zinc-100 border-b border-slate-300 dark:border-zinc-700">
                   <tr>
                     {headers.map((hdr, idx) => (
@@ -175,7 +175,7 @@ export const SafetyViolationPage: React.FC<SafetyViolationPageProps> = ({
                                       }
                                     }
                                     return (
-                                      <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-extrabold ${
+                                      <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[9px] sm:text-[10px] font-extrabold ${
                                         cellStr.toLowerCase() === 'closed'
                                           ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/55 dark:text-emerald-400'
                                           : 'bg-amber-100 text-amber-800 dark:bg-amber-950/55 dark:text-amber-400'
@@ -201,7 +201,7 @@ export const SafetyViolationPage: React.FC<SafetyViolationPageProps> = ({
                 </tbody>
               </table>
             </div>
-            <div className="p-3 bg-slate-50 dark:bg-zinc-900/60 border-t border-slate-200 dark:border-zinc-800 text-[10px] text-slate-500 dark:text-slate-400 flex justify-end">
+            <div className="p-3 bg-slate-50 dark:bg-zinc-900/60 border-t border-slate-200 dark:border-zinc-800 text-[9px] sm:text-[10px] text-slate-500 dark:text-slate-400 flex justify-end">
               <span className="flex items-center gap-1">
                 <span className="inline-block w-2.5 h-2.5 bg-red-500/20 rounded border border-red-500"></span>
                 Click a row to highlight
@@ -219,7 +219,7 @@ export const SafetyViolationPage: React.FC<SafetyViolationPageProps> = ({
                 </h3>
               </div>
               <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-slate-300 dark:scrollbar-thumb-zinc-700">
-                <table className="w-full border-collapse border border-slate-300 dark:border-zinc-700 text-left text-xs whitespace-nowrap">
+                <table className="w-full border-collapse border border-slate-300 dark:border-zinc-700 text-left text-[10px] sm:text-xs whitespace-nowrap">
                   <thead className="bg-slate-100 dark:bg-zinc-800/80 text-slate-800 dark:text-zinc-100 border-b border-slate-300 dark:border-zinc-700">
                     <tr>
                       {summaryHeaders.map((hdr, idx) => (

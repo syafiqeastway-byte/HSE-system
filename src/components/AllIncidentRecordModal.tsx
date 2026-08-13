@@ -189,24 +189,24 @@ useEffect(() => {
             </div>
           ) : (
             <div className="overflow-x-auto rounded-xl border border-slate-700">
-              <table className="w-full text-left border-collapse text-xs border border-slate-700">
+              <table className="w-full text-left border-collapse text-[10px] sm:text-xs border border-slate-700">
                 <thead>
-                  <tr className="bg-slate-900/90 text-slate-100 font-extrabold uppercase text-[10px] tracking-wider border border-slate-700">
-                    <th className="py-3 px-3 border border-slate-700 whitespace-nowrap text-center">NO</th>
-                    <th className="py-3 px-3 border border-slate-700 whitespace-nowrap text-center">DATE</th>
-                    <th className="py-3 px-3 border border-slate-700 whitespace-nowrap text-center">YEAR</th>
-                    <th className="py-3 px-3 border border-slate-700 min-w-[120px]">LOCATION</th>
-                    <th className="py-3 px-3 border border-slate-700 min-w-[200px]">DESCRIPTION</th>
-                    <th className="py-3 px-3 border border-slate-700 text-center whitespace-nowrap">OCCUPATIONAL INCIDENT?</th>
-                    <th className="py-3 px-3 border border-slate-700 min-w-[140px]">INCIDENT CATEGORY</th>
-                    <th className="py-3 px-3 border border-slate-700 text-center whitespace-nowrap">PROPERTY DAMAGE</th>
-                    <th className="py-3 px-3 border border-slate-700 whitespace-nowrap">DAMAGE LEVEL</th>
-                    <th className="py-3 px-3 border border-slate-700 min-w-[140px]">CLASSIFICATION</th>
-                    <th className="py-3 px-3 border border-slate-700 min-w-[120px]">INJURY TYPE</th>
-                    <th className="py-3 px-3 border border-slate-700 min-w-[120px]">PERSON INVOLVE</th>
-                    <th className="py-3 px-3 border border-slate-700 whitespace-nowrap">WORK EXPERIENCE</th>
-                    <th className="py-3 px-3 border border-slate-700 min-w-[110px]">REPORTED BY</th>
-                    <th className="py-3 px-3 border border-slate-700 text-center whitespace-nowrap">PDF</th>
+                  <tr className="bg-slate-900/90 text-slate-100 font-extrabold uppercase text-[9px] sm:text-[10px] tracking-wider border border-slate-700">
+                    <th className="py-1.5 px-2 sm:py-3 sm:px-3 border border-slate-700 whitespace-nowrap text-center">NO</th>
+                    <th className="py-1.5 px-2 sm:py-3 sm:px-3 border border-slate-700 whitespace-nowrap text-center">DATE</th>
+                    <th className="py-1.5 px-2 sm:py-3 sm:px-3 border border-slate-700 whitespace-nowrap text-center">YEAR</th>
+                    <th className="py-1.5 px-2 sm:py-3 sm:px-3 border border-slate-700 min-w-[120px]">LOCATION</th>
+                    <th className="py-1.5 px-2 sm:py-3 sm:px-3 border border-slate-700 min-w-[200px]">DESCRIPTION</th>
+                    <th className="py-1.5 px-2 sm:py-3 sm:px-3 border border-slate-700 text-center whitespace-nowrap">OCCUPATIONAL INCIDENT?</th>
+                    <th className="py-1.5 px-2 sm:py-3 sm:px-3 border border-slate-700 min-w-[140px]">INCIDENT CATEGORY</th>
+                    <th className="py-1.5 px-2 sm:py-3 sm:px-3 border border-slate-700 text-center whitespace-nowrap">PROPERTY DAMAGE</th>
+                    <th className="py-1.5 px-2 sm:py-3 sm:px-3 border border-slate-700 whitespace-nowrap">DAMAGE LEVEL</th>
+                    <th className="py-1.5 px-2 sm:py-3 sm:px-3 border border-slate-700 min-w-[140px]">CLASSIFICATION</th>
+                    <th className="py-1.5 px-2 sm:py-3 sm:px-3 border border-slate-700 min-w-[120px]">INJURY TYPE</th>
+                    <th className="py-1.5 px-2 sm:py-3 sm:px-3 border border-slate-700 min-w-[120px]">PERSON INVOLVE</th>
+                    <th className="py-1.5 px-2 sm:py-3 sm:px-3 border border-slate-700 whitespace-nowrap">WORK EXPERIENCE</th>
+                    <th className="py-1.5 px-2 sm:py-3 sm:px-3 border border-slate-700 min-w-[110px]">REPORTED BY</th>
+                    <th className="py-1.5 px-2 sm:py-3 sm:px-3 border border-slate-700 text-center whitespace-nowrap">PDF</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-800/60 bg-slate-950/40 font-medium text-slate-300">
@@ -222,25 +222,25 @@ useEffect(() => {
                             : 'hover:bg-slate-900 dark:hover:bg-slate-900/80 active:bg-slate-850/60'
                         }`}
                       >
-                      <td className="py-3 px-3 font-mono font-bold text-blue-400 whitespace-nowrap border border-slate-700 text-center">
+                      <td className="py-1.5 px-2 sm:py-3 sm:px-3 font-mono font-bold text-blue-400 whitespace-nowrap border border-slate-700 text-center">
                         {inc.id}
                       </td>
-                      <td className="py-3 px-3 font-mono whitespace-nowrap text-slate-400 border border-slate-700">
+                      <td className="py-1.5 px-2 sm:py-3 sm:px-3 font-mono whitespace-nowrap text-slate-400 border border-slate-700">
                         {inc.date}
                       </td>
-                      <td className="py-3 px-3 font-mono whitespace-nowrap text-slate-400 border border-slate-700 text-center">
+                      <td className="py-1.5 px-2 sm:py-3 sm:px-3 font-mono whitespace-nowrap text-slate-400 border border-slate-700 text-center">
                         {inc.year || '-'}
                       </td>
-                      <td className="py-3 px-3 font-bold text-slate-200 whitespace-nowrap border border-slate-700">
+                      <td className="py-1.5 px-2 sm:py-3 sm:px-3 font-bold text-slate-200 whitespace-nowrap border border-slate-700">
                         {inc.location}
                       </td>
-                      <td className="py-3 px-3 min-w-[200px] text-slate-400 border border-slate-700" title={(inc as any).rootCause || inc.description || (inc as any).root_cause || ''}>
+                      <td className="py-1.5 px-2 sm:py-3 sm:px-3 min-w-[200px] text-slate-400 border border-slate-700" title={(inc as any).rootCause || inc.description || (inc as any).root_cause || ''}>
                         <div className="line-clamp-2">
                           {(inc as any).rootCause || inc.description || (inc as any).root_cause || '-'}
                         </div>
                       </td>
-                      <td className="py-3 px-3 text-center whitespace-nowrap border border-slate-700">
-                        <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase ${
+                      <td className="py-1.5 px-2 sm:py-3 sm:px-3 text-center whitespace-nowrap border border-slate-700">
+                        <span className={`px-2 py-0.5 rounded text-[9px] sm:text-[10px] font-bold uppercase ${
                           inc.occupationalIncident?.toUpperCase() === 'YES'
                             ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
                             : 'bg-slate-800 text-slate-400 border border-slate-700'
@@ -248,33 +248,33 @@ useEffect(() => {
                           {inc.occupationalIncident || '-'}
                         </span>
                       </td>
-                      <td className="py-3 px-3 whitespace-nowrap border border-slate-700">
-                        <span className="px-2 py-0.5 rounded-md bg-slate-800 text-slate-300 border border-slate-700 text-[10px] font-bold">
+                      <td className="py-1.5 px-2 sm:py-3 sm:px-3 whitespace-nowrap border border-slate-700">
+                        <span className="px-2 py-0.5 rounded-md bg-slate-800 text-slate-300 border border-slate-700 text-[9px] sm:text-[10px] font-bold">
                           {inc.category || '-'}
                         </span>
                       </td>
-                      <td className="py-3 px-3 text-center whitespace-nowrap text-slate-400 border border-slate-700">
+                      <td className="py-1.5 px-2 sm:py-3 sm:px-3 text-center whitespace-nowrap text-slate-400 border border-slate-700">
                         {inc.propertyDamage || '-'}
                       </td>
-                      <td className="py-3 px-3 whitespace-nowrap text-slate-400 border border-slate-700">
+                      <td className="py-1.5 px-2 sm:py-3 sm:px-3 whitespace-nowrap text-slate-400 border border-slate-700">
                         {inc.damageLevel || '-'}
                       </td>
-                      <td className="py-3 px-3 font-semibold text-slate-300 whitespace-nowrap border border-slate-700">
+                      <td className="py-1.5 px-2 sm:py-3 sm:px-3 font-semibold text-slate-300 whitespace-nowrap border border-slate-700">
                         {inc.classification || '-'}
                       </td>
-                      <td className="py-3 px-3 text-slate-400 whitespace-nowrap border border-slate-700">
+                      <td className="py-1.5 px-2 sm:py-3 sm:px-3 text-slate-400 whitespace-nowrap border border-slate-700">
                         {inc.injuryType || '-'}
                       </td>
-                      <td className="py-3 px-3 text-slate-300 font-medium whitespace-nowrap border border-slate-700">
+                      <td className="py-1.5 px-2 sm:py-3 sm:px-3 text-slate-300 font-medium whitespace-nowrap border border-slate-700">
                         {inc.personInvolved || (inc as any).person_involved || '-'}
                       </td>
-                      <td className="py-3 px-3 text-slate-400 whitespace-nowrap border border-slate-700">
+                      <td className="py-1.5 px-2 sm:py-3 sm:px-3 text-slate-400 whitespace-nowrap border border-slate-700">
                         {inc.experienceLevel || '-'}
                       </td>
-                      <td className="py-3 px-3 text-slate-400 whitespace-nowrap border border-slate-700">
+                      <td className="py-1.5 px-2 sm:py-3 sm:px-3 text-slate-400 whitespace-nowrap border border-slate-700">
                         {inc.reportedBy || (inc as any).investigator || '-'}
                       </td>
-                      <td className="py-3 px-3 text-center whitespace-nowrap border border-slate-700">
+                      <td className="py-1.5 px-2 sm:py-3 sm:px-3 text-center whitespace-nowrap border border-slate-700">
                         {(inc as any).documentUrl && (inc as any).documentUrl !== '-' && (inc as any).documentUrl !== '' ? (
                           <a 
                             href={formatToPreviewUrl((inc as any).documentUrl)} 

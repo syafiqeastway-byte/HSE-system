@@ -95,7 +95,7 @@ export const SOPDropdown: React.FC<SOPDropdownProps> = ({ onSelectSOP }) => {
                 >
                   <div>
                     <div className="flex items-center gap-2">
-                      <span className="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-zinc-800 text-slate-600 dark:text-zinc-300 text-[10px] font-mono font-bold">
+                      <span className="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-zinc-800 text-slate-600 dark:text-zinc-300 text-[9px] sm:text-[10px] font-mono font-bold">
                         {sop.code}
                       </span>
                       <span className="text-xs font-bold text-slate-800 dark:text-zinc-100 group-hover:text-blue-600 dark:group-hover:text-blue-400">
@@ -106,7 +106,7 @@ export const SOPDropdown: React.FC<SOPDropdownProps> = ({ onSelectSOP }) => {
                       {sop.description}
                     </p>
                   </div>
-                  <span className="text-[10px] font-semibold text-slate-400 whitespace-nowrap self-center px-2 py-0.5 rounded-full bg-slate-100 dark:bg-zinc-800">
+                  <span className="text-[9px] sm:text-[10px] font-semibold text-slate-400 whitespace-nowrap self-center px-2 py-0.5 rounded-full bg-slate-100 dark:bg-zinc-800">
                     {sop.category}
                   </span>
                 </button>

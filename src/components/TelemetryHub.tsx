@@ -124,7 +124,7 @@ export const TelemetryHub: React.FC = () => {
             <span className="material-symbols-outlined text-2xl">schedule</span>
           </div>
           <div>
-            <div className="flex items-center gap-1.5 text-[10px] font-bold text-blue-400 uppercase tracking-widest">
+            <div className="flex items-center gap-1.5 text-[9px] sm:text-[10px] font-bold text-blue-400 uppercase tracking-widest">
               <span>DATE/TIME</span>
               <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
             </div>
@@ -142,7 +142,7 @@ export const TelemetryHub: React.FC = () => {
             <span className="material-symbols-outlined text-2xl">thermostat</span>
           </div>
           <div className="flex-1 min-w-0">
-            <div className="text-[10px] font-bold text-cyan-400 uppercase tracking-widest flex items-center gap-1">
+            <div className="text-[9px] sm:text-[10px] font-bold text-cyan-400 uppercase tracking-widest flex items-center gap-1">
               <span>LIVE SITE WEATHER</span>
               {loadingWeather && <span className="material-symbols-outlined text-xs animate-spin">sync</span>}
             </div>
@@ -181,7 +181,7 @@ export const TelemetryHub: React.FC = () => {
             <span className="material-symbols-outlined text-2xl">verified_user</span>
           </div>
           <div>
-            <div className="text-[10px] font-bold text-emerald-400 uppercase tracking-widest">
+            <div className="text-[9px] sm:text-[10px] font-bold text-emerald-400 uppercase tracking-widest">
               DAYS WITHOUT INCIDENT
             </div>
             <div className="text-3xl sm:text-4xl font-extrabold text-emerald-400 flex items-baseline gap-2 mt-0.5 font-mono">
@@ -190,7 +190,7 @@ export const TelemetryHub: React.FC = () => {
               ) : (
                 <span>{daysCount}</span>
               )}
-              <span className="text-[10px] font-bold text-emerald-500/80 uppercase tracking-widest">
+              <span className="text-[9px] sm:text-[10px] font-bold text-emerald-500/80 uppercase tracking-widest">
                 DAYS SAFE
               </span>
             </div>

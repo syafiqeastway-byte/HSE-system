@@ -87,7 +87,7 @@ export const MinuteMeetingPage: React.FC<MinuteMeetingPageProps> = ({
       ) : (
         <div className="glass-card overflow-hidden">
           <div className="overflow-x-auto">
-            <table className="w-full border-collapse border border-slate-300 dark:border-zinc-700 text-left text-sm whitespace-nowrap">
+            <table className="w-full border-collapse border border-slate-300 dark:border-zinc-700 text-left text-xs sm:text-sm whitespace-nowrap">
               <thead className="bg-slate-100 dark:bg-zinc-800/80 text-slate-800 dark:text-zinc-100 border-b border-slate-300 dark:border-zinc-700">
                 <tr>
                   <th className="py-3 px-4 font-extrabold uppercase tracking-wider border border-slate-300 dark:border-zinc-700">No</th>

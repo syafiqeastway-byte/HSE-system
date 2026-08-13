@@ -50,7 +50,7 @@ export const CompetentPersonModal: React.FC<CompetentPersonModalProps> = ({ isOp
                 <div>
                   <div className="flex items-center gap-2 flex-wrap">
                     <h3 className="text-sm font-bold text-slate-900 dark:text-white">{cp.name}</h3>
-                    <span className="px-2 py-0.5 rounded-md bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 text-[10px] font-bold border border-emerald-300 dark:border-emerald-800">
+                    <span className="px-2 py-0.5 rounded-md bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 text-[9px] sm:text-[10px] font-bold border border-emerald-300 dark:border-emerald-800">
                       {cp.status}
                     </span>
                   </div>
@@ -66,7 +66,7 @@ export const CompetentPersonModal: React.FC<CompetentPersonModalProps> = ({ isOp
                     {cp.qualifications.map((q, idx) => (
                       <span
                         key={idx}
-                        className="px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-700/80 text-slate-600 dark:text-slate-300 text-[10px] font-medium"
+                        className="px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-700/80 text-slate-600 dark:text-slate-300 text-[9px] sm:text-[10px] font-medium"
                       >
                         • {q}
                       </span>
