@@ -136,7 +136,6 @@ export const MOCK_INCIDENT_RECORDS: IncidentRecord[] = [
     classification: 'Unsafe Condition',
     injuryType: 'Cut/Laceration',
     experienceLevel: '1-3 Years',
-    status: 'Closed',
     description: 'Minor index finger laceration while replacing abrasive grinding wheel on hand grinder.',
     actionPlan: 'Enforced cut-resistant Kevlar glove usage during wheel changes and installed grinding wheel safety guard.'
   },
@@ -149,7 +148,6 @@ export const MOCK_INCIDENT_RECORDS: IncidentRecord[] = [
     classification: 'Unsafe Act',
     injuryType: 'None',
     experienceLevel: '< 1 Year',
-    status: 'Closed',
     description: 'Rigger stepped under suspended 2-ton beam during crane positioning maneuver.',
     actionPlan: 'Issued verbal warning, re-trained rigger on Tag Line control and 3m suspension exclusion zone.'
   },
@@ -162,7 +160,6 @@ export const MOCK_INCIDENT_RECORDS: IncidentRecord[] = [
     classification: 'Equipment Failure',
     injuryType: 'None',
     experienceLevel: '5+ Years',
-    status: 'Closed',
     description: 'Hydraulic hose burst on Boom Lift during boom extension causing minor oil spill on gravel.',
     actionPlan: 'Deployed spill kit immediately, replaced hydraulic hose assembly and reviewed hose crimp intervals.'
   },
@@ -175,7 +172,6 @@ export const MOCK_INCIDENT_RECORDS: IncidentRecord[] = [
     classification: 'Unsafe Act',
     injuryType: 'Contusion/Bruise',
     experienceLevel: '3-5 Years',
-    status: 'Closed',
     description: 'Worker sustained foot contusion when heavy impact socket slipped off pneumatic wrench.',
     actionPlan: 'Upgraded to heavy-duty impact socket retention pins and mandated metatarsal safety boots.'
   },
@@ -188,7 +184,6 @@ export const MOCK_INCIDENT_RECORDS: IncidentRecord[] = [
     classification: 'Environmental Hazard',
     injuryType: 'None',
     experienceLevel: '1-3 Years',
-    status: 'Closed',
     description: 'Chemical solvent drum cap loosened during forklift transport; liquid contained in secondary bund.',
     actionPlan: 'Inspected drum torque specs before transport and installed drum clamping harness on forklift tines.'
   },
@@ -201,7 +196,6 @@ export const MOCK_INCIDENT_RECORDS: IncidentRecord[] = [
     classification: 'Unsafe Act',
     injuryType: 'Musculoskeletal Strain',
     experienceLevel: '< 1 Year',
-    status: 'Closed',
     description: 'Junior mechanic strained lower back trying to manually lift 45kg hydraulic pump without assist.',
     actionPlan: 'Mandated 20kg manual lifting limit, installed overhead 1-ton jib crane for pump workstation.'
   }

@@ -8,7 +8,7 @@ import {
   INITIAL_DAYS_WITHOUT_INCIDENT
 } from '../data/mockData';
 import Papa from 'papaparse';
-import { FirstAidCert, InspectionRecord } from '../types';
+import { FirstAidCert, InspectionRecord, FireExtinguisherRecord } from '../types';
 
 declare global {
   interface Window {
@@ -223,6 +223,67 @@ export async function fetchInspectionData(): Promise<InspectionRecord[]> {
   return callGasFunction<InspectionRecord[]>('getInspectionData', MOCK_INSPECTION_RECORDS);
 }
 
+// 9b. Fire Extinguisher Inspection Data
+export async function fetchFireExtinguisherData(): Promise<FireExtinguisherRecord[]> {
+  const SPREADSHEET_ID = '1o9P6GnlsAwSJEUYHxITt1Opz973uX37MLBiv0LdFdIs';
+  const GID = '1996690139';
+  const url = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:csv&gid=${GID}&range=B2:K`;
+
+  try {
+    const res = await fetch(url);
+    if (!res.ok) throw new Error('Network response was not ok');
+    const csvText = await res.text();
+    
+    if (csvText.includes('<!DOCTYPE html>') || csvText.includes('google-signin-button')) {
+      throw new Error('Returned HTML instead of CSV data');
+    }
+
+    return new Promise((resolve) => {
+      Papa.parse(csvText, {
+        header: false,
+        skipEmptyLines: false,
+        complete: (results) => {
+          const records: FireExtinguisherRecord[] = [];
+          if (results.data && results.data.length > 0) {
+            results.data.forEach((row: any, index: number) => {
+              const sheetRowNumber = index + 2; // Range B2:K begins at row 2
+              
+              // Skip completely blank rows
+              if (!row || row.every((c: any) => !c || String(c).trim() === '')) {
+                return;
+              }
+
+              // Row 2 and Row 19 are headers and bold
+              const isHeader = sheetRowNumber === 2 || sheetRowNumber === 19;
+
+              records.push({
+                id: `FE-ROW-${sheetRowNumber}-${index}`,
+                rowNumber: sheetRowNumber,
+                isHeader,
+                no: (row[0] || '').trim(),
+                location: (row[1] || '').trim(),
+                typeABC: (row[2] || '').trim(),
+                typeCO2: (row[3] || '').trim(),
+                brand: (row[4] || '').trim(),
+                serialNumber: (row[5] || '').trim(),
+                month: (row[6] || '').trim(),
+                year: (row[7] || '').trim(),
+                certExpiryDate: (row[8] || '').trim(),
+                remarks: (row[9] || '').trim(),
+              });
+            });
+          }
+          resolve(records);
+        },
+        error: () => resolve([])
+      });
+    });
+  } catch (err) {
+    console.warn(`Error fetching Fire Extinguisher data with GID: ${GID}`, err);
+    return [];
+  }
+}
+
 
 // 10. First Aid Certifications
 export async function fetchFirstAidCertData(requireAuth: boolean = false): Promise<FirstAidCert[]> {
@@ -304,7 +365,7 @@ export async function fetchLiveIncidentRecords(requireAuth: boolean = false): Pr
                   experienceLevel: row[12] || '-', // Column M: WORK EXPERIENCE
                   reportedBy: row[13] || '-', // Column N: REPORTED BY
                   documentUrl: row[14] || '', // Column O: PDF
-                  status: 'Closed' // Default status
+                  
                 });
               }
             });

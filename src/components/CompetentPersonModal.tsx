@@ -84,7 +84,7 @@ export const CompetentPersonModal: React.FC<CompetentPersonModalProps> = ({ isOp
             onClick={onClose}
             className="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-semibold text-xs transition-colors"
           >
-            Close Credentials Panel
+            Close
           </button>
         </div>
 

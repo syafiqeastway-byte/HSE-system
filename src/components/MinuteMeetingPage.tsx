@@ -59,7 +59,7 @@ export const MinuteMeetingPage: React.FC<MinuteMeetingPageProps> = ({
               <span>SAFETY COMMITTEE MEETING MINUTES</span>
             </h2>
             <p className="text-xs text-slate-500 dark:text-slate-400">
-              Official JKK Meeting records
+              Official Safety & Health Committee Meeting records
             </p>
           </div>
         </div>

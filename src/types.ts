@@ -74,6 +74,22 @@ export interface DemeritMatrix {
   penaltyRemediation: string;
 }
 
+export interface FireExtinguisherRecord {
+  id: string;
+  rowNumber: number;
+  isHeader: boolean;
+  no: string;
+  location: string;
+  typeABC: string;
+  typeCO2: string;
+  brand: string;
+  serialNumber: string;
+  month: string;
+  year: string;
+  certExpiryDate: string;
+  remarks: string;
+}
+
 export interface InspectionRecord {
   id: string;
   date: string;

@@ -70,8 +70,6 @@ export const AllIncidentsPage: React.FC<AllIncidentsPageProps> = ({ onBackToHome
     const person = inc.personInvolved || (inc as any).person_involved || '';
     const experienceLevel = inc.experienceLevel || '';
     const reported = inc.reportedBy || (inc as any).investigator || '';
-    const status = inc.status || '';
-
     return (
       id.toLowerCase().includes(query) ||
       date.toLowerCase().includes(query) ||
@@ -86,8 +84,7 @@ export const AllIncidentsPage: React.FC<AllIncidentsPageProps> = ({ onBackToHome
       injuryType.toLowerCase().includes(query) ||
       person.toLowerCase().includes(query) ||
       experienceLevel.toLowerCase().includes(query) ||
-      reported.toLowerCase().includes(query) ||
-      status.toLowerCase().includes(query)
+      reported.toLowerCase().includes(query) 
     );
   });
 
@@ -111,10 +108,10 @@ export const AllIncidentsPage: React.FC<AllIncidentsPageProps> = ({ onBackToHome
         <div className="flex items-center gap-2">
           <button
             onClick={handleDownloadExcel}
-            className="px-4 py-2 rounded-xl bg-emerald-100 dark:bg-emerald-900/40 hover:bg-emerald-200 dark:hover:bg-emerald-800/60 text-emerald-700 dark:text-emerald-300 font-bold text-xs flex items-center gap-2 transition-all border border-emerald-200 dark:border-emerald-700"
+            className="px-4 py-2 rounded-xl bg-[#217346] hover:bg-[#1b5e39] text-white font-bold text-xs flex items-center gap-2 transition-all border border-[#1b5e39] shadow-sm"
           >
             <span className="material-symbols-outlined text-base">download</span>
-            <span>DOWNLOAD EXCEL</span>
+            <span>Download Excel</span>
           </button>
           <button
             onClick={handleLoadLiveData}
@@ -124,7 +121,7 @@ export const AllIncidentsPage: React.FC<AllIncidentsPageProps> = ({ onBackToHome
             <span className={`material-symbols-outlined text-base ${loading ? 'animate-spin text-blue-500' : ''}`}>
               sync
             </span>
-            <span>REFRESH</span>
+            <span>Refresh</span>
           </button>
         </div>
       </div>

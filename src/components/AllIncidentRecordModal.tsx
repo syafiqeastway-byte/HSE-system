@@ -13,8 +13,7 @@ export const AllIncidentRecordModal: React.FC<AllIncidentRecordModalProps> = ({ 
   const [incidents, setIncidents] = useState<IncidentRecord[]>([]);
   const [loading, setLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [statusFilter, setStatusFilter] = useState<string>('All');
-  const [source, setSource] = useState<'Google Sheets Live' | 'Local Cache Fallback'>('Google Sheets Live');
+    const [source, setSource] = useState<'Google Sheets Live' | 'Local Cache Fallback'>('Google Sheets Live');
   const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
 
   const fetchIncidents = async () => {
@@ -50,11 +49,7 @@ useEffect(() => {
 
   // Filtered incidents
   const filteredIncidents = incidents.filter(item => {
-    const matchesStatus =
-      statusFilter === 'All' ? true : item.status?.toLowerCase() === statusFilter.toLowerCase();
-
-    if (!matchesStatus) return false;
-    if (!searchQuery.trim()) return true;
+        if (!searchQuery.trim()) return true;
 
     const query = searchQuery.toLowerCase();
     
@@ -72,8 +67,6 @@ useEffect(() => {
     const person = item.personInvolved || (item as any).person_involved || '';
     const experienceLevel = item.experienceLevel || '';
     const reported = item.reportedBy || (item as any).investigator || '';
-    const status = item.status || '';
-
     return (
       id.toLowerCase().includes(query) ||
       date.toLowerCase().includes(query) ||
@@ -88,8 +81,7 @@ useEffect(() => {
       injuryType.toLowerCase().includes(query) ||
       person.toLowerCase().includes(query) ||
       experienceLevel.toLowerCase().includes(query) ||
-      reported.toLowerCase().includes(query) ||
-      status.toLowerCase().includes(query)
+      reported.toLowerCase().includes(query) 
     );
   });
 
@@ -150,15 +142,7 @@ useEffect(() => {
           </div>
 
           <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
-            <select
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
-              className="px-3 py-2 rounded-xl bg-slate-950 border border-slate-700 text-slate-200 text-xs font-semibold focus:outline-none focus:border-blue-500"
-            >
-              <option value="All">Status: All</option>
-              <option value="Closed">Status: Closed</option>
-              <option value="Open">Status: Open</option>
-            </select>
+            
 
             <button
               onClick={handleLoadLiveData}
