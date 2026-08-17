@@ -132,11 +132,10 @@ export const HIRARCPage: React.FC<HIRARCPageProps> = ({
                               target="_blank" 
                               rel="noopener noreferrer"
                               onClick={(e) => e.stopPropagation()}
-                              className="inline-flex items-center justify-center gap-1 px-2.5 py-1 bg-amber-500 hover:bg-amber-600 text-white rounded-md text-[11px] font-bold transition-colors shadow-sm shadow-amber-500/20"
+                              
+                              className="inline-flex items-center justify-center px-2 py-1 text-[11px] font-bold bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400 hover:bg-amber-100 dark:hover:bg-amber-500/20 rounded-md transition-colors"
                             >
-                              <span className="material-symbols-outlined text-[13px]">open_in_new</span>
-                              Open Doc
-                            </a>
+                              Open Doc</a>
                           ) : (
                             <span className="text-xs text-slate-400 italic">No Document</span>
                           )}

@@ -266,11 +266,10 @@ export const AllIncidentsPage: React.FC<AllIncidentsPageProps> = ({ onBackToHome
                              target="_blank" 
                              rel="noopener noreferrer" 
                              onClick={(e) => e.stopPropagation()}
-                             className="inline-flex items-center justify-center px-2 py-1 rounded-md bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-500/20 transition-colors text-[11px] font-bold gap-1"
-                           >
-                             <span className="material-symbols-outlined text-[13px]">description</span>
-                             <span>Open Doc</span>
-                           </a>
+                             
+                            className="inline-flex items-center justify-center px-2 py-1 text-[11px] font-bold rounded-md bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-500/20 transition-colors"
+                          >
+                            Open Doc</a>
                          ) : (
                            <span className="text-slate-300 dark:text-slate-600">-</span>
                          )}

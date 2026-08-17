@@ -137,11 +137,11 @@ export const MinuteMeetingPage: React.FC<MinuteMeetingPageProps> = ({
                               href={formatToPreviewUrl(m.documentUrl)} 
                               target="_blank" 
                               rel="noopener noreferrer"
-                              className="inline-flex items-center justify-center gap-1 px-2.5 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-[11px] font-bold transition-colors shadow-sm shadow-blue-500/20"
+                              className="inline-flex items-center justify-center px-2 py-1 text-[11px] font-bold bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-500/20 rounded-md transition-colors"
                               onClick={(e) => e.stopPropagation()}
                             >
-                              <span className="material-symbols-outlined text-[13px]">open_in_new</span>
                               Open Doc
+                              
                             </a>
                           ) : (
                             <span className="text-xs text-slate-400 italic">No Document</span>

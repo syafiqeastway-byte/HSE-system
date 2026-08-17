@@ -265,11 +265,10 @@ useEffect(() => {
                             target="_blank" 
                             rel="noopener noreferrer" 
                             onClick={(e) => e.stopPropagation()}
-                            className="inline-flex items-center justify-center px-2 py-1 rounded-md bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 text-[11px] font-bold gap-1 transition-colors"
+                            
+                            className="inline-flex items-center justify-center px-2 py-1 text-[11px] font-bold rounded-md bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 transition-colors"
                           >
-                            <span className="material-symbols-outlined text-[13px]">description</span>
-                            <span>Open Doc</span>
-                          </a>
+                            Open Doc</a>
                         ) : (
                           <span className="text-slate-600">-</span>
                         )}
