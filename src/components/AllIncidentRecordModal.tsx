@@ -212,8 +212,8 @@ useEffect(() => {
                         onClick={() => setSelectedRowId(isSelected ? null : inc.id)}
                         className={`transition-colors cursor-pointer ${
                           isSelected 
-                            ? 'bg-slate-900/95 dark:bg-slate-900 text-white font-semibold shadow-inner' 
-                            : 'hover:bg-slate-900 dark:hover:bg-slate-900/80 active:bg-slate-850/60'
+                            ? 'bg-slate-700/80 text-white font-semibold' 
+                            : 'hover:bg-slate-800/40 active:bg-slate-700/50'
                         }`}
                       >
                       <td className="py-1.5 px-2 sm:py-3 sm:px-3 font-mono font-bold text-blue-400 whitespace-nowrap border border-slate-700 text-center">

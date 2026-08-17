@@ -117,6 +117,7 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
   const [loading, setLoading] = useState<boolean>(true);
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
+  const [selectedSummaryRowIdx, setSelectedSummaryRowIdx] = useState<number | null>(null);
 
   // Canvas Refs for Charts
   const chartRef1 = useRef<HTMLCanvasElement | null>(null);
@@ -897,6 +898,111 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
 
   const displayIncidents = searchQuery.trim() ? sortedIncidents : sortedIncidents.slice(0, 10).reverse();
 
+  const renderSummaryTable = (extraClass = "") => {
+    const tableData = getActiveSummaryTable();
+    if (!tableData) return null;
+
+    return (
+      <div className={`p-4 sm:p-6 rounded-2xl bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 shadow-md ${extraClass}`}>
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4 pb-3 border-b border-slate-200 dark:border-slate-800">
+          <div className="flex items-center gap-2.5">
+            <span className="material-symbols-outlined text-blue-600 dark:text-blue-400 text-2xl">table_chart</span>
+            <div>
+              <h3 className="text-sm sm:text-base font-extrabold text-slate-900 dark:text-white uppercase tracking-wider">
+                {tableData.title}
+              </h3>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={exportSummaryTableToExcel}
+              className="px-3.5 py-1.5 rounded-lg text-white font-bold flex items-center gap-1.5 shadow-sm hover:brightness-110 active:scale-95 transition-all text-xs cursor-pointer"
+              style={{ backgroundColor: '#217346' }}
+            >
+              <span className="material-symbols-outlined text-sm">download</span>
+              Download Excel
+            </button>
+          </div>
+        </div>
+
+        {/* Table Container - Fixed formatting with bold header row as requested */}
+        <div className="overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-700/80 shadow-sm">
+          <table className="w-full text-left text-xs border-collapse">
+            <thead>
+              <tr className="bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white border-b-2 border-slate-300 dark:border-slate-600">
+                {tableData.headers.map((h, i) => (
+                  <th
+                    key={i}
+                    className={`px-3.5 py-3 font-extrabold uppercase tracking-wider text-xs ${
+                      i === 0
+                        ? 'w-12 text-center'
+                        : i === 1
+                        ? 'text-left min-w-[180px]'
+                        : 'text-center min-w-[85px]'
+                    }`}
+                  >
+                    {h}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-200 dark:divide-slate-800 text-slate-800 dark:text-slate-200">
+              {tableData.rows.map((row, idx) => {
+                const isTotal = row.isTotal || row.label.toUpperCase() === 'TOTAL';
+                const isSelected = selectedSummaryRowIdx === idx;
+                return (
+                  <tr
+                    key={idx}
+                    onClick={() => {
+                      if (!isTotal) {
+                        setSelectedSummaryRowIdx(selectedSummaryRowIdx === idx ? null : idx);
+                      }
+                    }}
+                    className={`transition-colors cursor-pointer ${
+                      isSelected
+                        ? 'bg-slate-200/80 dark:bg-slate-800 text-slate-900 dark:text-white font-semibold'
+                        : isTotal
+                        ? 'bg-blue-50/90 dark:bg-blue-950/60 font-extrabold text-slate-900 dark:text-white border-t-2 border-slate-300 dark:border-slate-600'
+                        : idx % 2 === 0
+                        ? 'bg-white dark:bg-slate-900/60 hover:bg-slate-50 dark:hover:bg-slate-800/50'
+                        : 'bg-slate-50/50 dark:bg-slate-800/30 hover:bg-slate-100/60 dark:hover:bg-slate-800/70'
+                    }`}
+                  >
+                    <td className={`px-3.5 py-2.5 text-center font-bold ${isTotal ? 'text-blue-600 dark:text-blue-400' : 'text-slate-500'}`}>
+                      {row.no || (isTotal ? '—' : idx + 1)}
+                    </td>
+                    <td className={`px-3.5 py-2.5 ${isTotal ? 'font-extrabold text-blue-700 dark:text-blue-300' : 'font-bold'}`}>
+                      {row.label}
+                    </td>
+                    <td className={`px-3.5 py-2.5 text-center ${isTotal ? 'font-extrabold text-blue-700 dark:text-blue-300' : 'font-semibold'}`}>
+                      {row.c2022}
+                    </td>
+                    <td className={`px-3.5 py-2.5 text-center ${isTotal ? 'font-extrabold text-blue-700 dark:text-blue-300' : 'font-semibold'}`}>
+                      {row.c2023}
+                    </td>
+                    <td className={`px-3.5 py-2.5 text-center ${isTotal ? 'font-extrabold text-blue-700 dark:text-blue-300' : 'font-semibold'}`}>
+                      {row.c2024}
+                    </td>
+                    <td className={`px-3.5 py-2.5 text-center ${isTotal ? 'font-extrabold text-blue-700 dark:text-blue-300' : 'font-semibold'}`}>
+                      {row.c2025}
+                    </td>
+                    <td className={`px-3.5 py-2.5 text-center ${isTotal ? 'font-extrabold text-blue-700 dark:text-blue-300' : 'font-semibold'}`}>
+                      {row.c2026}
+                    </td>
+                    <td className="px-3.5 py-2.5 text-center font-extrabold text-amber-600 dark:text-amber-400 bg-amber-500/5 dark:bg-amber-400/5">
+                      {row.total}
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="glass-card p-4 sm:p-6 mb-8">
       {/* Title & Refresh Bar */}
@@ -966,8 +1072,13 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
         <div>
           {/* Interactive Chart Container */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-            <div className="relative p-4 rounded-2xl bg-white dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 h-80 shadow-sm w-full">
-              <canvas ref={chartRef1}></canvas>
+            <div className="flex flex-col gap-6">
+              <div className="relative p-4 rounded-2xl bg-white dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 h-80 shadow-sm w-full">
+                <canvas ref={chartRef1}></canvas>
+              </div>
+
+              {/* On smartphone/mobile/tablet, the table goes here right below the first interactive chart */}
+              {renderSummaryTable("block lg:hidden")}
             </div>
 
             <div className="p-5 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 flex flex-col justify-between space-y-4">
@@ -1000,98 +1111,8 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
             </div>
           </div>
 
-          {/* Dynamic Fixed Summary Table from Google Sheet (Below Main Chart) */}
-          {getActiveSummaryTable() && (
-            <div className="mb-8 p-4 sm:p-6 rounded-2xl bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 shadow-md">
-              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4 pb-3 border-b border-slate-200 dark:border-slate-800">
-                <div className="flex items-center gap-2.5">
-                  <span className="material-symbols-outlined text-blue-600 dark:text-blue-400 text-2xl">table_chart</span>
-                  <div>
-                    <h3 className="text-sm sm:text-base font-extrabold text-slate-900 dark:text-white uppercase tracking-wider">
-                      {getActiveSummaryTable()?.title}
-                    </h3>
-                  </div>
-                </div>
-                <div className="flex items-center gap-2">
-                  <button
-                    type="button"
-                    onClick={exportSummaryTableToExcel}
-                    className="px-3.5 py-1.5 rounded-lg text-white font-bold flex items-center gap-1.5 shadow-sm hover:brightness-110 active:scale-95 transition-all text-xs"
-                    style={{ backgroundColor: '#217346' }}
-                  >
-                    <span className="material-symbols-outlined text-sm">download</span>
-                    Download Excel
-                  </button>
-                </div>
-              </div>
-
-              {/* Table Container - Fixed formatting with bold header row as requested */}
-              <div className="overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-700/80 shadow-sm">
-                <table className="w-full text-left text-xs border-collapse">
-                  <thead>
-                    <tr className="bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white border-b-2 border-slate-300 dark:border-slate-600">
-                      {getActiveSummaryTable()?.headers.map((h, i) => (
-                        <th
-                          key={i}
-                          className={`px-3.5 py-3 font-extrabold uppercase tracking-wider text-xs ${
-                            i === 0
-                              ? 'w-12 text-center'
-                              : i === 1
-                              ? 'text-left min-w-[180px]'
-                              : 'text-center min-w-[85px]'
-                          }`}
-                        >
-                          {h}
-                        </th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-slate-200 dark:divide-slate-800 text-slate-800 dark:text-slate-200">
-                    {getActiveSummaryTable()?.rows.map((row, idx) => {
-                      const isTotal = row.isTotal || row.label.toUpperCase() === 'TOTAL';
-                      return (
-                        <tr
-                          key={idx}
-                          className={`transition-colors ${
-                            isTotal
-                              ? 'bg-blue-50/90 dark:bg-blue-950/60 font-extrabold text-slate-900 dark:text-white border-t-2 border-slate-300 dark:border-slate-600'
-                              : idx % 2 === 0
-                              ? 'bg-white dark:bg-slate-900/60 hover:bg-slate-50 dark:hover:bg-slate-800/50'
-                              : 'bg-slate-50/50 dark:bg-slate-800/30 hover:bg-slate-100/60 dark:hover:bg-slate-800/70'
-                          }`}
-                        >
-                          <td className={`px-3.5 py-2.5 text-center font-bold ${isTotal ? 'text-blue-600 dark:text-blue-400' : 'text-slate-500'}`}>
-                            {row.no || (isTotal ? '—' : idx + 1)}
-                          </td>
-                          <td className={`px-3.5 py-2.5 ${isTotal ? 'font-extrabold text-blue-700 dark:text-blue-300' : 'font-bold'}`}>
-                            {row.label}
-                          </td>
-                          <td className={`px-3.5 py-2.5 text-center ${isTotal ? 'font-extrabold text-blue-700 dark:text-blue-300' : 'font-semibold'}`}>
-                            {row.c2022}
-                          </td>
-                          <td className={`px-3.5 py-2.5 text-center ${isTotal ? 'font-extrabold text-blue-700 dark:text-blue-300' : 'font-semibold'}`}>
-                            {row.c2023}
-                          </td>
-                          <td className={`px-3.5 py-2.5 text-center ${isTotal ? 'font-extrabold text-blue-700 dark:text-blue-300' : 'font-semibold'}`}>
-                            {row.c2024}
-                          </td>
-                          <td className={`px-3.5 py-2.5 text-center ${isTotal ? 'font-extrabold text-blue-700 dark:text-blue-300' : 'font-semibold'}`}>
-                            {row.c2025}
-                          </td>
-                          <td className={`px-3.5 py-2.5 text-center ${isTotal ? 'font-extrabold text-blue-700 dark:text-blue-300' : 'font-semibold'}`}>
-                            {row.c2026}
-                          </td>
-                          <td className="px-3.5 py-2.5 text-center font-extrabold text-amber-600 dark:text-amber-400 bg-amber-500/5 dark:bg-amber-400/5">
-                            {row.total}
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          )}
+          {/* On desktop (large screens), the summary table is displayed full-width below both boxes */}
+          {renderSummaryTable("hidden lg:block mb-8")}
 
           {/* Search Toolbar */}
           <div className="mb-4 flex flex-col sm:flex-row items-center justify-between gap-3 bg-slate-50 dark:bg-slate-900/40 p-3 rounded-xl border border-slate-200 dark:border-slate-800">

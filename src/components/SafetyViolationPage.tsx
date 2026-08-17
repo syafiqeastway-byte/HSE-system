@@ -149,7 +149,7 @@ export const SafetyViolationPage: React.FC<SafetyViolationPageProps> = ({
                           onClick={() => setSelectedRowIndex(isSelected ? null : rIdx)}
                           className={`transition-colors cursor-pointer ${
                             isSelected
-                              ? 'bg-red-50/80 dark:bg-red-950/30 text-slate-900 dark:text-white font-semibold shadow-inner'
+                              ? 'bg-slate-200/80 dark:bg-slate-800 text-slate-900 dark:text-white font-semibold'
                               : 'hover:bg-slate-50 dark:hover:bg-zinc-800/50 text-slate-700 dark:text-zinc-300'
                           }`}
                         >
@@ -265,7 +265,7 @@ export const SafetyViolationPage: React.FC<SafetyViolationPageProps> = ({
                             onClick={() => setSelectedSummaryRowIndex(isSelected ? null : rIdx)}
                             className={`transition-colors cursor-pointer ${
                               isSelected
-                                ? 'bg-amber-50/80 dark:bg-amber-950/30 text-slate-900 dark:text-white font-semibold shadow-inner'
+                                ? 'bg-slate-200/80 dark:bg-slate-800 text-slate-900 dark:text-white font-semibold'
                                 : 'hover:bg-slate-50 dark:hover:bg-zinc-800/50 text-slate-700 dark:text-zinc-300'
                             }`}
                           >

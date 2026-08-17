@@ -307,7 +307,7 @@ export const InspectionModal: React.FC<InspectionModalProps> = ({ isOpen, filter
                               onClick={() => setSelectedWorkplaceId(isSelected ? null : String(item.id))}
                               className={`transition-colors cursor-pointer ${
                                 isSelected 
-                                  ? 'bg-emerald-50 dark:bg-emerald-950/40 text-slate-900 dark:text-white font-semibold' 
+                                  ? 'bg-slate-200/80 dark:bg-slate-800 text-slate-900 dark:text-white font-semibold' 
                                   : 'hover:bg-slate-50 dark:hover:bg-zinc-800/60'
                               }`}
                             >
@@ -448,7 +448,7 @@ export const InspectionModal: React.FC<InspectionModalProps> = ({ isOpen, filter
                               onClick={() => setSelectedFEId(isSelected ? null : item.id)}
                               className={`transition-colors cursor-pointer ${
                                 isSelected
-                                  ? 'bg-red-50 dark:bg-red-950/40 text-slate-900 dark:text-white font-semibold'
+                                  ? 'bg-slate-200/80 dark:bg-slate-800 text-slate-900 dark:text-white font-semibold'
                                   : 'hover:bg-slate-50 dark:hover:bg-zinc-800/60'
                               }`}
                             >
