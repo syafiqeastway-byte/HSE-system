@@ -877,13 +877,13 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
         <div>
           {/* Interactive Chart Container */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-            <div className="p-4 rounded-2xl bg-white dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 h-80 shadow-sm">
+            <div className="relative p-4 rounded-2xl bg-white dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 h-80 shadow-sm w-full">
               <canvas ref={chartRef1}></canvas>
             </div>
 
             <div className="p-5 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 flex flex-col justify-between space-y-4">
               {/* Annual Occupational Incidents Sharp Line Chart */}
-              <div className="p-3 bg-white dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800/80 rounded-xl shadow-sm h-40">
+              <div className="relative p-3 bg-white dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800/80 rounded-xl shadow-sm h-40 w-full">
                 <canvas ref={occupationalChartRef}></canvas>
               </div>
 
@@ -897,11 +897,11 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
 
                 <div className="grid grid-cols-2 gap-3">
                   <div className="p-3 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
-                    <p className="text-[9px] sm:text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase">Total Records</p>
+                    <p className="text-xs sm:text-sm font-bold text-slate-400 uppercase">Total Records</p>
                     <p className="text-base font-extrabold text-blue-600 dark:text-blue-400">{incidents.length}</p>
                   </div>
                   <div className="p-3 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
-                    <p className="text-[9px] sm:text-[9px] sm:text-[10px] font-bold text-slate-400 uppercase">Occupational</p>
+                    <p className="text-xs sm:text-sm font-bold text-slate-400 uppercase">Occupational</p>
                     <p className="text-base font-extrabold text-amber-600 dark:text-amber-400">
                       {incidents.filter((i) => i.occupationalIncident?.toUpperCase() === 'YES').length}
                     </p>
@@ -932,24 +932,24 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
 
           {/* All Incident Records Live Table */}
           <div className="overflow-x-auto rounded-2xl border border-slate-300 dark:border-zinc-700 shadow-sm">
-            <table className="w-full border-collapse border border-slate-300 dark:border-zinc-700 text-left text-[9px] sm:text-[10px] sm:text-xs whitespace-nowrap">
+            <table className="w-full border-collapse border border-slate-300 dark:border-zinc-700 text-left text-xs sm:text-sm whitespace-nowrap">
               <thead>
                 <tr className="bg-slate-100 dark:bg-zinc-800/80 text-slate-800 dark:text-zinc-100">
-                  <th className="py-1.5 px-2 sm:py-3 sm:px-3 border border-slate-300 dark:border-zinc-700 font-extrabold uppercase text-[9px] sm:text-[9px] sm:text-[10px] tracking-wider whitespace-nowrap text-center">NO</th>
-                  <th className="py-1.5 px-2 sm:py-3 sm:px-3 border border-slate-300 dark:border-zinc-700 font-extrabold uppercase text-[9px] sm:text-[9px] sm:text-[10px] tracking-wider whitespace-nowrap text-center">DATE</th>
-                  <th className="py-1.5 px-2 sm:py-3 sm:px-3 border border-slate-300 dark:border-zinc-700 font-extrabold uppercase text-[9px] sm:text-[9px] sm:text-[10px] tracking-wider whitespace-nowrap text-center">YEAR</th>
-                  <th className="py-1.5 px-2 sm:py-3 sm:px-3 border border-slate-300 dark:border-zinc-700 font-extrabold uppercase text-[9px] sm:text-[9px] sm:text-[10px] tracking-wider min-w-[120px]">LOCATION</th>
-                  <th className="py-1.5 px-2 sm:py-3 sm:px-3 border border-slate-300 dark:border-zinc-700 font-extrabold uppercase text-[9px] sm:text-[9px] sm:text-[10px] tracking-wider min-w-[200px]">DESCRIPTION</th>
-                  <th className="py-1.5 px-2 sm:py-3 sm:px-3 border border-slate-300 dark:border-zinc-700 font-extrabold uppercase text-[9px] sm:text-[9px] sm:text-[10px] tracking-wider text-center whitespace-nowrap">OCCUPATIONAL INCIDENT?</th>
-                  <th className="py-1.5 px-2 sm:py-3 sm:px-3 border border-slate-300 dark:border-zinc-700 font-extrabold uppercase text-[9px] sm:text-[9px] sm:text-[10px] tracking-wider min-w-[140px]">INCIDENT CATEGORY</th>
-                  <th className="py-1.5 px-2 sm:py-3 sm:px-3 border border-slate-300 dark:border-zinc-700 font-extrabold uppercase text-[9px] sm:text-[9px] sm:text-[10px] tracking-wider text-center whitespace-nowrap">PROPERTY DAMAGE</th>
-                  <th className="py-1.5 px-2 sm:py-3 sm:px-3 border border-slate-300 dark:border-zinc-700 font-extrabold uppercase text-[9px] sm:text-[9px] sm:text-[10px] tracking-wider whitespace-nowrap">DAMAGE LEVEL</th>
-                  <th className="py-1.5 px-2 sm:py-3 sm:px-3 border border-slate-300 dark:border-zinc-700 font-extrabold uppercase text-[9px] sm:text-[9px] sm:text-[10px] tracking-wider min-w-[140px]">CLASSIFICATION</th>
-                  <th className="py-1.5 px-2 sm:py-3 sm:px-3 border border-slate-300 dark:border-zinc-700 font-extrabold uppercase text-[9px] sm:text-[9px] sm:text-[10px] tracking-wider min-w-[120px]">INJURY TYPE</th>
-                  <th className="py-1.5 px-2 sm:py-3 sm:px-3 border border-slate-300 dark:border-zinc-700 font-extrabold uppercase text-[9px] sm:text-[9px] sm:text-[10px] tracking-wider min-w-[120px]">PERSON INVOLVE</th>
-                  <th className="py-1.5 px-2 sm:py-3 sm:px-3 border border-slate-300 dark:border-zinc-700 font-extrabold uppercase text-[9px] sm:text-[9px] sm:text-[10px] tracking-wider whitespace-nowrap">WORK EXPERIENCE</th>
-                  <th className="py-1.5 px-2 sm:py-3 sm:px-3 border border-slate-300 dark:border-zinc-700 font-extrabold uppercase text-[9px] sm:text-[9px] sm:text-[10px] tracking-wider min-w-[110px]">REPORTED BY</th>
-                  <th className="py-1.5 px-2 sm:py-3 sm:px-3 border border-slate-300 dark:border-zinc-700 font-extrabold uppercase text-[9px] sm:text-[9px] sm:text-[10px] tracking-wider text-center whitespace-nowrap">PDF</th>
+                  <th className="py-1.5 px-2 sm:py-3 sm:px-3 border border-slate-300 dark:border-zinc-700 font-extrabold uppercase text-xs sm:text-sm tracking-wider whitespace-nowrap text-center">NO</th>
+                  <th className="py-1.5 px-2 sm:py-3 sm:px-3 border border-slate-300 dark:border-zinc-700 font-extrabold uppercase text-xs sm:text-sm tracking-wider whitespace-nowrap text-center">DATE</th>
+                  <th className="py-1.5 px-2 sm:py-3 sm:px-3 border border-slate-300 dark:border-zinc-700 font-extrabold uppercase text-xs sm:text-sm tracking-wider whitespace-nowrap text-center">YEAR</th>
+                  <th className="py-1.5 px-2 sm:py-3 sm:px-3 border border-slate-300 dark:border-zinc-700 font-extrabold uppercase text-xs sm:text-sm tracking-wider min-w-[120px]">LOCATION</th>
+                  <th className="py-1.5 px-2 sm:py-3 sm:px-3 border border-slate-300 dark:border-zinc-700 font-extrabold uppercase text-xs sm:text-sm tracking-wider min-w-[200px]">DESCRIPTION</th>
+                  <th className="py-1.5 px-2 sm:py-3 sm:px-3 border border-slate-300 dark:border-zinc-700 font-extrabold uppercase text-xs sm:text-sm tracking-wider text-center whitespace-nowrap">OCCUPATIONAL INCIDENT?</th>
+                  <th className="py-1.5 px-2 sm:py-3 sm:px-3 border border-slate-300 dark:border-zinc-700 font-extrabold uppercase text-xs sm:text-sm tracking-wider min-w-[140px]">INCIDENT CATEGORY</th>
+                  <th className="py-1.5 px-2 sm:py-3 sm:px-3 border border-slate-300 dark:border-zinc-700 font-extrabold uppercase text-xs sm:text-sm tracking-wider text-center whitespace-nowrap">PROPERTY DAMAGE</th>
+                  <th className="py-1.5 px-2 sm:py-3 sm:px-3 border border-slate-300 dark:border-zinc-700 font-extrabold uppercase text-xs sm:text-sm tracking-wider whitespace-nowrap">DAMAGE LEVEL</th>
+                  <th className="py-1.5 px-2 sm:py-3 sm:px-3 border border-slate-300 dark:border-zinc-700 font-extrabold uppercase text-xs sm:text-sm tracking-wider min-w-[140px]">CLASSIFICATION</th>
+                  <th className="py-1.5 px-2 sm:py-3 sm:px-3 border border-slate-300 dark:border-zinc-700 font-extrabold uppercase text-xs sm:text-sm tracking-wider min-w-[120px]">INJURY TYPE</th>
+                  <th className="py-1.5 px-2 sm:py-3 sm:px-3 border border-slate-300 dark:border-zinc-700 font-extrabold uppercase text-xs sm:text-sm tracking-wider min-w-[120px]">PERSON INVOLVE</th>
+                  <th className="py-1.5 px-2 sm:py-3 sm:px-3 border border-slate-300 dark:border-zinc-700 font-extrabold uppercase text-xs sm:text-sm tracking-wider whitespace-nowrap">WORK EXPERIENCE</th>
+                  <th className="py-1.5 px-2 sm:py-3 sm:px-3 border border-slate-300 dark:border-zinc-700 font-extrabold uppercase text-xs sm:text-sm tracking-wider min-w-[110px]">REPORTED BY</th>
+                  <th className="py-1.5 px-2 sm:py-3 sm:px-3 border border-slate-300 dark:border-zinc-700 font-extrabold uppercase text-xs sm:text-sm tracking-wider text-center whitespace-nowrap">PDF</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-200 dark:divide-slate-800/60 bg-white dark:bg-slate-900/40 text-slate-700 dark:text-slate-300">
@@ -995,7 +995,7 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
                       {/* 6. OCCUPATIONAL INCIDENT? */}
                       <td className="py-1.5 px-2 sm:py-3 sm:px-3 text-center whitespace-nowrap border border-slate-300 dark:border-zinc-700">
                         <span
-                          className={`px-2 py-0.5 rounded text-[9px] sm:text-[9px] sm:text-[10px] font-bold uppercase ${
+                          className={`px-2 py-0.5 rounded text-xs sm:text-sm font-bold uppercase ${
                             inc.occupationalIncident?.toUpperCase() === 'YES'
                               ? 'bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/30'
                               : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700'
@@ -1045,10 +1045,10 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
                             href={formatToPreviewUrl(inc.documentUrl)}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center justify-center px-2.5 py-1 rounded-lg bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-500/20 transition-colors text-xs font-bold gap-1"
+                            className="inline-flex items-center justify-center px-2 py-1 rounded-md bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-500/20 transition-colors text-[11px] font-bold gap-1"
                             onClick={(e) => e.stopPropagation()}
                           >
-                            <span className="material-symbols-outlined text-[15px]">description</span>
+                            <span className="material-symbols-outlined text-[13px]">description</span>
                             <span>Open Doc</span>
                           </a>
                         ) : (

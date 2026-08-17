@@ -173,9 +173,9 @@ useEffect(() => {
             </div>
           ) : (
             <div className="overflow-x-auto rounded-xl border border-slate-700">
-              <table className="w-full text-left border-collapse text-[10px] sm:text-xs border border-slate-700">
+              <table className="w-full text-left border-collapse text-xs sm:text-sm border border-slate-700">
                 <thead>
-                  <tr className="bg-slate-900/90 text-slate-100 font-extrabold uppercase text-[9px] sm:text-[10px] tracking-wider border border-slate-700">
+                  <tr className="bg-slate-900/90 text-slate-100 font-extrabold uppercase text-xs sm:text-sm tracking-wider border border-slate-700">
                     <th className="py-1.5 px-2 sm:py-3 sm:px-3 border border-slate-700 whitespace-nowrap text-center">NO</th>
                     <th className="py-1.5 px-2 sm:py-3 sm:px-3 border border-slate-700 whitespace-nowrap text-center">DATE</th>
                     <th className="py-1.5 px-2 sm:py-3 sm:px-3 border border-slate-700 whitespace-nowrap text-center">YEAR</th>
@@ -224,7 +224,7 @@ useEffect(() => {
                         </div>
                       </td>
                       <td className="py-1.5 px-2 sm:py-3 sm:px-3 text-center whitespace-nowrap border border-slate-700">
-                        <span className={`px-2 py-0.5 rounded text-[9px] sm:text-[10px] font-bold uppercase ${
+                        <span className={`px-2 py-0.5 rounded text-xs sm:text-sm font-bold uppercase ${
                           inc.occupationalIncident?.toUpperCase() === 'YES'
                             ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
                             : 'bg-slate-800 text-slate-400 border border-slate-700'
@@ -233,7 +233,7 @@ useEffect(() => {
                         </span>
                       </td>
                       <td className="py-1.5 px-2 sm:py-3 sm:px-3 whitespace-nowrap border border-slate-700">
-                        <span className="px-2 py-0.5 rounded-md bg-slate-800 text-slate-300 border border-slate-700 text-[9px] sm:text-[10px] font-bold">
+                        <span className="px-2 py-0.5 rounded-md bg-slate-800 text-slate-300 border border-slate-700 text-xs sm:text-sm font-bold">
                           {inc.category || '-'}
                         </span>
                       </td>
@@ -265,9 +265,9 @@ useEffect(() => {
                             target="_blank" 
                             rel="noopener noreferrer" 
                             onClick={(e) => e.stopPropagation()}
-                            className="inline-flex items-center justify-center px-2.5 py-1 rounded-md bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 text-xs font-bold gap-1 transition-colors"
+                            className="inline-flex items-center justify-center px-2 py-1 rounded-md bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 text-[11px] font-bold gap-1 transition-colors"
                           >
-                            <span className="material-symbols-outlined text-[14px]">description</span>
+                            <span className="material-symbols-outlined text-[13px]">description</span>
                             <span>Open Doc</span>
                           </a>
                         ) : (

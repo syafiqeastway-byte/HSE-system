@@ -59,7 +59,7 @@ export const HomePage: React.FC<HomePageProps> = ({
               onClick={() =>
                 onOpenDocument({
                   title: 'EASTWAY ENGINEERING SAFETY & HEALTH POLICY',
-                  subtitle: 'Official Google Drive Document',
+                  subtitle: 'Official Document',
                   url: 'https://drive.google.com/file/d/1wmQE-dzUGGwhkJsM8rwKOIf01C7yD5tV/preview',
                   type: 'doc'
                 })
@@ -74,7 +74,7 @@ export const HomePage: React.FC<HomePageProps> = ({
                   SAFETY POLICY
                 </h3>
                 <p className="text-[11px] text-slate-500 dark:text-zinc-400 mt-0.5">
-                  Corporate HSE Policy Google Drive document
+                  Corporate HSE Policy
                 </p>
               </div>
             </button>
@@ -84,7 +84,7 @@ export const HomePage: React.FC<HomePageProps> = ({
               onClick={() =>
                 onOpenDocument({
                   title: 'EASTWAY ENGINEERING COMPETENT PERSON CREDENTIALS',
-                  subtitle: 'Official Google Drive Document',
+                  subtitle: 'Official Document',
                   url: 'https://drive.google.com/file/d/1AnguTjW04YMFYKGcgCYAbuZrPDKVOHg6/preview',
                   type: 'doc'
                 })
@@ -99,7 +99,7 @@ export const HomePage: React.FC<HomePageProps> = ({
                   COMPETENT PERSON
                 </h3>
                 <p className="text-[11px] text-slate-500 dark:text-zinc-400 mt-0.5">
-                  DOSH SHO, AGESP & Scaffolder Google Drive doc
+                  Official Credentials
                 </p>
               </div>
             </button>
@@ -109,7 +109,7 @@ export const HomePage: React.FC<HomePageProps> = ({
               onClick={() =>
                 onOpenDocument({
                   title: 'EASTWAY ENGINEERING EMERGENCY RESPONSE PLAN',
-                  subtitle: 'Official Google Drive Document',
+                  subtitle: 'Official Document',
                   url: 'https://drive.google.com/file/d/1atnIb570BsXBjZpVe48QjDMVYmtHesgZ/view?usp=drive_link',
                   type: 'doc'
                 })
@@ -124,7 +124,7 @@ export const HomePage: React.FC<HomePageProps> = ({
                   EMERGENCY PLAN
                 </h3>
                 <p className="text-[11px] text-slate-500 dark:text-zinc-400 mt-0.5">
-                  Emergency response & evacuation Google Drive doc
+                  Emergency response & evacuation
                 </p>
               </div>
             </button>
@@ -134,7 +134,7 @@ export const HomePage: React.FC<HomePageProps> = ({
               onClick={() =>
                 onOpenDocument({
                   title: 'LEGAL STATUTORY COMPLIANCE LOGS (OSHA 1994, FMA 1967, EQA 1974)',
-                  subtitle: 'Official Google Docs Document',
+                  subtitle: 'Official Document',
                   url: 'https://docs.google.com/document/d/19zhynxyiJifW9U99cAbEAw_WAmTKRYs8/preview',
                   type: 'doc'
                 })

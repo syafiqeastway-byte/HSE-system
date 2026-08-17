@@ -119,10 +119,10 @@ export const SOPPage: React.FC<SOPPageProps> = ({
                         <td className="py-3 px-4 font-semibold text-slate-800 dark:text-slate-300 border border-slate-300 dark:border-zinc-700">
                           {r.title}
                         </td>
-                        <td className="py-3 px-4 font-mono text-slate-600 dark:text-slate-400 text-xs border border-slate-300 dark:border-zinc-700">
+                        <td className="py-3 px-4 font-mono text-slate-600 dark:text-slate-400 text-xs sm:text-sm border border-slate-300 dark:border-zinc-700">
                           {r.date}
                         </td>
-                        <td className="py-3 px-4 font-mono text-slate-600 dark:text-slate-400 text-xs border border-slate-300 dark:border-zinc-700">
+                        <td className="py-3 px-4 font-mono text-slate-600 dark:text-slate-400 text-xs sm:text-sm border border-slate-300 dark:border-zinc-700">
                           {r.revDate}
                         </td>
                         <td className="py-3 px-4 text-center border border-slate-300 dark:border-zinc-700">
@@ -132,9 +132,9 @@ export const SOPPage: React.FC<SOPPageProps> = ({
                               target="_blank" 
                               rel="noopener noreferrer"
                               onClick={(e) => e.stopPropagation()}
-                              className="inline-flex items-center justify-center gap-1.5 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold transition-colors shadow-sm shadow-blue-500/20"
+                              className="inline-flex items-center justify-center gap-1 px-2.5 py-1 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-[11px] font-bold transition-colors shadow-sm shadow-blue-500/20"
                             >
-                              <span className="material-symbols-outlined text-sm">open_in_new</span>
+                              <span className="material-symbols-outlined text-[13px]">open_in_new</span>
                               Open Doc
                             </a>
                           ) : (

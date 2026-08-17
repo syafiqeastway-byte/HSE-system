@@ -103,7 +103,7 @@ export const SafetyViolationPage: React.FC<SafetyViolationPageProps> = ({
           <div className="glass-card overflow-hidden">
             <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-slate-300 dark:scrollbar-thumb-zinc-700">
               {/* The table includes full column and row borders (grid lines) */}
-              <table className="w-full border-collapse border border-slate-300 dark:border-zinc-700 text-left text-[10px] sm:text-xs whitespace-nowrap">
+              <table className="w-full border-collapse border border-slate-300 dark:border-zinc-700 text-left text-xs sm:text-sm whitespace-nowrap">
                 <thead className="bg-slate-100 dark:bg-zinc-800/80 text-slate-800 dark:text-zinc-100 border-b border-slate-300 dark:border-zinc-700">
                   <tr>
                     {headers.map((hdr, idx) => (
@@ -219,7 +219,7 @@ export const SafetyViolationPage: React.FC<SafetyViolationPageProps> = ({
                 </h3>
               </div>
               <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-slate-300 dark:scrollbar-thumb-zinc-700">
-                <table className="w-full border-collapse border border-slate-300 dark:border-zinc-700 text-left text-[10px] sm:text-xs whitespace-nowrap">
+                <table className="w-full border-collapse border border-slate-300 dark:border-zinc-700 text-left text-xs sm:text-sm whitespace-nowrap">
                   <thead className="bg-slate-100 dark:bg-zinc-800/80 text-slate-800 dark:text-zinc-100 border-b border-slate-300 dark:border-zinc-700">
                     <tr>
                       {summaryHeaders.map((hdr, idx) => (

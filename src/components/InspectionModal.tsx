@@ -269,7 +269,7 @@ export const InspectionModal: React.FC<InspectionModalProps> = ({ isOpen, filter
                 </div>
               ) : (
                 <div className="overflow-x-auto rounded-2xl border border-slate-300 dark:border-zinc-700 shadow-sm">
-                  <table className="w-full border-collapse border border-slate-300 dark:border-zinc-700 text-left text-[10px] sm:text-xs text-slate-800 dark:text-slate-200">
+                  <table className="w-full border-collapse border border-slate-300 dark:border-zinc-700 text-left text-xs sm:text-sm text-slate-800 dark:text-slate-200">
                     <thead className="bg-slate-100 dark:bg-zinc-800/90 text-slate-800 dark:text-zinc-100 uppercase border-b border-slate-300 dark:border-zinc-700 font-extrabold">
                       <tr>
                         <th className="p-2 sm:p-3 border border-slate-300 dark:border-zinc-700 font-extrabold tracking-wider text-center w-12">NO</th>
@@ -373,7 +373,7 @@ export const InspectionModal: React.FC<InspectionModalProps> = ({ isOpen, filter
                 </div>
               ) : (
                 <div className="overflow-x-auto rounded-2xl border border-slate-300 dark:border-zinc-700 shadow-sm">
-                  <table className="w-full border-collapse border border-slate-300 dark:border-zinc-700 text-left text-[10px] sm:text-xs text-slate-800 dark:text-slate-200">
+                  <table className="w-full border-collapse border border-slate-300 dark:border-zinc-700 text-left text-xs sm:text-sm text-slate-800 dark:text-slate-200">
                     {/* Primary Table Head (Row 2 in Google Sheet) */}
                     <thead className="bg-slate-200 dark:bg-zinc-800 text-slate-900 dark:text-white uppercase border-b-2 border-slate-400 dark:border-zinc-700">
                       <tr>
@@ -439,7 +439,7 @@ export const InspectionModal: React.FC<InspectionModalProps> = ({ isOpen, filter
 
                               {/* LOCATION */}
                               <td className="p-2 sm:p-3 font-bold text-slate-900 dark:text-white border border-slate-300 dark:border-zinc-700">
-                                <span className="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 font-bold text-[10px] sm:text-xs">
+                                <span className="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 font-bold text-xs sm:text-sm">
                                   {item.location || '-'}
                                 </span>
                               </td>

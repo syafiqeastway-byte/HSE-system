@@ -34,7 +34,7 @@ export const Header: React.FC<HeaderProps> = ({
               <h1 className="text-lg sm:text-xl font-extrabold tracking-tight text-slate-900 dark:text-white uppercase leading-tight whitespace-nowrap">
                 EASTWAY ENGINEERING 
               </h1>
-              <p className="text-[10px] sm:text-xs text-slate-500 dark:text-zinc-400 font-bold tracking-[0.12em] sm:tracking-[0.15em] uppercase">
+              <p className="text-xs sm:text-sm text-slate-500 dark:text-zinc-400 font-bold tracking-[0.12em] sm:tracking-[0.15em] uppercase">
                 HSE Integrated Management System
               </p>
             </div>

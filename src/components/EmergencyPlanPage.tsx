@@ -171,7 +171,7 @@ export const EmergencyPlanPage: React.FC<EmergencyPlanPageProps> = ({
           </div>
         ) : (
           <div className="overflow-x-auto rounded-2xl border border-slate-300 dark:border-zinc-700">
-            <table className="w-full border-collapse border border-slate-300 dark:border-zinc-700 text-left text-[10px] sm:text-xs text-slate-800 dark:text-slate-200">
+            <table className="w-full border-collapse border border-slate-300 dark:border-zinc-700 text-left text-xs sm:text-sm text-slate-800 dark:text-slate-200">
               <thead className="bg-slate-100 dark:bg-zinc-800/80 text-slate-800 dark:text-zinc-100 uppercase border-b border-slate-300 dark:border-zinc-700">
                 <tr>
                   <th className="p-1.5 sm:p-3 border border-slate-300 dark:border-zinc-700 font-extrabold tracking-wider">Name</th>
