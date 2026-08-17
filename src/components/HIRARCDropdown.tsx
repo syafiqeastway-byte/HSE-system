@@ -84,9 +84,19 @@ export const HIRARCDropdown: React.FC<HIRARCDropdownProps> = ({ onSelectHIRARC }
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 placeholder="Search 25 HIRARCs by activity or location..."
-                className="w-full pl-9 pr-4 py-2 rounded-xl bg-white dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 text-xs sm:text-sm text-slate-800 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-amber-500"
+                className="w-full pl-9 pr-9 py-2 rounded-xl bg-white dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 text-xs sm:text-sm text-slate-800 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-amber-500"
                 autoFocus
               />
+              {searchTerm && (
+                <button
+                  type="button"
+                  onClick={() => setSearchTerm('')}
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-0.5 rounded-full"
+                  title="Clear search"
+                >
+                  <span className="material-symbols-outlined text-base">close</span>
+                </button>
+              )}
             </div>
           </div>
 

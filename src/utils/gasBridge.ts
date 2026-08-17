@@ -566,45 +566,17 @@ export async function fetchSafetyViolationScoring(): Promise<string[][]> {
   const GID = '817838002';
   const url = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:csv&gid=${GID}&range=A3:N33`;
 
-  // Provide high-quality fallback data matching 14 columns (A to N) and 31 rows (Row 3 header + 30 rows data)
   const fallbackData: string[][] = [
-    // Header (Row 3)
     [
       "No", "Date", "Worker Name / ID", "Department / Company", "Location", 
       "Violation Description", "Category", "First Offence", "Second Offence", 
       "Third Offence", "Demerit Points", "Action Taken / Fine (RM)", "Inspector Name", "Status"
     ],
-    // Rows 4 to 33 (30 rows of realistic HSE safety violations)
     ["1", "2026-08-01", "Ahmad Razak (EE-104)", "Logistics Dept", "Warehouse A", "Not wearing safety helmet in designated zone", "PPE Non-Compliance", "Warning", "N/A", "N/A", "10", "RM 50 Fine", "M. Syahmi (SHO)", "Closed"],
     ["2", "2026-08-02", "Subcon - Lin & Co", "Electrical Subcontractor", "Block C Level 2", "Working at height without safety harness hook", "Height Safety", "N/A", "Suspension", "N/A", "30", "Stop Work Order", "M. Syahmi (SHO)", "Closed"],
     ["3", "2026-08-03", "Johnathan Doe (EE-089)", "Production Line 1", "Fabrication Area", "Using damaged grinding machine without guard", "Equipment Safety", "Warning", "N/A", "N/A", "15", "Machine Confiscated", "M. Syahmi (SHO)", "Closed"],
     ["4", "2026-08-04", "Kamaluddin (EE-212)", "Maintenance Dept", "Boiler Room", "Blocked fire extinguisher and exit pathway", "Fire Hazard", "Warning", "N/A", "N/A", "10", "Verbal Warning", "M. Syahmi (SHO)", "Closed"],
-    ["5", "2026-08-05", "Tan Kah Seng (EE-115)", "Warehouse Operations", "Loading Bay 2", "Operating forklift above speed limit (15km/h)", "Vehicle Safety", "N/A", "Written Warning", "N/A", "20", "RM 100 Fine", "M. Syahmi (SHO)", "Closed"],
-    ["6", "2026-08-05", "Subcon - Syarikat Jaya", "Civil Subcontractor", "Drainage Site B", "Failure to provide safety barriers around excavation", "Excavation", "Written Warning", "N/A", "N/A", "25", "RM 200 Subcon Fine", "M. Syahmi (SHO)", "Closed"],
-    ["7", "2026-08-06", "S. Vijay (EE-311)", "Painting Dept", "Spray Booth 1", "Not wearing chemical respirator while painting", "PPE Non-Compliance", "Warning", "N/A", "N/A", "10", "Verbal Warning", "M. Syahmi (SHO)", "Closed"],
-    ["8", "2026-08-07", "Subcon - Tan Weld", "Mechanical Subcontractor", "Assembly Yard", "Hot work conducted without valid Hot Work Permit", "Permit to Work", "N/A", "N/A", "Stop Work", "40", "Stop Work & RM 500 Fine", "M. Syahmi (SHO)", "Closed"],
-    ["9", "2026-08-08", "Zulkifli (EE-145)", "Store Management", "Chemical Store", "Poor housekeeping, chemical spill not cleaned", "Housekeeping", "Warning", "N/A", "N/A", "10", "Clean-up directive", "M. Syahmi (SHO)", "Closed"],
-    ["10", "2026-08-09", "Muhammad Ali (EE-220)", "Production Line 3", "Machining Area", "Bypassing safety interlock door of CNC machine", "Machine Guarding", "N/A", "Suspension 3 days", "N/A", "30", "Suspension Order", "M. Syahmi (SHO)", "Closed"],
-    ["11", "2026-08-10", "Subcon - Elite Power", "Electrical Subcontractor", "Main Switchboard Room", "No LOTO (Lockout/Tagout) applied during repair", "Electrical Safety", "N/A", "Written Warning", "N/A", "35", "LOTO enforcement instruction", "M. Syahmi (SHO)", "Closed"],
-    ["12", "2026-08-10", "R. Ramasamy (EE-043)", "Logistics Dept", "Warehouse B", "Smoking in non-designated high risk storage area", "Fire Hazard", "N/A", "RM 150 Fine", "N/A", "25", "RM 150 Fine & Warning", "M. Syahmi (SHO)", "Closed"],
-    ["13", "2026-08-11", "Michael Wong (EE-188)", "Quality Control", "Testing Lab 2", "Disposing chemical solvent into municipal drain", "Environmental", "N/A", "Written Warning", "N/A", "30", "Environmental training req.", "M. Syahmi (SHO)", "Open"],
-    ["14", "2026-08-11", "Subcon - Lin & Co", "Electrical Subcontractor", "Generator Room", "Using non-certified electrical power tools", "Electrical Safety", "Warning", "N/A", "N/A", "15", "Tool Confiscated", "M. Syahmi (SHO)", "Open"],
-    ["15", "2026-08-11", "Azlan Shah (EE-205)", "Production Line 2", "Mixing Yard", "Failure to report minor spill immediately", "Incident Reporting", "Warning", "N/A", "N/A", "10", "Verbal Warning", "M. Syahmi (SHO)", "Closed"],
-    ["16", "2026-08-11", "Chong Wei (EE-072)", "Maintenance Dept", "Roof Area", "Working on roof without anchor point line setup", "Height Safety", "N/A", "Written Warning", "N/A", "25", "Harness installation instruction", "M. Syahmi (SHO)", "Open"],
-    ["17", "2026-08-11", "Subcon - Syarikat Jaya", "Civil Subcontractor", "Gate 3 Entrance", "Obstructing emergency fire hydrant with soil pile", "Fire Hazard", "Warning", "N/A", "N/A", "15", "Removal order issued", "M. Syahmi (SHO)", "Closed"],
-    ["18", "2026-08-11", "G. Naidu (EE-119)", "Logistics Dept", "Loading Dock 1", "Not wearing steel toe safety shoes in dock area", "PPE Non-Compliance", "Warning", "N/A", "N/A", "10", "Verbal Warning", "M. Syahmi (SHO)", "Closed"],
-    ["19", "2026-08-11", "Subcon - Tan Weld", "Mechanical Subcontractor", "Welding Bay C", "Lack of proper ventilation during heavy arc welding", "Industrial Hygiene", "Warning", "N/A", "N/A", "15", "Ventilation fan deployed", "M. Syahmi (SHO)", "Closed"],
-    ["20", "2026-08-11", "Mustafa (EE-302)", "Security Dept", "Front Gate Control", "Sleeping while on safety surveillance shift duty", "Safety Conduct", "N/A", "Written Warning", "N/A", "20", "Disciplinary hearing", "M. Syahmi (SHO)", "Closed"],
-    ["21", "2026-08-11", "Lim Kok Wing (EE-091)", "Production Line 1", "Packaging Area", "Stacking pallets dangerously high above yellow line", "Housekeeping", "Warning", "N/A", "N/A", "10", "Re-stack directive", "M. Syahmi (SHO)", "Closed"],
-    ["22", "2026-08-11", "Subcon - Elite Power", "Electrical Subcontractor", "Utility Building", "Leaving energized electrical panels open & unattended", "Electrical Safety", "N/A", "Written Warning", "N/A", "30", "Secure panel order", "M. Syahmi (SHO)", "Closed"],
-    ["23", "2026-08-11", "Steven Cole (EE-401)", "Operations Dept", "Silo Area", "Entering confined space without oxygen gas testing", "Confined Space", "N/A", "Suspension 5 days", "N/A", "45", "Immediate suspension & fine", "M. Syahmi (SHO)", "Open"],
-    ["24", "2026-08-11", "Faris (EE-289)", "Maintenance Dept", "Compressor Room", "Overriding air compressor pressure limit safety valve", "Pressure Vessel", "N/A", "Written Warning", "N/A", "25", "Reset safety valve order", "M. Syahmi (SHO)", "Closed"],
-    ["25", "2026-08-11", "Subcon - Lin & Co", "Electrical Subcontractor", "Office Annex", "Using daisy-chained extension leads for high load", "Electrical Safety", "Warning", "N/A", "N/A", "10", "Leads confiscated", "M. Syahmi (SHO)", "Closed"],
-    ["26", "2026-08-11", "S. Selvam (EE-341)", "Logistics Dept", "Scrap Yard", "Lifting steel plates without certified crane rigger", "Rigging/Lifting", "N/A", "Written Warning", "N/A", "25", "Stop lift & training req.", "M. Syahmi (SHO)", "Closed"],
-    ["27", "2026-08-11", "Amiruddin (EE-099)", "Production Line 2", "Conveyor Yard", "Riding on active assembly conveyor line for fun", "Safety Conduct", "N/A", "Written Warning", "N/A", "20", "Warning letter issued", "M. Syahmi (SHO)", "Closed"],
-    ["28", "2026-08-11", "Subcon - Syarikat Jaya", "Civil Subcontractor", "Piling Area", "Failure to deploy ear protection in high noise zone", "PPE Non-Compliance", "Warning", "N/A", "N/A", "10", "Ear plugs distributed", "M. Syahmi (SHO)", "Closed"],
-    ["29", "2026-08-11", "Yeoh Boon Hean (EE-137)", "Quality Control", "Chemical Lab 1", "Eating/drinking inside chemical analysis laboratory", "Hygiene Safety", "Warning", "N/A", "N/A", "10", "Verbal Warning", "M. Syahmi (SHO)", "Closed"],
-    ["30", "2026-08-11", "Rahmat (EE-164)", "Logistics Dept", "Warehouse C", "Using mobile phone while driving warehouse forklift", "Vehicle Safety", "N/A", "Written Warning", "N/A", "20", "RM 100 Fine", "M. Syahmi (SHO)", "Closed"]
+    ["5", "2026-08-05", "Tan Kah Seng (EE-115)", "Warehouse Operations", "Loading Bay 2", "Operating forklift above speed limit (15km/h)", "Vehicle Safety", "N/A", "Written Warning", "N/A", "20", "RM 100 Fine", "M. Syahmi (SHO)", "Closed"]
   ];
 
   try {
@@ -612,7 +584,6 @@ export async function fetchSafetyViolationScoring(): Promise<string[][]> {
     if (!res.ok) throw new Error('Failed to fetch from sheets');
     const csvText = await res.text();
     
-    // Check if it returned general HTML instead of actual CSV data (e.g., error or sign-in walls)
     if (csvText.includes('<!DOCTYPE html>') || csvText.includes('google-signin-button')) {
       throw new Error('Returned HTML instead of CSV data');
     }
@@ -623,7 +594,6 @@ export async function fetchSafetyViolationScoring(): Promise<string[][]> {
         skipEmptyLines: true,
         complete: (results) => {
           if (results.data && results.data.length > 0) {
-            // Standardize output to array of string arrays
             const formatted: string[][] = results.data.map((row: any) => 
               Array.isArray(row) ? row.map(cell => String(cell || '').trim()) : []
             );
@@ -642,3 +612,245 @@ export async function fetchSafetyViolationScoring(): Promise<string[][]> {
     return fallbackData;
   }
 }
+
+// 15. Summary Tables Fetcher (Q25:W102) from Google Sheet
+export interface SummaryTableRowData {
+  no: string;
+  label: string;
+  c2022: string;
+  c2023: string;
+  c2024: string;
+  c2025: string;
+  c2026: string;
+  total: string;
+  isTotal?: boolean;
+}
+
+export interface SummaryTableSectionData {
+  title: string;
+  headers: string[];
+  rows: SummaryTableRowData[];
+}
+
+export type SummaryTablesMap = Record<string, SummaryTableSectionData>;
+
+export async function fetchSummaryTablesFromGoogleSheet(): Promise<SummaryTablesMap> {
+  const SPREADSHEET_ID = '1o9P6GnlsAwSJEUYHxITt1Opz973uX37MLBiv0LdFdIs';
+  const GID = '88563672';
+  const url = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:csv&gid=${GID}&range=Q25:W102`;
+
+  const fallbackTables: SummaryTablesMap = {
+    LOCATION: {
+      title: 'LOCATION OF INCIDENTS',
+      headers: ['NO', 'LOCATION', '2022', '2023', '2024', '2025', '2026', 'TOTAL INCIDENTS'],
+      rows: [
+        { no: '1', label: 'IJOK', c2022: '3', c2023: '3', c2024: '3', c2025: '6', c2026: '5', total: '20' },
+        { no: '2', label: 'PENANG', c2022: '0', c2023: '0', c2024: '1', c2025: '1', c2026: '3', total: '5' },
+        { no: '3', label: 'PUBLIC ROAD', c2022: '2', c2023: '1', c2024: '11', c2025: '6', c2026: '9', total: '29' },
+        { no: '4', label: 'SITE', c2022: '0', c2023: '0', c2024: '1', c2025: '0', c2026: '3', total: '4' },
+        { no: '', label: 'TOTAL', c2022: '5', c2023: '4', c2024: '16', c2025: '13', c2026: '20', total: '58', isTotal: true },
+      ],
+    },
+    'INCIDENT CATEGORY': {
+      title: 'INCIDENT CATEGORY',
+      headers: ['NO', 'INCIDENT CATEGORY', '2022', '2023', '2024', '2025', '2026', 'TOTAL INCIDENTS'],
+      rows: [
+        { no: '1', label: 'Near Miss', c2022: '0', c2023: '0', c2024: '1', c2025: '0', c2026: '2', total: '3' },
+        { no: '2', label: 'Property Damage Only', c2022: '2', c2023: '2', c2024: '5', c2025: '8', c2026: '11', total: '28' },
+        { no: '3', label: 'First Aid Case (FAC)', c2022: '0', c2023: '0', c2024: '1', c2025: '1', c2026: '0', total: '2' },
+        { no: '4', label: 'Medical Treatment Case (MTC)', c2022: '3', c2023: '1', c2024: '9', c2025: '3', c2026: '4', total: '20' },
+        { no: '5', label: 'Restricted Work Case (RWC)', c2022: '0', c2023: '0', c2024: '0', c2025: '0', c2026: '0', total: '0' },
+        { no: '6', label: 'Lost Time Injury (LTI)', c2022: '0', c2023: '1', c2024: '0', c2025: '1', c2026: '3', total: '5' },
+        { no: '7', label: 'Fatality', c2022: '0', c2023: '0', c2024: '0', c2025: '0', c2026: '0', total: '0' },
+        { no: '8', label: 'Occupational Illness', c2022: '0', c2023: '0', c2024: '0', c2025: '0', c2026: '0', total: '0' },
+        { no: '9', label: 'Other Illness', c2022: '0', c2023: '0', c2024: '0', c2025: '0', c2026: '1', total: '1' },
+        { no: '', label: 'TOTAL', c2022: '5', c2023: '4', c2024: '16', c2025: '13', c2026: '21', total: '59', isTotal: true },
+      ],
+    },
+    CLASSIFICATION: {
+      title: 'INCIDENT CLASSIFICATION',
+      headers: ['NO', 'CLASSIFICATION', '2022', '2023', '2024', '2025', '2026', 'TOTAL INCIDENTS'],
+      rows: [
+        { no: '1', label: 'Unsafe Act', c2022: '1', c2023: '0', c2024: '3', c2025: '7', c2026: '7', total: '18' },
+        { no: '2', label: 'Unsafe Condition', c2022: '2', c2023: '2', c2024: '1', c2025: '0', c2026: '1', total: '6' },
+        { no: '3', label: 'Equipment Failure', c2022: '0', c2023: '0', c2024: '1', c2025: '0', c2026: '1', total: '2' },
+        { no: '4', label: 'Environmental', c2022: '0', c2023: '0', c2024: '0', c2025: '0', c2026: '1', total: '1' },
+        { no: '5', label: 'Fire / Explosion', c2022: '0', c2023: '1', c2024: '0', c2025: '1', c2026: '1', total: '3' },
+        { no: '6', label: 'Vehicle Incident', c2022: '0', c2023: '0', c2024: '8', c2025: '4', c2026: '7', total: '19' },
+        { no: '7', label: 'Company Vehicle Incident', c2022: '2', c2023: '1', c2024: '3', c2025: '1', c2026: '3', total: '10' },
+        { no: '', label: 'TOTAL', c2022: '5', c2023: '4', c2024: '16', c2025: '13', c2026: '21', total: '59', isTotal: true },
+      ],
+    },
+    'INJURY TYPE': {
+      title: 'INJURY TYPE / NATURE OF INJURY',
+      headers: ['NO', 'INJURY TYPE', '2022', '2023', '2024', '2025', '2026', 'TOTAL INCIDENTS'],
+      rows: [
+        { no: '1', label: 'N/A', c2022: '3', c2023: '2', c2024: '6', c2025: '8', c2026: '13', total: '32' },
+        { no: '2', label: 'Cut/Abrasion', c2022: '2', c2023: '1', c2024: '10', c2025: '3', c2026: '3', total: '19' },
+        { no: '3', label: 'Bruise', c2022: '0', c2023: '0', c2024: '0', c2025: '1', c2026: '4', total: '5' },
+        { no: '4', label: 'Pinch Injury', c2022: '0', c2023: '1', c2024: '0', c2025: '1', c2026: '0', total: '2' },
+        { no: '5', label: 'Other', c2022: '0', c2023: '0', c2024: '0', c2025: '0', c2026: '1', total: '1' },
+        { no: '', label: 'TOTAL', c2022: '5', c2023: '4', c2024: '16', c2025: '13', c2026: '21', total: '59', isTotal: true },
+      ],
+    },
+    'WORK EXPERIENCE': {
+      title: 'WORK EXPERIENCE OF INJURED PERSON',
+      headers: ['NO', 'WORK EXPERIENCE', '2022', '2023', '2024', '2025', '2026', 'TOTAL INCIDENTS'],
+      rows: [
+        { no: '1', label: 'Permanent Staff <5 Year', c2022: '3', c2023: '3', c2024: '7', c2025: '5', c2026: '10', total: '28' },
+        { no: '2', label: 'Permanent Staff 5-10 Year', c2022: '1', c2023: '0', c2024: '0', c2025: '1', c2026: '2', total: '4' },
+        { no: '3', label: 'Permanent Staff >10 Year', c2022: '0', c2023: '0', c2024: '1', c2025: '1', c2026: '3', total: '5' },
+        { no: '4', label: 'Intern/OJT', c2022: '1', c2023: '0', c2024: '6', c2025: '5', c2026: '0', total: '12' },
+        { no: '5', label: 'Others', c2022: '0', c2023: '1', c2024: '2', c2025: '1', c2026: '1', total: '5' },
+        { no: '', label: 'TOTAL', c2022: '5', c2023: '4', c2024: '16', c2025: '13', c2026: '16', total: '54', isTotal: true },
+      ],
+    },
+    'OCCUPATIONAL INCIDENT': {
+      title: 'OCCUPATIONAL INCIDENT VS NON-OCCUPATIONAL INCIDENT',
+      headers: ['NO', 'INCIDENT TYPE', '2022', '2023', '2024', '2025', '2026', 'TOTAL INCIDENTS'],
+      rows: [
+        { no: '1', label: 'YES (WORK-RELATED)', c2022: '4', c2023: '4', c2024: '8', c2025: '9', c2026: '13', total: '38' },
+        { no: '2', label: 'NO (NON-WORK RELATED)', c2022: '1', c2023: '0', c2024: '8', c2025: '4', c2026: '8', total: '21' },
+        { no: '', label: 'TOTAL', c2022: '5', c2023: '4', c2024: '16', c2025: '13', c2026: '21', total: '59', isTotal: true },
+      ],
+    },
+  };
+
+  try {
+    const res = await fetch(url);
+    if (!res.ok) throw new Error('Failed to fetch summary tables from sheets');
+    const csvText = await res.text();
+
+    if (csvText.includes('<!DOCTYPE html>') || csvText.includes('google-signin-button')) {
+      throw new Error('Returned HTML instead of CSV data');
+    }
+
+    return new Promise((resolve) => {
+      Papa.parse(csvText, {
+        header: false,
+        skipEmptyLines: true,
+        complete: (results) => {
+          if (!results.data || results.data.length === 0) {
+            resolve(fallbackTables);
+            return;
+          }
+
+          const parsed: string[][] = results.data as string[][];
+          const map: SummaryTablesMap = {};
+          let currentKey = '';
+          let currentTitle = '';
+          let currentRows: SummaryTableRowData[] = [];
+          let itemIndex = 1;
+
+          parsed.forEach((row: any) => {
+            if (!Array.isArray(row)) return;
+            const col0 = String(row[0] || '').trim();
+            if (!col0) return;
+
+            const isHeaderRow = ['LOCATION', 'INCIDENT CATEGORY', 'CLASSIFICATION', 'INJURY TYPE', 'WORK EXPERIENCE', 'OCCUPATIONAL INCIDENT'].some(
+              (k) => col0.toUpperCase().includes(k)
+            );
+
+            if (isHeaderRow) {
+              if (currentKey && currentRows.length > 0) {
+                // Add calculated TOTAL row if not exists
+                const total2022 = currentRows.reduce((sum, r) => sum + (parseInt(r.c2022, 10) || 0), 0);
+                const total2023 = currentRows.reduce((sum, r) => sum + (parseInt(r.c2023, 10) || 0), 0);
+                const total2024 = currentRows.reduce((sum, r) => sum + (parseInt(r.c2024, 10) || 0), 0);
+                const total2025 = currentRows.reduce((sum, r) => sum + (parseInt(r.c2025, 10) || 0), 0);
+                const total2026 = currentRows.reduce((sum, r) => sum + (parseInt(r.c2026, 10) || 0), 0);
+                const grandTotal = total2022 + total2023 + total2024 + total2025 + total2026;
+
+                currentRows.push({
+                  no: '',
+                  label: 'TOTAL',
+                  c2022: String(total2022),
+                  c2023: String(total2023),
+                  c2024: String(total2024),
+                  c2025: String(total2025),
+                  c2026: String(total2026),
+                  total: String(grandTotal),
+                  isTotal: true,
+                });
+
+                map[currentKey] = {
+                  title: currentTitle,
+                  headers: ['NO', currentTitle, '2022', '2023', '2024', '2025', '2026', 'TOTAL INCIDENTS'],
+                  rows: currentRows,
+                };
+              }
+
+              currentTitle = col0;
+              currentKey = col0.toUpperCase();
+              currentRows = [];
+              itemIndex = 1;
+            } else if (currentKey) {
+              const c2022 = String(row[1] || '0').trim();
+              const c2023 = String(row[2] || '0').trim();
+              const c2024 = String(row[3] || '0').trim();
+              const c2025 = String(row[4] || '0').trim();
+              const c2026 = String(row[5] || '0').trim();
+              let tot = String(row[6] || '0').trim();
+
+              const sumVal =
+                (parseInt(c2022, 10) || 0) +
+                (parseInt(c2023, 10) || 0) +
+                (parseInt(c2024, 10) || 0) +
+                (parseInt(c2025, 10) || 0) +
+                (parseInt(c2026, 10) || 0);
+
+              if (tot === '0' || !tot) {
+                tot = String(sumVal);
+              }
+
+              currentRows.push({
+                no: String(itemIndex++),
+                label: col0,
+                c2022,
+                c2023,
+                c2024,
+                c2025,
+                c2026,
+                total: tot,
+              });
+            }
+          });
+
+          if (currentKey && currentRows.length > 0) {
+            const total2022 = currentRows.reduce((sum, r) => sum + (parseInt(r.c2022, 10) || 0), 0);
+            const total2023 = currentRows.reduce((sum, r) => sum + (parseInt(r.c2023, 10) || 0), 0);
+            const total2024 = currentRows.reduce((sum, r) => sum + (parseInt(r.c2024, 10) || 0), 0);
+            const total2025 = currentRows.reduce((sum, r) => sum + (parseInt(r.c2025, 10) || 0), 0);
+            const total2026 = currentRows.reduce((sum, r) => sum + (parseInt(r.c2026, 10) || 0), 0);
+            const grandTotal = total2022 + total2023 + total2024 + total2025 + total2026;
+
+            currentRows.push({
+              no: '',
+              label: 'TOTAL',
+              c2022: String(total2022),
+              c2023: String(total2023),
+              c2024: String(total2024),
+              c2025: String(total2025),
+              c2026: String(total2026),
+              total: String(grandTotal),
+              isTotal: true,
+            });
+
+            map[currentKey] = {
+              title: currentTitle,
+              headers: ['NO', currentTitle, '2022', '2023', '2024', '2025', '2026', 'TOTAL INCIDENTS'],
+              rows: currentRows,
+            };
+          }
+
+          resolve(Object.keys(map).length > 0 ? map : fallbackTables);
+        },
+        error: () => resolve(fallbackTables),
+      });
+    });
+  } catch (err) {
+    console.warn('Error fetching summary tables:', err);
+    return fallbackTables;
+  }
+}
+

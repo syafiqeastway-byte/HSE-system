@@ -47,13 +47,17 @@ export const SafetyViolationPage: React.FC<SafetyViolationPageProps> = ({
   const summaryRows = summaryTableData.length > 1 ? summaryTableData.slice(1) : [];
 
   // Filter rows based on search query
-  const filteredRows = rows.filter((row) =>
-    row.some((cell) => cell.toLowerCase().includes(searchQuery.toLowerCase()))
-  );
+  const filteredRows = rows.filter((row) => {
+    const q = searchQuery.trim().toLowerCase();
+    if (!q) return true;
+    return row.some((cell) => (cell || '').toLowerCase().includes(q));
+  });
 
-  const filteredSummaryRows = summaryRows.filter((row) =>
-    row.some((cell) => cell.toLowerCase().includes(searchQuery.toLowerCase()))
-  );
+  const filteredSummaryRows = summaryRows.filter((row) => {
+    const q = searchQuery.trim().toLowerCase();
+    if (!q) return true;
+    return row.some((cell) => (cell || '').toLowerCase().includes(q));
+  });
 
   return (
     <div className="space-y-6">
@@ -86,8 +90,18 @@ export const SafetyViolationPage: React.FC<SafetyViolationPageProps> = ({
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search violations..."
-              className="w-full pl-9 pr-4 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs sm:text-sm text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full pl-9 pr-9 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs sm:text-sm text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
+            {searchQuery && (
+              <button
+                type="button"
+                onClick={() => setSearchQuery('')}
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-0.5 rounded-full"
+                title="Clear search"
+              >
+                <span className="material-symbols-outlined text-base">close</span>
+              </button>
+            )}
           </div>
         </div>
       </div>

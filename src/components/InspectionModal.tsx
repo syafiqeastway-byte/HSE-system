@@ -247,8 +247,18 @@ export const InspectionModal: React.FC<InspectionModalProps> = ({ isOpen, filter
                     value={searchQueryWorkplace}
                     onChange={(e) => setSearchQueryWorkplace(e.target.value)}
                     placeholder="SEARCH WORKPLACE INSPECTION RECORDS..."
-                    className="w-full pl-9 pr-4 py-2.5 rounded-xl bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 text-xs sm:text-sm text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-emerald-500 shadow-sm"
+                    className="w-full pl-9 pr-9 py-2.5 rounded-xl bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 text-xs sm:text-sm text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-emerald-500 shadow-sm"
                   />
+                  {searchQueryWorkplace && (
+                    <button
+                      type="button"
+                      onClick={() => setSearchQueryWorkplace('')}
+                      className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-0.5 rounded-full"
+                      title="Clear search"
+                    >
+                      <span className="material-symbols-outlined text-base">close</span>
+                    </button>
+                  )}
                 </div>
 
                 {/* Download Excel Button */}
@@ -351,8 +361,18 @@ export const InspectionModal: React.FC<InspectionModalProps> = ({ isOpen, filter
                     value={searchQueryFE}
                     onChange={(e) => setSearchQueryFE(e.target.value)}
                     placeholder="SEARCH BY LOCATION, BRAND, SERIAL NO, EXPIRY DATE, REMARKS..."
-                    className="w-full pl-9 pr-4 py-2.5 rounded-xl bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 text-xs sm:text-sm text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-red-500 shadow-sm"
+                    className="w-full pl-9 pr-9 py-2.5 rounded-xl bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 text-xs sm:text-sm text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-red-500 shadow-sm"
                   />
+                  {searchQueryFE && (
+                    <button
+                      type="button"
+                      onClick={() => setSearchQueryFE('')}
+                      className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-0.5 rounded-full"
+                      title="Clear search"
+                    >
+                      <span className="material-symbols-outlined text-base">close</span>
+                    </button>
+                  )}
                 </div>
 
                 {/* Download Excel Button */}

@@ -135,13 +135,29 @@ export const AllIncidentsPage: React.FC<AllIncidentsPageProps> = ({ onBackToHome
             </span>
             <input
               type="text"
-              placeholder="Search ID, Location, Category, Description..."
+              placeholder="Search ID, Location, Category, Description, Person..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all"
+              className="w-full pl-10 pr-10 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-slate-100 placeholder-slate-400 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition-all"
             />
+            {searchQuery && (
+              <button
+                type="button"
+                onClick={() => setSearchQuery('')}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-0.5 rounded-full"
+                title="Clear search"
+              >
+                <span className="material-symbols-outlined text-lg">close</span>
+              </button>
+            )}
           </div>
-          
+          <div className="text-xs font-medium text-slate-500 dark:text-slate-400">
+            {searchQuery.trim() ? (
+              <span>Found <strong className="text-blue-600 dark:text-blue-400">{filteredIncidents.length}</strong> matching records (Total {incidents.length})</span>
+            ) : (
+              <span>Total <strong className="text-slate-800 dark:text-slate-200">{incidents.length}</strong> incident records</span>
+            )}
+          </div>
         </div>
 
         {/* Table Content */}

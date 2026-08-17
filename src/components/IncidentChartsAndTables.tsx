@@ -1,7 +1,13 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { IncidentRecord } from '../types';
-import { fetchLiveIncidentRecords } from '../utils/gasBridge';
+import {
+  fetchLiveIncidentRecords,
+  fetchSummaryTablesFromGoogleSheet,
+  SummaryTablesMap,
+  SummaryTableSectionData,
+} from '../utils/gasBridge';
 import { formatToPreviewUrl } from '../utils/formatDriveUrl';
+import * as XLSX from 'xlsx';
 
 declare const Chart: any;
 
@@ -107,6 +113,7 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
 }) => {
   const [activeTab, setActiveTab] = useState<TabHeaderKey>('YEAR');
   const [incidents, setIncidents] = useState<IncidentRecord[]>([]);
+  const [summaryTables, setSummaryTables] = useState<SummaryTablesMap | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
@@ -119,14 +126,18 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
   const chartInstance2 = useRef<any>(null);
   const occupationalChartInstance = useRef<any>(null);
 
-  // Fetch Live Incident Records from Google Sheets
+  // Fetch Live Incident Records & Summary Tables from Google Sheets
   const loadData = async () => {
     setLoading(true);
     try {
-      const data = await fetchLiveIncidentRecords();
+      const [data, tablesMap] = await Promise.all([
+        fetchLiveIncidentRecords(),
+        fetchSummaryTablesFromGoogleSheet(),
+      ]);
       setIncidents(data as IncidentRecord[]);
+      setSummaryTables(tablesMap);
     } catch (err) {
-      console.error('Error loading incident records:', err);
+      console.error('Error loading incident records or summary tables:', err);
     } finally {
       setLoading(false);
     }
@@ -135,6 +146,69 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
   useEffect(() => {
     loadData();
   }, []);
+
+  // Helper to get active summary table from Google Sheets data matching dropdown list selection
+  const getActiveSummaryTable = (): SummaryTableSectionData | null => {
+    if (!summaryTables) return null;
+
+    switch (activeTab) {
+      case 'LOCATION':
+        return summaryTables['LOCATION'] || null;
+      case 'INCIDENT CATEGORY':
+        return summaryTables['INCIDENT CATEGORY'] || null;
+      case 'CLASSIFICATION':
+        return summaryTables['CLASSIFICATION'] || null;
+      case 'INJURY TYPE':
+        return summaryTables['INJURY TYPE'] || null;
+      case 'WORK EXPERIENCE':
+        return summaryTables['WORK EXPERIENCE'] || null;
+      case 'OCCUPATIONAL INCIDENT?':
+        return summaryTables['OCCUPATIONAL INCIDENT'] || null;
+      default:
+        // Default to LOCATION summary table for other tabs (DATE, YEAR, DESCRIPTION, etc.)
+        return summaryTables['LOCATION'] || summaryTables['INCIDENT CATEGORY'] || null;
+    }
+  };
+
+  // Export summary table to Excel as requested
+  const exportSummaryTableToExcel = () => {
+    const tableData = getActiveSummaryTable();
+    if (!tableData) return;
+
+    const colName = tableData.headers[1] || 'CATEGORY';
+    const totalName = tableData.headers[7] || 'TOTAL INCIDENTS';
+
+    const exportRows = tableData.rows.map((r, idx) => {
+      const obj: any = {};
+      obj['NO'] = r.no || (r.isTotal ? '' : String(idx + 1));
+      obj[colName] = r.label;
+      obj['2022'] = r.c2022;
+      obj['2023'] = r.c2023;
+      obj['2024'] = r.c2024;
+      obj['2025'] = r.c2025;
+      obj['2026'] = r.c2026;
+      obj[totalName] = r.total;
+      return obj;
+    });
+
+    const headerOrder = [
+      'NO',
+      colName,
+      '2022',
+      '2023',
+      '2024',
+      '2025',
+      '2026',
+      totalName
+    ];
+
+    const worksheet = XLSX.utils.json_to_sheet(exportRows, { header: headerOrder });
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Summary');
+
+    const fileName = `${tableData.title.replace(/[^a-zA-Z0-9]/g, '_')}_Summary.xlsx`;
+    XLSX.writeFile(workbook, fileName);
+  };
 
   // Calculate Frequency map helper
   const getFrequencyMap = (fieldExtractor: (record: IncidentRecord) => string) => {
@@ -771,42 +845,57 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
 
   // Client-Side Search Filter across all fields
   const filteredIncidents = incidents.filter((inc) => {
-    const q = searchQuery.toLowerCase();
-    const desc = inc.description || '';
-    const person = inc.personInvolved || '';
-    const reporter = inc.reportedBy || '';
+    const q = searchQuery.trim().toLowerCase();
+    if (!q) return true;
+    const id = inc.id || '';
+    const date = inc.date || '';
+    const year = inc.year || '';
+    const location = inc.location || '';
+    const desc = (inc as any).rootCause || inc.description || (inc as any).root_cause || '';
+    const occupationalIncident = inc.occupationalIncident || '';
+    const category = inc.category || '';
+    const propertyDamage = inc.propertyDamage || '';
+    const damageLevel = inc.damageLevel || '';
+    const classification = inc.classification || '';
+    const injuryType = inc.injuryType || '';
+    const person = inc.personInvolved || (inc as any).person_involved || '';
+    const experienceLevel = inc.experienceLevel || '';
+    const reporter = inc.reportedBy || (inc as any).investigator || '';
+
     return (
-      inc.id.toLowerCase().includes(q) ||
-      inc.date.toLowerCase().includes(q) ||
-      (inc.year && inc.year.toLowerCase().includes(q)) ||
-      inc.location.toLowerCase().includes(q) ||
+      id.toLowerCase().includes(q) ||
+      date.toLowerCase().includes(q) ||
+      year.toLowerCase().includes(q) ||
+      location.toLowerCase().includes(q) ||
       desc.toLowerCase().includes(q) ||
-      inc.category.toLowerCase().includes(q) ||
-      inc.classification.toLowerCase().includes(q) ||
-      (inc.injuryType && inc.injuryType.toLowerCase().includes(q)) ||
+      occupationalIncident.toLowerCase().includes(q) ||
+      category.toLowerCase().includes(q) ||
+      propertyDamage.toLowerCase().includes(q) ||
+      damageLevel.toLowerCase().includes(q) ||
+      classification.toLowerCase().includes(q) ||
+      injuryType.toLowerCase().includes(q) ||
       person.toLowerCase().includes(q) ||
-      (inc.experienceLevel && inc.experienceLevel.toLowerCase().includes(q)) ||
+      experienceLevel.toLowerCase().includes(q) ||
       reporter.toLowerCase().includes(q)
     );
   });
 
-  // Display only 10 latest cases
-  const displayIncidents = [...filteredIncidents]
-    .sort((a, b) => {
-      const yearA = parseInt(a.year || '0', 10);
-      const yearB = parseInt(b.year || '0', 10);
-      if (yearA !== yearB && !isNaN(yearA) && !isNaN(yearB) && yearA > 0 && yearB > 0) {
-        return yearB - yearA;
-      }
-      const idA = parseInt(a.id.replace(/\D/g, ''), 10);
-      const idB = parseInt(b.id.replace(/\D/g, ''), 10);
-      if (!isNaN(idA) && !isNaN(idB) && idA !== idB && idA > 0 && idB > 0) {
-        return idB - idA;
-      }
-      return 0;
-    })
-    .slice(0, 10)
-    .reverse();
+  // Display all matched cases if searching, otherwise display 10 latest cases
+  const sortedIncidents = [...filteredIncidents].sort((a, b) => {
+    const yearA = parseInt(a.year || '0', 10);
+    const yearB = parseInt(b.year || '0', 10);
+    if (yearA !== yearB && !isNaN(yearA) && !isNaN(yearB) && yearA > 0 && yearB > 0) {
+      return yearB - yearA;
+    }
+    const idA = parseInt(a.id.replace(/\D/g, ''), 10);
+    const idB = parseInt(b.id.replace(/\D/g, ''), 10);
+    if (!isNaN(idA) && !isNaN(idB) && idA !== idB && idA > 0 && idB > 0) {
+      return idB - idA;
+    }
+    return 0;
+  });
+
+  const displayIncidents = searchQuery.trim() ? sortedIncidents : sortedIncidents.slice(0, 10).reverse();
 
   return (
     <div className="glass-card p-4 sm:p-6 mb-8">
@@ -911,6 +1000,99 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
             </div>
           </div>
 
+          {/* Dynamic Fixed Summary Table from Google Sheet (Below Main Chart) */}
+          {getActiveSummaryTable() && (
+            <div className="mb-8 p-4 sm:p-6 rounded-2xl bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 shadow-md">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4 pb-3 border-b border-slate-200 dark:border-slate-800">
+                <div className="flex items-center gap-2.5">
+                  <span className="material-symbols-outlined text-blue-600 dark:text-blue-400 text-2xl">table_chart</span>
+                  <div>
+                    <h3 className="text-sm sm:text-base font-extrabold text-slate-900 dark:text-white uppercase tracking-wider">
+                      {getActiveSummaryTable()?.title}
+                    </h3>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={exportSummaryTableToExcel}
+                    className="px-3.5 py-1.5 rounded-lg text-white font-bold flex items-center gap-1.5 shadow-sm hover:brightness-110 active:scale-95 transition-all text-xs"
+                    style={{ backgroundColor: '#217346' }}
+                  >
+                    <span className="material-symbols-outlined text-sm">download</span>
+                    Download Excel
+                  </button>
+                </div>
+              </div>
+
+              {/* Table Container - Fixed formatting with bold header row as requested */}
+              <div className="overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-700/80 shadow-sm">
+                <table className="w-full text-left text-xs border-collapse">
+                  <thead>
+                    <tr className="bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white border-b-2 border-slate-300 dark:border-slate-600">
+                      {getActiveSummaryTable()?.headers.map((h, i) => (
+                        <th
+                          key={i}
+                          className={`px-3.5 py-3 font-extrabold uppercase tracking-wider text-xs ${
+                            i === 0
+                              ? 'w-12 text-center'
+                              : i === 1
+                              ? 'text-left min-w-[180px]'
+                              : 'text-center min-w-[85px]'
+                          }`}
+                        >
+                          {h}
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-200 dark:divide-slate-800 text-slate-800 dark:text-slate-200">
+                    {getActiveSummaryTable()?.rows.map((row, idx) => {
+                      const isTotal = row.isTotal || row.label.toUpperCase() === 'TOTAL';
+                      return (
+                        <tr
+                          key={idx}
+                          className={`transition-colors ${
+                            isTotal
+                              ? 'bg-blue-50/90 dark:bg-blue-950/60 font-extrabold text-slate-900 dark:text-white border-t-2 border-slate-300 dark:border-slate-600'
+                              : idx % 2 === 0
+                              ? 'bg-white dark:bg-slate-900/60 hover:bg-slate-50 dark:hover:bg-slate-800/50'
+                              : 'bg-slate-50/50 dark:bg-slate-800/30 hover:bg-slate-100/60 dark:hover:bg-slate-800/70'
+                          }`}
+                        >
+                          <td className={`px-3.5 py-2.5 text-center font-bold ${isTotal ? 'text-blue-600 dark:text-blue-400' : 'text-slate-500'}`}>
+                            {row.no || (isTotal ? '—' : idx + 1)}
+                          </td>
+                          <td className={`px-3.5 py-2.5 ${isTotal ? 'font-extrabold text-blue-700 dark:text-blue-300' : 'font-bold'}`}>
+                            {row.label}
+                          </td>
+                          <td className={`px-3.5 py-2.5 text-center ${isTotal ? 'font-extrabold text-blue-700 dark:text-blue-300' : 'font-semibold'}`}>
+                            {row.c2022}
+                          </td>
+                          <td className={`px-3.5 py-2.5 text-center ${isTotal ? 'font-extrabold text-blue-700 dark:text-blue-300' : 'font-semibold'}`}>
+                            {row.c2023}
+                          </td>
+                          <td className={`px-3.5 py-2.5 text-center ${isTotal ? 'font-extrabold text-blue-700 dark:text-blue-300' : 'font-semibold'}`}>
+                            {row.c2024}
+                          </td>
+                          <td className={`px-3.5 py-2.5 text-center ${isTotal ? 'font-extrabold text-blue-700 dark:text-blue-300' : 'font-semibold'}`}>
+                            {row.c2025}
+                          </td>
+                          <td className={`px-3.5 py-2.5 text-center ${isTotal ? 'font-extrabold text-blue-700 dark:text-blue-300' : 'font-semibold'}`}>
+                            {row.c2026}
+                          </td>
+                          <td className="px-3.5 py-2.5 text-center font-extrabold text-amber-600 dark:text-amber-400 bg-amber-500/5 dark:bg-amber-400/5">
+                            {row.total}
+                          </td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+
           {/* Search Toolbar */}
           <div className="mb-4 flex flex-col sm:flex-row items-center justify-between gap-3 bg-slate-50 dark:bg-slate-900/40 p-3 rounded-xl border border-slate-200 dark:border-slate-800">
             <div className="relative w-full sm:w-96">
@@ -922,11 +1104,25 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search ID, Location, Category, Description, Person..."
-                className="w-full pl-9 pr-4 py-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full pl-9 pr-9 py-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
+              {searchQuery && (
+                <button
+                  type="button"
+                  onClick={() => setSearchQuery('')}
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-0.5 rounded-full"
+                  title="Clear search"
+                >
+                  <span className="material-symbols-outlined text-base">close</span>
+                </button>
+              )}
             </div>
             <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">
-              Showing <strong className="text-slate-900 dark:text-white">{displayIncidents.length}</strong> latest cases (Total <strong className="text-slate-900 dark:text-white">{incidents.length}</strong> records)
+              {searchQuery.trim() ? (
+                <>Found <strong className="text-blue-600 dark:text-blue-400">{filteredIncidents.length}</strong> matching cases (Total <strong className="text-slate-900 dark:text-white">{incidents.length}</strong> records)</>
+              ) : (
+                <>Showing <strong className="text-slate-900 dark:text-white">{displayIncidents.length}</strong> latest cases (Total <strong className="text-slate-900 dark:text-white">{incidents.length}</strong> records)</>
+              )}
             </span>
           </div>
 

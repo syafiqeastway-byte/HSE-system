@@ -137,8 +137,18 @@ useEffect(() => {
               placeholder="Search ID, Location, Category, Cause..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-4 py-2 rounded-xl bg-slate-950 border border-slate-700 text-slate-200 placeholder-slate-500 text-xs focus:outline-none focus:border-blue-500 transition-all"
+              className="w-full pl-9 pr-9 py-2 rounded-xl bg-slate-950 border border-slate-700 text-slate-200 placeholder-slate-500 text-xs focus:outline-none focus:border-blue-500 transition-all"
             />
+            {searchQuery && (
+              <button
+                type="button"
+                onClick={() => setSearchQuery('')}
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-200 p-0.5 rounded-full"
+                title="Clear search"
+              >
+                <span className="material-symbols-outlined text-base">close</span>
+              </button>
+            )}
           </div>
 
           <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
