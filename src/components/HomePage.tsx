@@ -277,7 +277,7 @@ export const HomePage: React.FC<HomePageProps> = ({
 
           {/* External Inspection Form Button */}
           <a
-            href="https://script.google.com/macros/s/AKfycby-Bg4p7Z_1jUowq7PY7rKcaOR5Kx3uXxddB31jjflSBrCj6sJ6j4TwVTxEWLYmuVHX4w/exec"
+            href="https://script.google.com/macros/s/AKfycbxhrI7F4_Tbg2wPSky9i0cBK8xc2OQDMpUHlE2ZAxDLZxqvb5iBkO5a6P6UoJRo04CdaA/exec"
             target="_blank"
             rel="noopener noreferrer"
             className="w-full px-4 py-3.5 rounded-xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-slate-800 dark:text-zinc-100 font-semibold text-xs sm:text-sm flex items-center justify-between hover:border-amber-500 dark:hover:border-amber-400 transition-all shadow-sm group min-h-[44px]"
