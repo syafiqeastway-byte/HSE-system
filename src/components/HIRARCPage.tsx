@@ -102,18 +102,18 @@ export const HIRARCPage: React.FC<HIRARCPageProps> = ({
           <div className="overflow-x-auto">
             <table className="w-full border-collapse border border-slate-300 dark:border-zinc-700 text-left text-xs sm:text-sm whitespace-nowrap">
               <thead className="bg-slate-100 dark:bg-zinc-800/80 text-slate-800 dark:text-zinc-100 border-b border-slate-300 dark:border-zinc-700">
-                <tr>
-                  <th className="py-3 px-4 font-extrabold uppercase tracking-wider border border-slate-300 dark:border-zinc-700">No</th>
-                  <th className="py-3 px-4 font-extrabold uppercase tracking-wider border border-slate-300 dark:border-zinc-700">Title</th>
-                  <th className="py-3 px-4 font-extrabold uppercase tracking-wider border border-slate-300 dark:border-zinc-700">Date</th>
-                  <th className="py-3 px-4 font-extrabold uppercase tracking-wider border border-slate-300 dark:border-zinc-700">Rev Date</th>
-                  <th className="py-3 px-4 font-extrabold uppercase tracking-wider border border-slate-300 dark:border-zinc-700 text-center">Document</th>
+                <tr className="h-8">
+                  <th className="w-14 py-1 px-3 font-bold uppercase tracking-wider border border-slate-300 dark:border-zinc-700 text-center text-xs">No</th>
+                  <th className="min-w-[260px] py-1 px-3 font-bold uppercase tracking-wider border border-slate-300 dark:border-zinc-700 text-xs">Title</th>
+                  <th className="w-28 py-1 px-3 font-bold uppercase tracking-wider border border-slate-300 dark:border-zinc-700 text-center text-xs">Date</th>
+                  <th className="w-28 py-1 px-3 font-bold uppercase tracking-wider border border-slate-300 dark:border-zinc-700 text-center text-xs">Rev Date</th>
+                  <th className="w-28 py-1 px-3 font-bold uppercase tracking-wider border border-slate-300 dark:border-zinc-700 text-center text-xs">Document</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-300 dark:divide-zinc-700">
+              <tbody className="divide-y divide-slate-300 dark:divide-zinc-700 text-xs sm:text-sm">
                 {filteredRecords.length === 0 ? (
-                  <tr>
-                    <td colSpan={5} className="py-8 text-center text-xs text-slate-400 border border-slate-300 dark:border-zinc-700">
+                  <tr className="h-9">
+                    <td colSpan={5} className="py-4 text-center text-xs text-slate-400 border border-slate-300 dark:border-zinc-700">
                       No records found matching "{searchQuery}"
                     </td>
                   </tr>
@@ -124,35 +124,35 @@ export const HIRARCPage: React.FC<HIRARCPageProps> = ({
                       <tr 
                         key={r.id} 
                         onClick={() => setSelectedRowId(isSelected ? null : String(r.id))}
-                        className={`transition-colors cursor-pointer ${
+                        className={`h-9 transition-colors cursor-pointer ${
                           isSelected 
                             ? 'bg-slate-200/80 dark:bg-slate-800 text-slate-900 dark:text-white font-semibold shadow-inner' 
                             : 'hover:bg-slate-100 dark:hover:bg-slate-800/80 active:bg-slate-200 dark:active:bg-slate-700/60'
                         }`}
                       >
-                        <td className="py-3 px-4 font-medium text-slate-900 dark:text-slate-200 border border-slate-300 dark:border-zinc-700">
-                          {r.id}
+                        <td className="py-1 px-3 font-medium text-slate-900 dark:text-slate-200 border border-slate-300 dark:border-zinc-700 text-center leading-none">
+                          {r.id.split('-')[0]}
                         </td>
-                        <td className="py-3 px-4 font-semibold text-slate-800 dark:text-slate-300 border border-slate-300 dark:border-zinc-700">
+                        <td className="py-1 px-3 font-medium text-slate-800 dark:text-slate-200 border border-slate-300 dark:border-zinc-700 leading-none">
                           {r.title}
                         </td>
-                        <td className="py-3 px-4 font-mono text-slate-600 dark:text-slate-400 text-xs sm:text-sm border border-slate-300 dark:border-zinc-700">
+                        <td className="py-1 px-3 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-zinc-700 text-center leading-none">
                           {r.date}
                         </td>
-                        <td className="py-3 px-4 font-mono text-slate-600 dark:text-slate-400 text-xs sm:text-sm border border-slate-300 dark:border-zinc-700">
+                        <td className="py-1 px-3 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-zinc-700 text-center leading-none">
                           {r.revDate}
                         </td>
-                        <td className="py-3 px-4 text-center border border-slate-300 dark:border-zinc-700">
+                        <td className="py-1 px-3 text-center border border-slate-300 dark:border-zinc-700 leading-none">
                           {r.documentUrl ? (
                             <a 
-                              href={formatToPreviewUrl(r.documentUrl)}
+                              href={formatToPreviewUrl(r.documentUrl)} 
                               target="_blank" 
                               rel="noopener noreferrer"
                               onClick={(e) => e.stopPropagation()}
-                              
-                              className="inline-flex items-center justify-center px-2 py-1 text-[11px] font-bold bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400 hover:bg-amber-100 dark:hover:bg-amber-500/20 rounded-md transition-colors"
+                              className="inline-flex items-center justify-center px-2.5 py-0.5 text-[11px] font-semibold bg-amber-50 dark:bg-amber-500/10 text-amber-600 dark:text-amber-400 hover:bg-amber-100 dark:hover:bg-amber-500/20 rounded transition-colors leading-tight"
                             >
-                              Open Doc</a>
+                              Open Doc
+                            </a>
                           ) : (
                             <span className="text-xs text-slate-400 italic">No Document</span>
                           )}

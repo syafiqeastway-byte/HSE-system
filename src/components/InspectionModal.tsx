@@ -279,22 +279,22 @@ export const InspectionModal: React.FC<InspectionModalProps> = ({ isOpen, filter
                 </div>
               ) : (
                 <div className="overflow-x-auto rounded-2xl border border-slate-300 dark:border-zinc-700 shadow-sm">
-                  <table className="w-full border-collapse border border-slate-300 dark:border-zinc-700 text-left text-xs sm:text-sm text-slate-800 dark:text-slate-200">
-                    <thead className="bg-slate-100 dark:bg-zinc-800/90 text-slate-800 dark:text-zinc-100 uppercase border-b border-slate-300 dark:border-zinc-700 font-extrabold">
-                      <tr>
-                        <th className="p-2 sm:p-3 border border-slate-300 dark:border-zinc-700 font-extrabold tracking-wider text-center w-12">NO</th>
-                        <th className="p-2 sm:p-3 border border-slate-300 dark:border-zinc-700 font-extrabold tracking-wider">DATE</th>
-                        <th className="p-2 sm:p-3 border border-slate-300 dark:border-zinc-700 font-extrabold tracking-wider">LOCATION</th>
-                        <th className="p-2 sm:p-3 border border-slate-300 dark:border-zinc-700 font-extrabold tracking-wider">TYPE OF INSPECTION</th>
-                        <th className="p-2 sm:p-3 border border-slate-300 dark:border-zinc-700 font-extrabold tracking-wider">INSPECTOR</th>
-                        <th className="p-2 sm:p-3 border border-slate-300 dark:border-zinc-700 font-extrabold tracking-wider">REMARK</th>
-                        <th className="p-2 sm:p-3 border border-slate-300 dark:border-zinc-700 font-extrabold tracking-wider text-center">PDF</th>
+                  <table className="w-full border-collapse border border-slate-300 dark:border-zinc-700 text-left text-xs sm:text-sm text-slate-800 dark:text-slate-200 whitespace-nowrap">
+                    <thead className="bg-slate-100 dark:bg-zinc-800/90 text-slate-800 dark:text-zinc-100 uppercase border-b border-slate-300 dark:border-zinc-700 font-bold">
+                      <tr className="h-8">
+                        <th className="py-1 px-3 border border-slate-300 dark:border-zinc-700 font-bold uppercase tracking-wider text-center w-12 text-xs">NO</th>
+                        <th className="py-1 px-3 border border-slate-300 dark:border-zinc-700 font-bold uppercase tracking-wider text-center w-28 text-xs">DATE</th>
+                        <th className="py-1 px-3 border border-slate-300 dark:border-zinc-700 font-bold uppercase tracking-wider min-w-[150px] text-xs">LOCATION</th>
+                        <th className="py-1 px-3 border border-slate-300 dark:border-zinc-700 font-bold uppercase tracking-wider min-w-[160px] text-xs">TYPE OF INSPECTION</th>
+                        <th className="py-1 px-3 border border-slate-300 dark:border-zinc-700 font-bold uppercase tracking-wider min-w-[140px] text-xs">INSPECTOR</th>
+                        <th className="py-1 px-3 border border-slate-300 dark:border-zinc-700 font-bold uppercase tracking-wider min-w-[180px] text-xs">REMARK</th>
+                        <th className="py-1 px-3 border border-slate-300 dark:border-zinc-700 font-bold uppercase tracking-wider text-center w-28 text-xs">PDF</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-slate-300 dark:divide-zinc-700 bg-white dark:bg-zinc-900/60">
+                    <tbody className="divide-y divide-slate-300 dark:divide-zinc-700 bg-white dark:bg-zinc-900/60 text-xs sm:text-sm">
                       {filteredWorkplaceData.length === 0 ? (
-                        <tr>
-                          <td colSpan={7} className="p-4 text-center text-slate-400 border border-slate-300 dark:border-zinc-700">
+                        <tr className="h-9">
+                          <td colSpan={7} className="py-4 text-center text-xs text-slate-400 border border-slate-300 dark:border-zinc-700">
                             No workplace inspection records found matching "{searchQueryWorkplace}"
                           </td>
                         </tr>
@@ -305,32 +305,32 @@ export const InspectionModal: React.FC<InspectionModalProps> = ({ isOpen, filter
                             <tr 
                               key={item.id} 
                               onClick={() => setSelectedWorkplaceId(isSelected ? null : String(item.id))}
-                              className={`transition-colors cursor-pointer ${
+                              className={`h-9 transition-colors cursor-pointer ${
                                 isSelected 
                                   ? 'bg-slate-200/80 dark:bg-slate-800 text-slate-900 dark:text-white font-semibold' 
                                   : 'hover:bg-slate-50 dark:hover:bg-zinc-800/60'
                               }`}
                             >
-                              <td className="p-2 sm:p-3 text-center font-mono font-semibold text-slate-500 border border-slate-300 dark:border-zinc-700">{index + 1}</td>
-                              <td className="p-2 sm:p-3 whitespace-nowrap font-mono border border-slate-300 dark:border-zinc-700">{item.date}</td>
-                              <td className="p-2 sm:p-3 font-bold text-slate-900 dark:text-white border border-slate-300 dark:border-zinc-700">{item.location || '-'}</td>
-                              <td className="p-2 sm:p-3 font-semibold text-emerald-600 dark:text-emerald-400 border border-slate-300 dark:border-zinc-700">{item.typeOfInspection || '-'}</td>
-                              <td className="p-2 sm:p-3 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-zinc-700">{item.inspector || '-'}</td>
-                              <td className="p-2 sm:p-3 text-slate-600 dark:text-slate-400 max-w-xs truncate border border-slate-300 dark:border-zinc-700" title={item.remark}>{item.remark || '-'}</td>
-                              <td className="p-2 sm:p-3 text-center border border-slate-300 dark:border-zinc-700">
+                              <td className="py-1 px-3 text-center font-mono font-medium text-slate-500 border border-slate-300 dark:border-zinc-700 leading-none">{index + 1}</td>
+                              <td className="py-1 px-3 whitespace-nowrap font-mono text-center border border-slate-300 dark:border-zinc-700 leading-none">{item.date}</td>
+                              <td className="py-1 px-3 font-medium text-slate-900 dark:text-white border border-slate-300 dark:border-zinc-700 leading-none">{item.location || '-'}</td>
+                              <td className="py-1 px-3 font-medium text-emerald-600 dark:text-emerald-400 border border-slate-300 dark:border-zinc-700 leading-none">{item.typeOfInspection || '-'}</td>
+                              <td className="py-1 px-3 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-zinc-700 leading-none">{item.inspector || '-'}</td>
+                              <td className="py-1 px-3 text-slate-600 dark:text-slate-400 max-w-xs truncate border border-slate-300 dark:border-zinc-700 leading-none" title={item.remark}>{item.remark || '-'}</td>
+                              <td className="py-1 px-3 text-center border border-slate-300 dark:border-zinc-700 leading-none">
                                 {item.documentUrl ? (
                                   <a
                                     href={formatToPreviewUrl(item.documentUrl)}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     onClick={(e) => e.stopPropagation()}
-                                    className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-[11px] font-bold transition-colors shadow-sm shadow-blue-500/20"
+                                    className="inline-flex items-center justify-center gap-1 px-2.5 py-0.5 bg-blue-600 hover:bg-blue-700 text-white rounded text-[11px] font-semibold transition-colors leading-tight"
                                   >
                                     <span className="material-symbols-outlined text-[13px]">open_in_new</span>
                                     View PDF
                                   </a>
                                 ) : (
-                                  <span className="text-[9px] sm:text-[10px] text-slate-400 italic">No PDF</span>
+                                  <span className="text-[11px] text-slate-400 italic leading-tight">No PDF</span>
                                 )}
                               </td>
                             </tr>
@@ -393,26 +393,26 @@ export const InspectionModal: React.FC<InspectionModalProps> = ({ isOpen, filter
                 </div>
               ) : (
                 <div className="overflow-x-auto rounded-2xl border border-slate-300 dark:border-zinc-700 shadow-sm">
-                  <table className="w-full border-collapse border border-slate-300 dark:border-zinc-700 text-left text-xs sm:text-sm text-slate-800 dark:text-slate-200">
+                  <table className="w-full border-collapse border border-slate-300 dark:border-zinc-700 text-left text-xs sm:text-sm text-slate-800 dark:text-slate-200 whitespace-nowrap">
                     {/* Primary Table Head (Row 2 in Google Sheet) */}
                     <thead className="bg-slate-200 dark:bg-zinc-800 text-slate-900 dark:text-white uppercase border-b-2 border-slate-400 dark:border-zinc-700">
-                      <tr>
-                        <th className="p-2 sm:p-3 border border-slate-300 dark:border-zinc-700 font-extrabold tracking-wider text-center w-12">NO</th>
-                        <th className="p-2 sm:p-3 border border-slate-300 dark:border-zinc-700 font-extrabold tracking-wider">LOCATION</th>
-                        <th className="p-2 sm:p-3 border border-slate-300 dark:border-zinc-700 font-extrabold tracking-wider text-center">TYPE ABC</th>
-                        <th className="p-2 sm:p-3 border border-slate-300 dark:border-zinc-700 font-extrabold tracking-wider text-center">TYPE CO2</th>
-                        <th className="p-2 sm:p-3 border border-slate-300 dark:border-zinc-700 font-extrabold tracking-wider">BRAND</th>
-                        <th className="p-2 sm:p-3 border border-slate-300 dark:border-zinc-700 font-extrabold tracking-wider">SERIAL NUMBER</th>
-                        <th className="p-2 sm:p-3 border border-slate-300 dark:border-zinc-700 font-extrabold tracking-wider text-center">MONTH</th>
-                        <th className="p-2 sm:p-3 border border-slate-300 dark:border-zinc-700 font-extrabold tracking-wider text-center">YEAR</th>
-                        <th className="p-2 sm:p-3 border border-slate-300 dark:border-zinc-700 font-extrabold tracking-wider">CERT EXPIRY DATE</th>
-                        <th className="p-2 sm:p-3 border border-slate-300 dark:border-zinc-700 font-extrabold tracking-wider">REMARKS 2026</th>
+                      <tr className="h-8">
+                        <th className="py-1 px-3 border border-slate-300 dark:border-zinc-700 font-bold uppercase tracking-wider text-center w-12 text-xs">NO</th>
+                        <th className="py-1 px-3 border border-slate-300 dark:border-zinc-700 font-bold uppercase tracking-wider min-w-[140px] text-xs">LOCATION</th>
+                        <th className="py-1 px-3 border border-slate-300 dark:border-zinc-700 font-bold uppercase tracking-wider text-center w-24 text-xs">TYPE ABC</th>
+                        <th className="py-1 px-3 border border-slate-300 dark:border-zinc-700 font-bold uppercase tracking-wider text-center w-24 text-xs">TYPE CO2</th>
+                        <th className="py-1 px-3 border border-slate-300 dark:border-zinc-700 font-bold uppercase tracking-wider min-w-[120px] text-xs">BRAND</th>
+                        <th className="py-1 px-3 border border-slate-300 dark:border-zinc-700 font-bold uppercase tracking-wider min-w-[140px] text-xs">SERIAL NUMBER</th>
+                        <th className="py-1 px-3 border border-slate-300 dark:border-zinc-700 font-bold uppercase tracking-wider text-center w-20 text-xs">MONTH</th>
+                        <th className="py-1 px-3 border border-slate-300 dark:border-zinc-700 font-bold uppercase tracking-wider text-center w-20 text-xs">YEAR</th>
+                        <th className="py-1 px-3 border border-slate-300 dark:border-zinc-700 font-bold uppercase tracking-wider min-w-[150px] text-xs text-center">CERT EXPIRY DATE</th>
+                        <th className="py-1 px-3 border border-slate-300 dark:border-zinc-700 font-bold uppercase tracking-wider min-w-[160px] text-xs">REMARKS 2026</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-slate-300 dark:divide-zinc-700 bg-white dark:bg-zinc-900/60">
+                    <tbody className="divide-y divide-slate-300 dark:divide-zinc-700 bg-white dark:bg-zinc-900/60 text-xs sm:text-sm">
                       {filteredFEData.length === 0 ? (
-                        <tr>
-                          <td colSpan={10} className="p-4 text-center text-slate-400 border border-slate-300 dark:border-zinc-700">
+                        <tr className="h-9">
+                          <td colSpan={10} className="py-4 text-center text-xs text-slate-400 border border-slate-300 dark:border-zinc-700">
                             No fire extinguisher records found matching "{searchQueryFE}"
                           </td>
                         </tr>
@@ -423,18 +423,18 @@ export const InspectionModal: React.FC<InspectionModalProps> = ({ isOpen, filter
                             return (
                               <tr 
                                 key={item.id}
-                                className="bg-slate-200 dark:bg-zinc-800 text-slate-900 dark:text-white font-extrabold uppercase tracking-wider text-[11px] sm:text-xs border-y-2 border-slate-400 dark:border-zinc-600 shadow-sm"
+                                className="h-8 bg-slate-200 dark:bg-zinc-800 text-slate-900 dark:text-white font-bold uppercase tracking-wider text-xs border-y-2 border-slate-400 dark:border-zinc-600 shadow-sm"
                               >
-                                <td className="p-2 sm:p-3 text-center font-black border border-slate-300 dark:border-zinc-600">{item.no || '—'}</td>
-                                <td className="p-2 sm:p-3 font-black border border-slate-300 dark:border-zinc-600">{item.location || 'LOCATION'}</td>
-                                <td className="p-2 sm:p-3 text-center font-black border border-slate-300 dark:border-zinc-600">{item.typeABC || 'TYPE ABC'}</td>
-                                <td className="p-2 sm:p-3 text-center font-black border border-slate-300 dark:border-zinc-600">{item.typeCO2 || 'TYPE CO2'}</td>
-                                <td className="p-2 sm:p-3 font-black border border-slate-300 dark:border-zinc-600">{item.brand || 'BRAND'}</td>
-                                <td className="p-2 sm:p-3 font-black border border-slate-300 dark:border-zinc-600">{item.serialNumber || 'SERIAL NUMBER'}</td>
-                                <td className="p-2 sm:p-3 text-center font-black border border-slate-300 dark:border-zinc-600">{item.month || 'MONTH'}</td>
-                                <td className="p-2 sm:p-3 text-center font-black border border-slate-300 dark:border-zinc-600">{item.year || 'YEAR'}</td>
-                                <td className="p-2 sm:p-3 font-black border border-slate-300 dark:border-zinc-600">{item.certExpiryDate || 'CERT EXPIRY DATE'}</td>
-                                <td className="p-2 sm:p-3 font-black border border-slate-300 dark:border-zinc-600">{item.remarks || 'REMARKS 2026'}</td>
+                                <td className="py-1 px-3 text-center font-bold border border-slate-300 dark:border-zinc-600 leading-none">{item.no || '—'}</td>
+                                <td className="py-1 px-3 font-bold border border-slate-300 dark:border-zinc-600 leading-none">{item.location || 'LOCATION'}</td>
+                                <td className="py-1 px-3 text-center font-bold border border-slate-300 dark:border-zinc-600 leading-none">{item.typeABC || 'TYPE ABC'}</td>
+                                <td className="py-1 px-3 text-center font-bold border border-slate-300 dark:border-zinc-600 leading-none">{item.typeCO2 || 'TYPE CO2'}</td>
+                                <td className="py-1 px-3 font-bold border border-slate-300 dark:border-zinc-600 leading-none">{item.brand || 'BRAND'}</td>
+                                <td className="py-1 px-3 font-bold border border-slate-300 dark:border-zinc-600 leading-none">{item.serialNumber || 'SERIAL NUMBER'}</td>
+                                <td className="py-1 px-3 text-center font-bold border border-slate-300 dark:border-zinc-600 leading-none">{item.month || 'MONTH'}</td>
+                                <td className="py-1 px-3 text-center font-bold border border-slate-300 dark:border-zinc-600 leading-none">{item.year || 'YEAR'}</td>
+                                <td className="py-1 px-3 font-bold border border-slate-300 dark:border-zinc-600 text-center leading-none">{item.certExpiryDate || 'CERT EXPIRY DATE'}</td>
+                                <td className="py-1 px-3 font-bold border border-slate-300 dark:border-zinc-600 leading-none">{item.remarks || 'REMARKS 2026'}</td>
                               </tr>
                             );
                           }
@@ -446,28 +446,28 @@ export const InspectionModal: React.FC<InspectionModalProps> = ({ isOpen, filter
                             <tr
                               key={item.id}
                               onClick={() => setSelectedFEId(isSelected ? null : item.id)}
-                              className={`transition-colors cursor-pointer ${
+                              className={`h-9 transition-colors cursor-pointer ${
                                 isSelected
                                   ? 'bg-slate-200/80 dark:bg-slate-800 text-slate-900 dark:text-white font-semibold'
                                   : 'hover:bg-slate-50 dark:hover:bg-zinc-800/60'
                               }`}
                             >
                               {/* NO */}
-                              <td className="p-2 sm:p-3 text-center font-mono font-semibold text-slate-600 dark:text-slate-400 border border-slate-300 dark:border-zinc-700">
+                              <td className="py-1 px-3 text-center font-mono font-medium text-slate-600 dark:text-slate-400 border border-slate-300 dark:border-zinc-700 leading-none">
                                 {item.no || '-'}
                               </td>
 
                               {/* LOCATION */}
-                              <td className="p-2 sm:p-3 font-bold text-slate-900 dark:text-white border border-slate-300 dark:border-zinc-700">
-                                <span className="px-2 py-0.5 rounded-md bg-slate-100 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 font-bold text-xs sm:text-sm">
+                              <td className="py-1 px-3 font-medium text-slate-900 dark:text-white border border-slate-300 dark:border-zinc-700 leading-none">
+                                <span className="inline-flex items-center px-2 py-0.5 rounded bg-slate-100 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 font-medium text-xs leading-tight">
                                   {item.location || '-'}
                                 </span>
                               </td>
 
                               {/* TYPE ABC */}
-                              <td className="p-2 sm:p-3 text-center border border-slate-300 dark:border-zinc-700">
+                              <td className="py-1 px-3 text-center border border-slate-300 dark:border-zinc-700 leading-none">
                                 {item.typeABC && item.typeABC.trim() !== '' ? (
-                                  <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 font-black text-xs">
+                                  <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 font-bold text-[10px]">
                                     ✓
                                   </span>
                                 ) : (
@@ -476,9 +476,9 @@ export const InspectionModal: React.FC<InspectionModalProps> = ({ isOpen, filter
                               </td>
 
                               {/* TYPE CO2 */}
-                              <td className="p-2 sm:p-3 text-center border border-slate-300 dark:border-zinc-700">
+                              <td className="py-1 px-3 text-center border border-slate-300 dark:border-zinc-700 leading-none">
                                 {item.typeCO2 && item.typeCO2.trim() !== '' ? (
-                                  <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-blue-100 dark:bg-blue-950 text-blue-600 dark:text-blue-400 font-black text-xs">
+                                  <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-blue-100 dark:bg-blue-950 text-blue-600 dark:text-blue-400 font-bold text-[10px]">
                                     ✓
                                   </span>
                                 ) : (
@@ -487,9 +487,9 @@ export const InspectionModal: React.FC<InspectionModalProps> = ({ isOpen, filter
                               </td>
 
                               {/* BRAND */}
-                              <td className="p-2 sm:p-3 font-bold text-slate-800 dark:text-slate-200 border border-slate-300 dark:border-zinc-700">
+                              <td className="py-1 px-3 font-medium text-slate-800 dark:text-slate-200 border border-slate-300 dark:border-zinc-700 leading-none">
                                 {item.brand ? (
-                                  <span className="font-semibold text-slate-800 dark:text-zinc-200">
+                                  <span className="font-medium text-slate-800 dark:text-zinc-200">
                                     {item.brand}
                                   </span>
                                 ) : (
@@ -498,33 +498,33 @@ export const InspectionModal: React.FC<InspectionModalProps> = ({ isOpen, filter
                               </td>
 
                               {/* SERIAL NUMBER */}
-                              <td className="p-2 sm:p-3 font-mono text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-zinc-700">
+                              <td className="py-1 px-3 font-mono text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-zinc-700 leading-none">
                                 {item.serialNumber || '-'}
                               </td>
 
                               {/* MONTH */}
-                              <td className="p-2 sm:p-3 text-center font-mono text-slate-600 dark:text-slate-400 border border-slate-300 dark:border-zinc-700">
+                              <td className="py-1 px-3 text-center font-mono text-slate-600 dark:text-slate-400 border border-slate-300 dark:border-zinc-700 leading-none">
                                 {item.month || '-'}
                               </td>
 
                               {/* YEAR */}
-                              <td className="p-2 sm:p-3 text-center font-mono font-semibold text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-zinc-700">
+                              <td className="py-1 px-3 text-center font-mono font-medium text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-zinc-700 leading-none">
                                 {item.year || '-'}
                               </td>
 
                               {/* CERT EXPIRY DATE */}
-                              <td className="p-2 sm:p-3 whitespace-nowrap font-mono font-bold text-red-600 dark:text-red-400 border border-slate-300 dark:border-zinc-700">
+                              <td className="py-1 px-3 whitespace-nowrap font-mono font-bold text-red-600 dark:text-red-400 border border-slate-300 dark:border-zinc-700 text-center leading-none">
                                 {item.certExpiryDate || '-'}
                               </td>
 
                               {/* REMARKS */}
-                              <td className="p-2 sm:p-3 border border-slate-300 dark:border-zinc-700">
+                              <td className="py-1 px-3 border border-slate-300 dark:border-zinc-700 leading-none">
                                 {hasRemarks ? (
-                                  <span className="px-2 py-1 rounded bg-amber-50 dark:bg-amber-950/60 border border-amber-200 dark:border-amber-800 text-amber-800 dark:text-amber-300 font-semibold text-[10px] block">
+                                  <span className="inline-block px-2 py-0.5 rounded bg-amber-50 dark:bg-amber-950/60 border border-amber-200 dark:border-amber-800 text-amber-800 dark:text-amber-300 font-medium text-[11px] leading-tight">
                                     {item.remarks}
                                   </span>
                                 ) : (
-                                  <span className="text-slate-400 italic text-[10px]">-</span>
+                                  <span className="text-slate-400 italic text-[11px]">-</span>
                                 )}
                               </td>
                             </tr>

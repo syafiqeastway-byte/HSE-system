@@ -119,23 +119,23 @@ export const SafetyViolationPage: React.FC<SafetyViolationPageProps> = ({
               {/* The table includes full column and row borders (grid lines) */}
               <table className="w-full border-collapse border border-slate-300 dark:border-zinc-700 text-left text-xs sm:text-sm whitespace-nowrap">
                 <thead className="bg-slate-100 dark:bg-zinc-800/80 text-slate-800 dark:text-zinc-100 border-b border-slate-300 dark:border-zinc-700">
-                  <tr>
+                  <tr className="h-8">
                     {headers.map((hdr, idx) => (
                       <th
                         key={idx}
-                        className="py-3 px-4 font-extrabold uppercase tracking-wider text-center border border-slate-300 dark:border-zinc-700"
+                        className="py-1 px-3 font-bold uppercase tracking-wider text-center border border-slate-300 dark:border-zinc-700 text-xs"
                       >
                         {hdr || `Col ${idx + 1}`}
                       </th>
                     ))}
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-300 dark:divide-zinc-700">
+                <tbody className="divide-y divide-slate-300 dark:divide-zinc-700 text-xs sm:text-sm">
                   {filteredRows.length === 0 ? (
-                    <tr>
+                    <tr className="h-9">
                       <td
                         colSpan={Math.max(headers.length, 1)}
-                        className="py-12 text-center text-xs text-slate-400 italic border border-slate-300 dark:border-zinc-700"
+                        className="py-4 text-center text-xs text-slate-400 italic border border-slate-300 dark:border-zinc-700"
                       >
                         No safety violation records found matching "{searchQuery}"
                       </td>
@@ -147,7 +147,7 @@ export const SafetyViolationPage: React.FC<SafetyViolationPageProps> = ({
                         <tr
                           key={rIdx}
                           onClick={() => setSelectedRowIndex(isSelected ? null : rIdx)}
-                          className={`transition-colors cursor-pointer ${
+                          className={`h-9 transition-colors cursor-pointer ${
                             isSelected
                               ? 'bg-slate-200/80 dark:bg-slate-800 text-slate-900 dark:text-white font-semibold'
                               : 'hover:bg-slate-50 dark:hover:bg-zinc-800/50 text-slate-700 dark:text-zinc-300'
@@ -164,7 +164,7 @@ export const SafetyViolationPage: React.FC<SafetyViolationPageProps> = ({
                             return (
                               <td
                                 key={cIdx}
-                                className={`py-2.5 px-4 border border-slate-300 dark:border-zinc-700 ${
+                                className={`py-1 px-3 border border-slate-300 dark:border-zinc-700 leading-none ${
                                   isCenterCol ? 'text-center' : 'text-left'
                                 }`}
                               >
@@ -176,20 +176,20 @@ export const SafetyViolationPage: React.FC<SafetyViolationPageProps> = ({
                                       const numVal = Number(cellStr);
                                       if (numVal > 0) {
                                         return (
-                                          <span className="inline-flex items-center px-2.5 py-0.5 rounded bg-red-100 text-red-800 dark:bg-red-950/60 dark:text-red-200 font-extrabold font-mono">
+                                          <span className="inline-flex items-center px-2 py-0.5 rounded bg-red-100 text-red-800 dark:bg-red-950/60 dark:text-red-200 font-bold font-mono text-[11px] leading-tight">
                                             {cellStr}
                                           </span>
                                         );
                                       } else {
                                         return (
-                                          <span className="font-mono font-bold text-slate-900 dark:text-zinc-100">
+                                          <span className="font-mono font-medium text-slate-900 dark:text-zinc-100 text-xs">
                                             {cellStr}
                                           </span>
                                         );
                                       }
                                     }
                                     return (
-                                      <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-[9px] sm:text-[10px] font-extrabold ${
+                                      <span className={`inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold leading-tight ${
                                         cellStr.toLowerCase() === 'closed'
                                           ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/55 dark:text-emerald-400'
                                           : 'bg-amber-100 text-amber-800 dark:bg-amber-950/55 dark:text-amber-400'
@@ -199,7 +199,7 @@ export const SafetyViolationPage: React.FC<SafetyViolationPageProps> = ({
                                     );
                                   })()
                                 ) : isDemeritCol ? (
-                                  <span className="font-mono font-bold text-red-600 dark:text-red-400 text-sm">
+                                  <span className="font-mono font-bold text-red-600 dark:text-red-400 text-xs">
                                     {cell && cell.trim() !== '' && cell !== '-' ? cell : '-'}
                                   </span>
                                 ) : (
@@ -235,23 +235,23 @@ export const SafetyViolationPage: React.FC<SafetyViolationPageProps> = ({
               <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-slate-300 dark:scrollbar-thumb-zinc-700">
                 <table className="w-full border-collapse border border-slate-300 dark:border-zinc-700 text-left text-xs sm:text-sm whitespace-nowrap">
                   <thead className="bg-slate-100 dark:bg-zinc-800/80 text-slate-800 dark:text-zinc-100 border-b border-slate-300 dark:border-zinc-700">
-                    <tr>
+                    <tr className="h-8">
                       {summaryHeaders.map((hdr, idx) => (
                         <th
                           key={idx}
-                          className="py-3 px-4 font-extrabold uppercase tracking-wider text-center border border-slate-300 dark:border-zinc-700"
+                          className="py-1 px-3 font-bold uppercase tracking-wider text-center border border-slate-300 dark:border-zinc-700 text-xs"
                         >
                           {hdr || `Col ${idx + 1}`}
                         </th>
                       ))}
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-300 dark:divide-zinc-700">
+                  <tbody className="divide-y divide-slate-300 dark:divide-zinc-700 text-xs sm:text-sm">
                     {filteredSummaryRows.length === 0 ? (
-                      <tr>
+                      <tr className="h-9">
                         <td
                           colSpan={Math.max(summaryHeaders.length, 1)}
-                          className="py-8 text-center text-xs text-slate-400 italic border border-slate-300 dark:border-zinc-700"
+                          className="py-4 text-center text-xs text-slate-400 italic border border-slate-300 dark:border-zinc-700"
                         >
                           No summary records found matching "{searchQuery}"
                         </td>
@@ -263,7 +263,7 @@ export const SafetyViolationPage: React.FC<SafetyViolationPageProps> = ({
                           <tr
                             key={rIdx}
                             onClick={() => setSelectedSummaryRowIndex(isSelected ? null : rIdx)}
-                            className={`transition-colors cursor-pointer ${
+                            className={`h-9 transition-colors cursor-pointer ${
                               isSelected
                                 ? 'bg-slate-200/80 dark:bg-slate-800 text-slate-900 dark:text-white font-semibold'
                                 : 'hover:bg-slate-50 dark:hover:bg-zinc-800/50 text-slate-700 dark:text-zinc-300'
@@ -272,7 +272,7 @@ export const SafetyViolationPage: React.FC<SafetyViolationPageProps> = ({
                             {row.map((cell, cIdx) => (
                               <td
                                 key={cIdx}
-                                className={`py-2.5 px-4 border border-slate-300 dark:border-zinc-700 ${
+                                className={`py-1 px-3 border border-slate-300 dark:border-zinc-700 leading-none ${
                                   cIdx === 0 || cIdx === 2 || cIdx === 3 ? 'text-center font-semibold' : 'text-left'
                                 }`}
                               >

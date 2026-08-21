@@ -190,7 +190,7 @@ export const TelemetryHub: React.FC = () => {
               ) : (
                 <span>{daysCount}</span>
               )}
-              <span className="text-[9px] sm:text-[10px] font-bold text-emerald-500/80 uppercase tracking-widest">
+              <span className="text-xs sm:text-sm font-bold text-emerald-600 dark:text-emerald-400/90 uppercase tracking-wider">
                 DAYS SAFE
               </span>
             </div>

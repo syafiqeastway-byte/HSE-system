@@ -186,19 +186,19 @@ export const EmergencyPlanPage: React.FC<EmergencyPlanPageProps> = ({
           </div>
         ) : (
           <div className="overflow-x-auto rounded-2xl border border-slate-300 dark:border-zinc-700">
-            <table className="w-full border-collapse border border-slate-300 dark:border-zinc-700 text-left text-xs sm:text-sm text-slate-800 dark:text-slate-200">
+            <table className="w-full border-collapse border border-slate-300 dark:border-zinc-700 text-left text-xs sm:text-sm text-slate-800 dark:text-slate-200 whitespace-nowrap">
               <thead className="bg-slate-100 dark:bg-zinc-800/80 text-slate-800 dark:text-zinc-100 uppercase border-b border-slate-300 dark:border-zinc-700">
-                <tr>
-                  <th className="p-1.5 sm:p-3 border border-slate-300 dark:border-zinc-700 font-extrabold tracking-wider">Name</th>
-                  <th className="p-1.5 sm:p-3 border border-slate-300 dark:border-zinc-700 font-extrabold tracking-wider">Department</th>
-                  <th className="p-1.5 sm:p-3 border border-slate-300 dark:border-zinc-700 font-extrabold tracking-wider">CERT EXPIRED</th>
-                  <th className="p-1.5 sm:p-3 border border-slate-300 dark:border-zinc-700 font-extrabold tracking-wider text-center">CERT PDF</th>
+                <tr className="h-8">
+                  <th className="min-w-[180px] py-1 px-3 border border-slate-300 dark:border-zinc-700 font-bold uppercase text-xs tracking-wider">Name</th>
+                  <th className="min-w-[160px] py-1 px-3 border border-slate-300 dark:border-zinc-700 font-bold uppercase text-xs tracking-wider">Department</th>
+                  <th className="w-36 py-1 px-3 border border-slate-300 dark:border-zinc-700 font-bold uppercase text-xs tracking-wider text-center">CERT EXPIRED</th>
+                  <th className="w-28 py-1 px-3 border border-slate-300 dark:border-zinc-700 font-bold uppercase text-xs tracking-wider text-center">CERT PDF</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-300 dark:divide-zinc-700 bg-white dark:bg-transparent">
+              <tbody className="divide-y divide-slate-300 dark:divide-zinc-700 bg-white dark:bg-transparent text-xs sm:text-sm">
                 {filteredCerts.length === 0 ? (
-                  <tr>
-                    <td colSpan={4} className="p-2 sm:p-4 text-center text-slate-400 border border-slate-300 dark:border-zinc-700">
+                  <tr className="h-9">
+                    <td colSpan={4} className="py-4 text-center text-xs text-slate-400 border border-slate-300 dark:border-zinc-700">
                       No first aid cert found matching "{searchQuery}"
                     </td>
                   </tr>
@@ -209,34 +209,34 @@ export const EmergencyPlanPage: React.FC<EmergencyPlanPageProps> = ({
                       <tr 
                         key={cert.id} 
                         onClick={() => setSelectedRowId(isSelected ? null : String(cert.id))}
-                        className={`transition-colors cursor-pointer ${
+                        className={`h-9 transition-colors cursor-pointer ${
                           isSelected 
                             ? 'bg-slate-200/80 dark:bg-slate-800 text-slate-900 dark:text-white font-semibold shadow-inner' 
                             : 'hover:bg-slate-100 dark:hover:bg-slate-800/80 active:bg-slate-200 dark:active:bg-slate-700/60'
                         }`}
                       >
-                        <td className="p-1.5 sm:p-3 font-semibold text-slate-900 dark:text-slate-100 border border-slate-300 dark:border-zinc-700">{cert.name}</td>
-                        <td className="p-1.5 sm:p-3 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-zinc-700">{cert.department}</td>
-                        <td className="p-1.5 sm:p-3 font-mono font-bold text-emerald-600 dark:text-emerald-400 border border-slate-300 dark:border-zinc-700">{cert.expiryDate}</td>
-                        <td className="p-1.5 sm:p-3 border border-slate-300 dark:border-zinc-700 text-center">
+                        <td className="py-1 px-3 font-medium text-slate-900 dark:text-slate-100 border border-slate-300 dark:border-zinc-700 leading-none">{cert.name}</td>
+                        <td className="py-1 px-3 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-zinc-700 leading-none">{cert.department}</td>
+                        <td className="py-1 px-3 font-mono font-bold text-emerald-600 dark:text-emerald-400 border border-slate-300 dark:border-zinc-700 text-center leading-none">{cert.expiryDate}</td>
+                        <td className="py-1 px-3 border border-slate-300 dark:border-zinc-700 text-center leading-none">
                           <div className="flex justify-center">
                             <button
                               onClick={(e) => {
-                              e.stopPropagation(); // Avoid triggering row selection when clicking the view button
-                              onOpenDocument({
-                                title: `First Aid & CPR Certificate - ${cert.name}`,
-                                subtitle: `Department: ${cert.department}`,
-                                url: cert.certLink,
-                                type: 'pdf'
-                              });
-                            }}
-                            className="px-3 py-1.5 rounded-lg bg-blue-100 hover:bg-blue-200 dark:bg-blue-900/40 dark:hover:bg-blue-900/60 text-blue-700 dark:text-blue-300 font-semibold text-[9px] sm:text-[10px] uppercase tracking-wider flex items-center gap-1.5 transition-colors"
-                          >
-                            <span className="material-symbols-outlined text-[14px]">visibility</span>
-                            View Cert
-                          </button>
-                        </div>
-                      </td>
+                                e.stopPropagation(); // Avoid triggering row selection when clicking the view button
+                                onOpenDocument({
+                                  title: `First Aid & CPR Certificate - ${cert.name}`,
+                                  subtitle: `Department: ${cert.department}`,
+                                  url: cert.certLink,
+                                  type: 'pdf'
+                                });
+                              }}
+                              className="inline-flex items-center justify-center px-2.5 py-0.5 rounded bg-blue-100 hover:bg-blue-200 dark:bg-blue-900/40 dark:hover:bg-blue-900/60 text-blue-700 dark:text-blue-300 font-semibold text-[11px] uppercase tracking-wider gap-1 transition-colors leading-tight"
+                            >
+                              <span className="material-symbols-outlined text-[13px]">visibility</span>
+                              View Cert
+                            </button>
+                          </div>
+                        </td>
                       </tr>
                     );
                   })

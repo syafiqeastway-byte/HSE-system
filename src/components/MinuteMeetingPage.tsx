@@ -103,18 +103,18 @@ export const MinuteMeetingPage: React.FC<MinuteMeetingPageProps> = ({
           <div className="overflow-x-auto">
             <table className="w-full border-collapse border border-slate-300 dark:border-zinc-700 text-left text-xs sm:text-sm whitespace-nowrap">
               <thead className="bg-slate-100 dark:bg-zinc-800/80 text-slate-800 dark:text-zinc-100 border-b border-slate-300 dark:border-zinc-700">
-                <tr>
-                  <th className="py-3 px-4 font-extrabold uppercase tracking-wider border border-slate-300 dark:border-zinc-700">No</th>
-                  <th className="py-3 px-4 font-extrabold uppercase tracking-wider border border-slate-300 dark:border-zinc-700">Title</th>
-                  <th className="py-3 px-4 font-extrabold uppercase tracking-wider border border-slate-300 dark:border-zinc-700">Location</th>
-                  <th className="py-3 px-4 font-extrabold uppercase tracking-wider border border-slate-300 dark:border-zinc-700">Date</th>
-                  <th className="py-3 px-4 font-extrabold uppercase tracking-wider border border-slate-300 dark:border-zinc-700 text-center">Document</th>
+                <tr className="h-8">
+                  <th className="w-14 py-1 px-3 font-bold uppercase tracking-wider border border-slate-300 dark:border-zinc-700 text-center text-xs">No</th>
+                  <th className="min-w-[260px] py-1 px-3 font-bold uppercase tracking-wider border border-slate-300 dark:border-zinc-700 text-xs">Title</th>
+                  <th className="min-w-[140px] py-1 px-3 font-bold uppercase tracking-wider border border-slate-300 dark:border-zinc-700 text-xs">Location</th>
+                  <th className="w-28 py-1 px-3 font-bold uppercase tracking-wider border border-slate-300 dark:border-zinc-700 text-center text-xs">Date</th>
+                  <th className="w-28 py-1 px-3 font-bold uppercase tracking-wider border border-slate-300 dark:border-zinc-700 text-center text-xs">Document</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-300 dark:divide-zinc-700">
+              <tbody className="divide-y divide-slate-300 dark:divide-zinc-700 text-xs sm:text-sm">
                 {filteredMeetings.length === 0 ? (
-                  <tr>
-                    <td colSpan={5} className="py-8 text-center text-xs text-slate-400 border border-slate-300 dark:border-zinc-700">
+                  <tr className="h-9">
+                    <td colSpan={5} className="py-4 text-center text-xs text-slate-400 border border-slate-300 dark:border-zinc-700">
                       No meeting records found matching "{searchQuery}"
                     </td>
                   </tr>
@@ -125,40 +125,39 @@ export const MinuteMeetingPage: React.FC<MinuteMeetingPageProps> = ({
                       <tr 
                         key={m.id} 
                         onClick={() => setSelectedRowId(isSelected ? null : String(m.id))}
-                        className={`transition-colors cursor-pointer ${
+                        className={`h-9 transition-colors cursor-pointer ${
                           isSelected 
                             ? 'bg-slate-200/80 dark:bg-slate-800 text-slate-900 dark:text-white font-semibold shadow-inner' 
                             : 'hover:bg-slate-100 dark:hover:bg-slate-800/80 active:bg-slate-200 dark:active:bg-slate-700/60'
                         }`}
                       >
-                        <td className="py-3 px-4 font-medium text-slate-900 dark:text-slate-200 border border-slate-300 dark:border-zinc-700">
+                        <td className="py-1 px-3 font-medium text-slate-900 dark:text-slate-200 border border-slate-300 dark:border-zinc-700 text-center leading-none">
                           {m.id}
                         </td>
-                        <td className="py-3 px-4 font-semibold text-slate-800 dark:text-slate-300 border border-slate-300 dark:border-zinc-700">
+                        <td className="py-1 px-3 font-medium text-slate-800 dark:text-slate-200 border border-slate-300 dark:border-zinc-700 leading-none">
                           {m.title}
                         </td>
-                        <td className="py-3 px-4 text-slate-600 dark:text-slate-400 border border-slate-300 dark:border-zinc-700">
-                          <span className="px-2 py-1 rounded bg-slate-100 dark:bg-slate-800 text-xs font-semibold">
+                        <td className="py-1 px-3 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-zinc-700 leading-none">
+                          <span className="inline-flex items-center px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-[11px] font-medium leading-tight">
                             {m.location}
                           </span>
                         </td>
-                        <td className="py-3 px-4 font-mono text-slate-600 dark:text-slate-400 text-xs sm:text-sm border border-slate-300 dark:border-zinc-700">
+                        <td className="py-1 px-3 font-mono text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-zinc-700 text-center leading-none">
                           {m.date}
                         </td>
-                        <td className="py-3 px-4 text-center border border-slate-300 dark:border-zinc-700">
+                        <td className="py-1 px-3 text-center border border-slate-300 dark:border-zinc-700 leading-none">
                           {m.documentUrl ? (
                             <a 
                               href={formatToPreviewUrl(m.documentUrl)} 
                               target="_blank" 
                               rel="noopener noreferrer"
-                              className="inline-flex items-center justify-center px-2 py-1 text-[11px] font-bold bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-500/20 rounded-md transition-colors"
+                              className="inline-flex items-center justify-center px-2.5 py-0.5 text-[11px] font-semibold bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-500/20 rounded transition-colors leading-tight"
                               onClick={(e) => e.stopPropagation()}
                             >
                               Open Doc
-                              
                             </a>
                           ) : (
-                            <span className="text-xs text-slate-400 italic">No Document</span>
+                            <span className="text-[11px] text-slate-400 italic leading-tight">No Doc</span>
                           )}
                         </td>
                       </tr>
