@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import * as XLSX from 'xlsx';
 import { IncidentRecord } from '../types';
 import { MOCK_INCIDENT_RECORDS } from '../data/mockData';
 import { fetchLiveIncidentRecords } from '../utils/gasBridge';
 import { formatToPreviewUrl } from '../utils/formatDriveUrl';
+import { generateIncidentFullAnalyticsReport } from '../utils/incidentReportPdfGenerator';
 
 interface AllIncidentRecordModalProps {
   isOpen: boolean;
@@ -12,8 +14,9 @@ interface AllIncidentRecordModalProps {
 export const AllIncidentRecordModal: React.FC<AllIncidentRecordModalProps> = ({ isOpen, onClose }) => {
   const [incidents, setIncidents] = useState<IncidentRecord[]>([]);
   const [loading, setLoading] = useState(false);
+  const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-    const [source, setSource] = useState<'Google Sheets Live' | 'Local Cache Fallback'>('Google Sheets Live');
+  const [source, setSource] = useState<'Google Sheets Live' | 'Local Cache Fallback'>('Google Sheets Live');
   const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
 
   const fetchIncidents = async () => {
@@ -38,6 +41,26 @@ export const AllIncidentRecordModal: React.FC<AllIncidentRecordModalProps> = ({ 
 
   const handleLoadLiveData = () => {
     fetchIncidents();
+  };
+
+  const handleGeneratePdfReport = async () => {
+    if (isGeneratingPdf) return;
+    setIsGeneratingPdf(true);
+    try {
+      const recordsToAnalyze = filteredIncidents.length > 0 ? filteredIncidents : incidents;
+      await generateIncidentFullAnalyticsReport(recordsToAnalyze);
+    } catch (error) {
+      console.error('Failed to generate PDF Report:', error);
+    } finally {
+      setIsGeneratingPdf(false);
+    }
+  };
+
+  const handleDownloadExcel = () => {
+    const ws = XLSX.utils.json_to_sheet(filteredIncidents.length > 0 ? filteredIncidents : incidents);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Incidents");
+    XLSX.writeFile(wb, "Incident_Records.xlsx");
   };
 useEffect(() => {
     if (isOpen) {
@@ -151,9 +174,26 @@ useEffect(() => {
             )}
           </div>
 
-          <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
-            
-
+          <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto justify-end">
+            <button
+              onClick={handleGeneratePdfReport}
+              disabled={isGeneratingPdf}
+              className="px-3 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold text-xs flex items-center gap-1.5 transition-all border border-red-700 shadow-sm disabled:opacity-50 cursor-pointer"
+              title="Generate comprehensive 7-section incident analytics PDF report with charts"
+            >
+              <span className={`material-symbols-outlined text-base ${isGeneratingPdf ? 'animate-spin' : ''}`}>
+                {isGeneratingPdf ? 'sync' : 'picture_as_pdf'}
+              </span>
+              <span>{isGeneratingPdf ? 'Generating PDF...' : 'PDF Report'}</span>
+            </button>
+            <button
+              onClick={handleDownloadExcel}
+              className="px-3 py-2 rounded-xl bg-[#217346] hover:bg-[#1b5e39] text-white font-bold text-xs flex items-center gap-1.5 transition-all border border-[#1b5e39] shadow-sm cursor-pointer"
+              title="Download Incident Records Excel"
+            >
+              <span className="material-symbols-outlined text-base">download</span>
+              <span>Download Excel</span>
+            </button>
             <button
               onClick={handleLoadLiveData}
               disabled={loading}

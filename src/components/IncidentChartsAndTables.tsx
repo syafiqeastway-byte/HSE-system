@@ -8,6 +8,7 @@ import {
 } from '../utils/gasBridge';
 import { formatToPreviewUrl } from '../utils/formatDriveUrl';
 import * as XLSX from 'xlsx';
+import { generateIncidentFullAnalyticsReport } from '../utils/incidentReportPdfGenerator';
 
 declare const Chart: any;
 
@@ -118,6 +119,7 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
   const [selectedSummaryRowIdx, setSelectedSummaryRowIdx] = useState<number | null>(null);
+  const [isGeneratingPdf, setIsGeneratingPdf] = useState<boolean>(false);
 
   // Canvas Refs for Charts
   const chartRef1 = useRef<HTMLCanvasElement | null>(null);
@@ -209,6 +211,29 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
 
     const fileName = `${tableData.title.replace(/[^a-zA-Z0-9]/g, '_')}_Summary.xlsx`;
     XLSX.writeFile(workbook, fileName);
+  };
+
+  // Generate Comprehensive PDF Report with analysis & charts for 7 sections
+  const handleGeneratePdfReport = async () => {
+    if (isGeneratingPdf) return;
+    setIsGeneratingPdf(true);
+    try {
+      const recordsToAnalyze = filteredIncidents.length > 0 ? filteredIncidents : incidents;
+      await generateIncidentFullAnalyticsReport(recordsToAnalyze);
+    } catch (err) {
+      console.error('Failed to generate full analytics PDF report:', err);
+    } finally {
+      setIsGeneratingPdf(false);
+    }
+  };
+
+  // Export All Incidents Live Table to Excel
+  const exportAllIncidentsToExcel = () => {
+    const recordsToExport = filteredIncidents.length > 0 ? filteredIncidents : incidents;
+    const ws = XLSX.utils.json_to_sheet(recordsToExport);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Incidents');
+    XLSX.writeFile(wb, 'All_Incident_Records.xlsx');
   };
 
   // Calculate Frequency map helper
@@ -916,6 +941,18 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
           <div className="flex items-center gap-2">
             <button
               type="button"
+              onClick={handleGeneratePdfReport}
+              disabled={isGeneratingPdf}
+              className="px-3.5 py-1.5 rounded-lg text-white font-bold flex items-center gap-1.5 shadow-sm hover:brightness-110 active:scale-95 transition-all text-xs cursor-pointer bg-red-600 hover:bg-red-700 border border-red-700 disabled:opacity-50"
+              title="Generate comprehensive 7-section incident analytics PDF report with charts"
+            >
+              <span className={`material-symbols-outlined text-sm ${isGeneratingPdf ? 'animate-spin' : ''}`}>
+                {isGeneratingPdf ? 'sync' : 'picture_as_pdf'}
+              </span>
+              {isGeneratingPdf ? 'Generating PDF...' : 'PDF Report'}
+            </button>
+            <button
+              type="button"
               onClick={exportSummaryTableToExcel}
               className="px-3.5 py-1.5 rounded-lg text-white font-bold flex items-center gap-1.5 shadow-sm hover:brightness-110 active:scale-95 transition-all text-xs cursor-pointer"
               style={{ backgroundColor: '#217346' }}
@@ -1138,13 +1175,38 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
                 </button>
               )}
             </div>
-            <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">
-              {searchQuery.trim() ? (
-                <>Found <strong className="text-blue-600 dark:text-blue-400">{filteredIncidents.length}</strong> matching cases (Total <strong className="text-slate-900 dark:text-white">{incidents.length}</strong> records)</>
-              ) : (
-                <>Showing <strong className="text-slate-900 dark:text-white">{displayIncidents.length}</strong> latest cases (Total <strong className="text-slate-900 dark:text-white">{incidents.length}</strong> records)</>
-              )}
-            </span>
+            <div className="flex flex-wrap items-center gap-3">
+              <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">
+                {searchQuery.trim() ? (
+                  <>Found <strong className="text-blue-600 dark:text-blue-400">{filteredIncidents.length}</strong> matching cases (Total <strong className="text-slate-900 dark:text-white">{incidents.length}</strong> records)</>
+                ) : (
+                  <>Showing <strong className="text-slate-900 dark:text-white">{displayIncidents.length}</strong> latest cases (Total <strong className="text-slate-900 dark:text-white">{incidents.length}</strong> records)</>
+                )}
+              </span>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={handleGeneratePdfReport}
+                  disabled={isGeneratingPdf}
+                  className="px-3 py-1.5 rounded-lg text-white font-bold flex items-center gap-1.5 shadow-sm hover:brightness-110 active:scale-95 transition-all text-xs cursor-pointer bg-red-600 hover:bg-red-700 border border-red-700 disabled:opacity-50"
+                  title="Generate comprehensive 7-section incident analytics PDF report with charts"
+                >
+                  <span className={`material-symbols-outlined text-sm ${isGeneratingPdf ? 'animate-spin' : ''}`}>
+                    {isGeneratingPdf ? 'sync' : 'picture_as_pdf'}
+                  </span>
+                  <span>{isGeneratingPdf ? 'Generating PDF...' : 'PDF Report'}</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={exportAllIncidentsToExcel}
+                  className="px-3 py-1.5 rounded-lg text-white font-bold flex items-center gap-1.5 shadow-sm hover:brightness-110 active:scale-95 transition-all text-xs cursor-pointer bg-[#217346] hover:bg-[#1b5e39] border border-[#1b5e39]"
+                  title="Export all incident records to Excel"
+                >
+                  <span className="material-symbols-outlined text-sm">download</span>
+                  <span>Download Excel</span>
+                </button>
+              </div>
+            </div>
           </div>
 
           {/* All Incident Records Live Table */}
