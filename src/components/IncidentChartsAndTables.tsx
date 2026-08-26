@@ -8,9 +8,8 @@ import {
 } from '../utils/gasBridge';
 import { formatToPreviewUrl } from '../utils/formatDriveUrl';
 import * as XLSX from 'xlsx';
+import Chart from 'chart.js/auto';
 import { generateIncidentFullAnalyticsReport } from '../utils/incidentReportPdfGenerator';
-
-declare const Chart: any;
 
 interface IncidentChartsAndTablesProps {
   isDarkMode: boolean;
@@ -252,15 +251,13 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
 
   // Render Charts on activeTab / data change
   useEffect(() => {
-    if (loading || typeof Chart === 'undefined' || incidents.length === 0) return;
+    if (loading || incidents.length === 0) return;
 
-    // Register plugin if supported
-    if (typeof Chart !== 'undefined' && Chart.register) {
-      try {
-        Chart.register(centerDataLabelsPlugin);
-      } catch (e) {
-        // ignore duplicate registration
-      }
+    // Register plugin
+    try {
+      Chart.register(centerDataLabelsPlugin);
+    } catch (e) {
+      // ignore duplicate registration
     }
 
     // Destroy previous chart instances
@@ -360,7 +357,7 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
                 display: true,
                 text: 'OCCUPATIONAL INCIDENTS ANNUAL TREND',
                 color: textColor,
-                font: { size: 12, weight: 'extrabold' },
+                font: { size: 12, weight: 'bold' },
               },
             },
           },
@@ -589,10 +586,12 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
                 backgroundColor: ['#10B981', '#EF4444', '#F59E0B'],
                 borderWidth: 2,
                 borderColor: isDarkMode ? '#1E293B' : '#FFFFFF',
+                hoverOffset: 14,
+                hoverBorderWidth: 3,
               },
             ],
           },
-          options: { animation: { duration: 1500, easing: 'easeOutQuart' },
+          options: { animation: { duration: 1200, easing: 'easeOutQuart' },
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
@@ -624,10 +623,12 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
                 backgroundColor: ['#F59E0B', '#3B82F6', '#EF4444', '#10B981', '#8B5CF6'],
                 borderWidth: 2,
                 borderColor: isDarkMode ? '#1E293B' : '#FFFFFF',
+                hoverOffset: 14,
+                hoverBorderWidth: 3,
               },
             ],
           },
-          options: { animation: { duration: 1500, easing: 'easeOutQuart' },
+          options: { animation: { duration: 1200, easing: 'easeOutQuart' },
             responsive: true,
             maintainAspectRatio: false,
             plugins: {
@@ -659,6 +660,8 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
                 backgroundColor: ['#EF4444', '#10B981', '#64748B'],
                 borderWidth: 2,
                 borderColor: isDarkMode ? '#1E293B' : '#FFFFFF',
+                hoverOffset: 14,
+                hoverBorderWidth: 3,
               },
             ],
           },
@@ -941,18 +944,6 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
           <div className="flex items-center gap-2">
             <button
               type="button"
-              onClick={handleGeneratePdfReport}
-              disabled={isGeneratingPdf}
-              className="px-3.5 py-1.5 rounded-lg text-white font-bold flex items-center gap-1.5 shadow-sm hover:brightness-110 active:scale-95 transition-all text-xs cursor-pointer bg-red-600 hover:bg-red-700 border border-red-700 disabled:opacity-50"
-              title="Generate comprehensive 7-section incident analytics PDF report with charts"
-            >
-              <span className={`material-symbols-outlined text-sm ${isGeneratingPdf ? 'animate-spin' : ''}`}>
-                {isGeneratingPdf ? 'sync' : 'picture_as_pdf'}
-              </span>
-              {isGeneratingPdf ? 'Generating PDF...' : 'PDF Report'}
-            </button>
-            <button
-              type="button"
               onClick={exportSummaryTableToExcel}
               className="px-3.5 py-1.5 rounded-lg text-white font-bold flex items-center gap-1.5 shadow-sm hover:brightness-110 active:scale-95 transition-all text-xs cursor-pointer"
               style={{ backgroundColor: '#217346' }}
@@ -1184,18 +1175,6 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
                 )}
               </span>
               <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={handleGeneratePdfReport}
-                  disabled={isGeneratingPdf}
-                  className="px-3 py-1.5 rounded-lg text-white font-bold flex items-center gap-1.5 shadow-sm hover:brightness-110 active:scale-95 transition-all text-xs cursor-pointer bg-red-600 hover:bg-red-700 border border-red-700 disabled:opacity-50"
-                  title="Generate comprehensive 7-section incident analytics PDF report with charts"
-                >
-                  <span className={`material-symbols-outlined text-sm ${isGeneratingPdf ? 'animate-spin' : ''}`}>
-                    {isGeneratingPdf ? 'sync' : 'picture_as_pdf'}
-                  </span>
-                  <span>{isGeneratingPdf ? 'Generating PDF...' : 'PDF Report'}</span>
-                </button>
                 <button
                   type="button"
                   onClick={exportAllIncidentsToExcel}
