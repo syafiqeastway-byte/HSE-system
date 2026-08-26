@@ -73,7 +73,7 @@ export const EmergencyPlanPage: React.FC<EmergencyPlanPageProps> = ({
             <span className="material-symbols-outlined text-xl">arrow_back</span>
           </button>
           <div>
-            <h2 className="text-xl font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
+            <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
               <span className="material-symbols-outlined text-red-500 animate-pulse">e911_emergency</span>
               <span>EMERGENCY RESPONSE PLAN & COMMAND CENTER</span>
             </h2>

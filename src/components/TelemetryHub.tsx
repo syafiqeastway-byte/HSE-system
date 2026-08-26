@@ -115,20 +115,20 @@ export const TelemetryHub: React.FC = () => {
   };
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5 sm:gap-4 mb-6">
       
       {/* 1. Real-Time System Clock */}
-      <div className="bg-blue-500/10 border border-blue-500/30 rounded-2xl p-4 sm:p-5 flex items-center justify-between backdrop-blur-md">
-        <div className="flex items-center gap-3.5">
-          <div className="w-10 h-10 rounded-xl bg-blue-500/20 text-blue-400 flex items-center justify-center flex-shrink-0 border border-blue-500/30">
-            <span className="material-symbols-outlined text-2xl">schedule</span>
+      <div className="bg-blue-500/10 border border-blue-500/30 rounded-2xl px-3.5 py-2.5 sm:px-4 sm:py-3 h-20 flex items-center justify-between backdrop-blur-md">
+        <div className="flex items-center gap-3">
+          <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-blue-500/20 text-blue-400 flex items-center justify-center flex-shrink-0 border border-blue-500/30">
+            <span className="material-symbols-outlined text-xl sm:text-2xl">schedule</span>
           </div>
           <div>
-            <div className="flex items-center gap-1.5 text-sm sm:text-base font-bold text-blue-400 uppercase tracking-wider">
+            <div className="flex items-center gap-1.5 text-xs font-bold text-blue-400 uppercase tracking-wider">
               <span>DATE/TIME</span>
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
             </div>
-            <div className="text-sm sm:text-base font-bold font-mono text-slate-900 dark:text-white mt-1 tracking-tight">
+            <div className="text-xs sm:text-sm font-bold font-mono text-slate-900 dark:text-white mt-0.5 tracking-tight">
               {timeStr}
             </div>
           </div>
@@ -136,36 +136,32 @@ export const TelemetryHub: React.FC = () => {
       </div>
 
       {/* 2. Live Weather Widget (Kuala Lumpur & Penang) */}
-      <div className="bg-cyan-500/10 border border-cyan-500/30 rounded-2xl p-4 sm:p-5 flex items-center justify-between backdrop-blur-md">
-        <div className="flex items-center gap-3.5 w-full">
-          <div className="w-10 h-10 rounded-xl bg-cyan-500/20 text-cyan-400 flex items-center justify-center flex-shrink-0 border border-cyan-500/30">
-            <span className="material-symbols-outlined text-2xl">thermostat</span>
+      <div className="bg-cyan-500/10 border border-cyan-500/30 rounded-2xl px-3.5 py-2.5 sm:px-4 sm:py-3 h-20 flex items-center justify-between backdrop-blur-md">
+        <div className="flex items-center gap-3 w-full">
+          <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-cyan-500/20 text-cyan-400 flex items-center justify-center flex-shrink-0 border border-cyan-500/30">
+            <span className="material-symbols-outlined text-xl sm:text-2xl">thermostat</span>
           </div>
           <div className="flex-1 min-w-0">
-            <div className="text-sm sm:text-base font-bold text-cyan-400 uppercase tracking-wider flex items-center gap-1">
+            <div className="text-xs font-bold text-cyan-400 uppercase tracking-wider flex items-center gap-1">
               <span>LIVE SITE WEATHER</span>
-              {loadingWeather && <span className="material-symbols-outlined text-xs animate-spin">sync</span>}
+              {loadingWeather && <span className="material-symbols-outlined text-[10px] animate-spin">sync</span>}
             </div>
             
-            <div className="space-y-1 mt-1.5">
+            <div className="grid grid-cols-2 gap-2 mt-0.5">
               {/* KL Weather */}
-              <div className="flex items-center gap-1.5 text-xs sm:text-sm font-bold text-slate-900 dark:text-white">
-                <span>KL:</span>
-                <span className="text-cyan-500 dark:text-cyan-400 font-extrabold">{weather.tempKL}°C</span>
-                <span className="text-slate-400 dark:text-slate-600 font-normal">•</span>
-                <span className="text-slate-700 dark:text-slate-300 font-medium truncate">{weather.weatherKL}</span>
-                <span className="material-symbols-outlined text-cyan-400 text-lg animate-pulse ml-auto" title={weather.weatherKL}>
+              <div className="flex items-center gap-1 text-[11px] sm:text-xs font-bold text-slate-900 dark:text-white truncate">
+                <span className="text-cyan-400 font-extrabold">KL:</span>
+                <span>{weather.tempKL}°C</span>
+                <span className="material-symbols-outlined text-cyan-400 text-sm animate-pulse ml-0.5" title={weather.weatherKL}>
                   {getWeatherIcon(weather.weatherKL)}
                 </span>
               </div>
               
               {/* PENANG Weather */}
-              <div className="flex items-center gap-1.5 text-xs sm:text-sm font-bold text-slate-900 dark:text-white">
-                <span>PENANG:</span>
-                <span className="text-cyan-500 dark:text-cyan-400 font-extrabold">{weather.tempPenang}°C</span>
-                <span className="text-slate-400 dark:text-slate-600 font-normal">•</span>
-                <span className="text-slate-700 dark:text-slate-300 font-medium truncate">{weather.weatherPenang}</span>
-                <span className="material-symbols-outlined text-cyan-400 text-lg animate-pulse ml-auto" title={weather.weatherPenang}>
+              <div className="flex items-center gap-1 text-[11px] sm:text-xs font-bold text-slate-900 dark:text-white truncate">
+                <span className="text-cyan-400 font-extrabold">PNG:</span>
+                <span>{weather.tempPenang}°C</span>
+                <span className="material-symbols-outlined text-cyan-400 text-sm animate-pulse ml-0.5" title={weather.weatherPenang}>
                   {getWeatherIcon(weather.weatherPenang)}
                 </span>
               </div>
@@ -175,22 +171,22 @@ export const TelemetryHub: React.FC = () => {
       </div>
 
       {/* 3. Incident Counter Card */}
-      <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-2xl p-4 sm:p-5 flex items-center justify-between backdrop-blur-md animate-pulse-glow">
-        <div className="flex items-center gap-3.5">
-          <div className="w-10 h-10 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center flex-shrink-0 border border-emerald-500/30">
-            <span className="material-symbols-outlined text-2xl">verified_user</span>
+      <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-2xl px-3.5 py-2.5 sm:px-4 sm:py-3 h-20 flex items-center justify-between backdrop-blur-md animate-pulse-glow">
+        <div className="flex items-center gap-3">
+          <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center flex-shrink-0 border border-emerald-500/30">
+            <span className="material-symbols-outlined text-xl sm:text-2xl">verified_user</span>
           </div>
           <div>
-            <div className="text-sm sm:text-base font-bold text-emerald-400 uppercase tracking-wider">
+            <div className="text-xs font-bold text-emerald-400 uppercase tracking-wider">
               DAYS WITHOUT INCIDENT
             </div>
-            <div className="text-3xl sm:text-4xl font-extrabold text-emerald-400 flex items-baseline gap-2 mt-0.5 font-mono">
+            <div className="text-2xl sm:text-3xl font-extrabold text-emerald-400 flex items-baseline gap-1.5 mt-0.5 font-mono">
               {loadingDays ? (
-                <span className="text-slate-400 text-lg">--</span>
+                <span className="text-slate-400 text-base">--</span>
               ) : (
                 <span>{daysCount}</span>
               )}
-              <span className="text-xs sm:text-sm font-bold text-emerald-600 dark:text-emerald-400/90 uppercase tracking-wider">
+              <span className="text-[10px] sm:text-xs font-bold text-emerald-600 dark:text-emerald-400/90 uppercase tracking-wider">
                 DAYS SAFE
               </span>
             </div>

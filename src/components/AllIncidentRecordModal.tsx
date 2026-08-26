@@ -120,7 +120,7 @@ useEffect(() => {
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h2 className="text-base sm:text-xl font-black text-slate-900 dark:text-white tracking-wide uppercase">
+                <h2 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white tracking-wide uppercase">
                   ALL INCIDENT RECORD
                 </h2>
               </div>

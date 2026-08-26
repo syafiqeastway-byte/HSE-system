@@ -1045,7 +1045,7 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
       {/* Title & Refresh Bar */}
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-4 pb-3 border-b border-slate-200 dark:border-slate-800">
         <div>
-          <h2 className="text-lg sm:text-xl font-extrabold flex items-center gap-2 text-slate-900 dark:text-white">
+          <h2 className="text-base sm:text-lg font-bold flex items-center gap-2 text-slate-900 dark:text-white">
             <span className="material-symbols-outlined text-blue-600 dark:text-blue-400 text-2xl">analytics</span>
             <span>SAFETY PERFORMANCE & LIVE INCIDENT ANALYTICS</span>
           </h2>

@@ -31,10 +31,10 @@ export const Header: React.FC<HeaderProps> = ({
               />
             </div>
             <div>
-              <h1 className="text-lg sm:text-xl font-extrabold tracking-tight text-slate-900 dark:text-white uppercase leading-tight whitespace-nowrap">
+              <h1 className="text-xl sm:text-2xl font-black tracking-tight text-slate-900 dark:text-white uppercase leading-tight whitespace-nowrap">
                 EASTWAY ENGINEERING 
               </h1>
-              <p className="text-xs sm:text-sm text-slate-500 dark:text-zinc-400 font-bold tracking-[0.12em] sm:tracking-[0.15em] uppercase">
+              <p className="text-[11px] sm:text-xs text-slate-500 dark:text-zinc-400 font-bold tracking-[0.12em] sm:tracking-[0.15em] uppercase">
                 HSE Integrated Management System
               </p>
             </div>

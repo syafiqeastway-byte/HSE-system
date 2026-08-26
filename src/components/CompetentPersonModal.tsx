@@ -20,7 +20,7 @@ export const CompetentPersonModal: React.FC<CompetentPersonModalProps> = ({ isOp
               <span className="material-symbols-outlined text-2xl">badge</span>
             </div>
             <div>
-              <h2 className="text-lg font-bold text-slate-900 dark:text-white">
+              <h2 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white">
                 COMPETENT PERSON & CERTIFIED SUPERVISORS
               </h2>
               <p className="text-xs text-slate-500 dark:text-slate-400">

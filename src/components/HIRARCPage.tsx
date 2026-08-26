@@ -57,7 +57,7 @@ export const HIRARCPage: React.FC<HIRARCPageProps> = ({
             <span className="material-symbols-outlined text-xl">arrow_back</span>
           </button>
           <div>
-            <h2 className="text-xl font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
+            <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
               <span className="material-symbols-outlined text-amber-500">assignment_turned_in</span>
               <span>HIRARC</span>
             </h2>
