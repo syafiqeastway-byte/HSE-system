@@ -104,20 +104,6 @@ export const Header: React.FC<HeaderProps> = ({
 
           {/* Action Controls Desktop */}
           <div className="flex items-center gap-2 flex-shrink-0 ml-1">
-            {onOpenPWAInstall && !isPwaInstalled && (
-              <button
-                onClick={onOpenPWAInstall}
-                className="px-3 py-2 sm:px-3.5 sm:py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold text-xs uppercase tracking-wider flex items-center gap-1.5 shadow-md shadow-blue-500/20 transition-all cursor-pointer whitespace-nowrap"
-                title="Install Eastway Engineering Digital Hub App"
-              >
-                <span className="material-symbols-outlined text-base sm:text-lg animate-bounce">get_app</span>
-                <span>INSTALL APP</span>
-                {canInstallPwa && (
-                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
-                )}
-              </button>
-            )}
-
             {onRefreshData && (
               <button
                 onClick={onRefreshData}

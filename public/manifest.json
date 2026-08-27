@@ -1,6 +1,6 @@
 {
-  "name": "Eastway Engineering Digital Hub",
-  "short_name": "EE Digital Hub",
+  "name": "EE HSE PORTAL",
+  "short_name": "EE HSE PORTAL",
   "description": "EASTWAY ENGINEERING Official HSE Integrated Management System & Incident Telemetry App",
   "start_url": "/",
   "scope": "/",

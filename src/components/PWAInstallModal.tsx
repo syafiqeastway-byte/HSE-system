@@ -72,7 +72,7 @@ export const PWAInstallModal: React.FC<PWAInstallModalProps> = ({
           <div className="w-14 h-14 rounded-2xl bg-slate-900 p-2 flex items-center justify-center shadow-lg border border-slate-800 flex-shrink-0 overflow-hidden">
             <img 
               src="/EE LOGO.png" 
-              alt="Eastway Engineering Digital Hub Logo" 
+              alt="Eastway Engineering HSE Portal Logo" 
               className="w-full h-full object-contain"
               onError={(e) => {
                 (e.target as HTMLImageElement).src = '/icons/icon-192.png';
@@ -84,7 +84,7 @@ export const PWAInstallModal: React.FC<PWAInstallModalProps> = ({
               INSTALL APP
             </h3>
             <p className="text-xs text-blue-600 dark:text-blue-400 font-bold uppercase tracking-wider mt-0.5">
-              Eastway Engineering Digital Hub
+              Eastway Engineering HSE Portal
             </p>
           </div>
         </div>
@@ -96,14 +96,14 @@ export const PWAInstallModal: React.FC<PWAInstallModalProps> = ({
               App is already installed!
             </p>
             <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
-              You are running Eastway Engineering Digital Hub in Standalone App Mode.
+              You are running Eastway Engineering HSE Portal in Standalone App Mode.
             </p>
           </div>
         ) : isIOS ? (
           /* iOS Step-by-Step Installation Instructions */
           <div className="space-y-4 my-4">
             <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300">
-              To install <strong>EE Digital Hub</strong> on <strong>iPhone / iPad</strong>:
+              To install <strong>EE HSE PORTAL</strong> on <strong>iPhone / iPad</strong>:
             </p>
             <div className="space-y-2.5 bg-slate-50 dark:bg-slate-800/60 p-4 rounded-2xl border border-slate-200 dark:border-slate-700/60 text-xs text-slate-700 dark:text-slate-300">
               <div className="flex items-center gap-3">
@@ -124,7 +124,7 @@ export const PWAInstallModal: React.FC<PWAInstallModalProps> = ({
           /* Android / Desktop Direct Install */
           <div className="space-y-4 my-4">
             <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
-              Install <strong>Eastway Engineering Digital Hub</strong> on your Android Smartphone, Windows PC, or Tablet for fast launch, standalone window mode, and offline reliability.
+              Install <strong>Eastway Engineering HSE Portal</strong> on your Android Smartphone, Windows PC, or Tablet for fast launch, standalone window mode, and offline reliability.
             </p>
             <ul className="space-y-2 text-xs text-slate-600 dark:text-slate-400">
               <li className="flex items-center gap-2">

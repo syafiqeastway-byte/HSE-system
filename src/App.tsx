@@ -126,6 +126,9 @@ export default function App() {
               onOpenAllIncidentsModal={() => setActivePage('allIncidentsPage')}
               onNavigateSafetyViolation={() => setActivePage('safetyViolationPage')}
               isDarkMode={isDarkMode}
+              onOpenPWAInstall={() => setPwaModalOpen(true)}
+              isPwaInstalled={isPwaInstalled}
+              canInstallPwa={!!deferredPrompt}
             />
           )}
 

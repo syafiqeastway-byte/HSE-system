@@ -15,6 +15,9 @@ interface HomePageProps {
   onOpenAllIncidentsModal?: () => void;
   onNavigateSafetyViolation: () => void;
   isDarkMode: boolean;
+  onOpenPWAInstall?: () => void;
+  isPwaInstalled?: boolean;
+  canInstallPwa?: boolean;
 }
 
 export const HomePage: React.FC<HomePageProps> = ({
@@ -28,6 +31,9 @@ export const HomePage: React.FC<HomePageProps> = ({
   onOpenAllIncidentsModal,
   onNavigateSafetyViolation,
   isDarkMode,
+  onOpenPWAInstall,
+  isPwaInstalled,
+  canInstallPwa,
 }) => {
   return (
     <div className="space-y-8">
@@ -323,6 +329,25 @@ export const HomePage: React.FC<HomePageProps> = ({
 
         </div>
       </div>
+
+      {/* PWA INSTALLATION SECTION AT THE BOTTOM OF THE PAGE */}
+      {onOpenPWAInstall && !isPwaInstalled && (
+        <div className="flex justify-center items-center py-4 mt-2">
+          <button
+            onClick={onOpenPWAInstall}
+            className="w-14 h-14 rounded-full bg-blue-600 hover:bg-blue-700 text-white flex items-center justify-center shadow-lg shadow-blue-500/30 hover:scale-110 active:scale-95 transition-all cursor-pointer relative"
+            title="Install App"
+          >
+            <span className="material-symbols-outlined text-3xl">download</span>
+            {canInstallPwa && (
+              <span className="absolute top-0.5 right-0.5 w-3 h-3 rounded-full bg-emerald-400 border-2 border-white dark:border-slate-900 animate-ping"></span>
+            )}
+            {canInstallPwa && (
+              <span className="absolute top-0.5 right-0.5 w-3 h-3 rounded-full bg-emerald-400 border-2 border-white dark:border-slate-900"></span>
+            )}
+          </button>
+        </div>
+      )}
 
     </div>
   );

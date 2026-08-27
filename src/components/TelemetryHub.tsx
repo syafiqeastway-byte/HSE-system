@@ -11,6 +11,10 @@ export const TelemetryHub: React.FC = () => {
     weatherKL: 'Partly Cloudy',
     tempPenang: 30.5,
     weatherPenang: 'Fair & Sunny',
+    tempIpoh: 31.0,
+    weatherIpoh: 'Fair',
+    tempJB: 29.5,
+    weatherJB: 'Partly Cloudy',
     lastUpdated: 'Just Now'
   });
   const [loadingWeather, setLoadingWeather] = useState<boolean>(true);
@@ -55,14 +59,20 @@ export const TelemetryHub: React.FC = () => {
         setLoadingWeather(true);
         // Kuala Lumpur: Lat 3.1390, Lon 101.6869
         // Penang: Lat 5.4164, Lon 100.3327
-        const [resKL, resPenang] = await Promise.all([
+        // Ipoh: Lat 4.5975, Lon 101.0901
+        // Johor Bahru (JB): Lat 1.4854, Lon 103.7618
+        const [resKL, resPenang, resIpoh, resJB] = await Promise.all([
           fetch('https://api.open-meteo.com/v1/forecast?latitude=3.1390&longitude=101.6869&current_weather=true'),
-          fetch('https://api.open-meteo.com/v1/forecast?latitude=5.4164&longitude=100.3327&current_weather=true')
+          fetch('https://api.open-meteo.com/v1/forecast?latitude=5.4164&longitude=100.3327&current_weather=true'),
+          fetch('https://api.open-meteo.com/v1/forecast?latitude=4.5975&longitude=101.0901&current_weather=true'),
+          fetch('https://api.open-meteo.com/v1/forecast?latitude=1.4854&longitude=103.7618&current_weather=true')
         ]);
 
-        if (resKL.ok && resPenang.ok) {
+        if (resKL.ok && resPenang.ok && resIpoh.ok && resJB.ok) {
           const dataKL = await resKL.json();
           const dataPenang = await resPenang.json();
+          const dataIpoh = await resIpoh.json();
+          const dataJB = await resJB.json();
 
           const codeMap: Record<number, string> = {
             0: 'Clear Sky',
@@ -78,6 +88,8 @@ export const TelemetryHub: React.FC = () => {
 
           const klCode = dataKL.current_weather?.weathercode ?? 2;
           const penangCode = dataPenang.current_weather?.weathercode ?? 0;
+          const ipohCode = dataIpoh.current_weather?.weathercode ?? 0;
+          const jbCode = dataJB.current_weather?.weathercode ?? 2;
 
           if (isMounted) {
             setWeather({
@@ -85,6 +97,10 @@ export const TelemetryHub: React.FC = () => {
               weatherKL: codeMap[klCode] || 'Partly Cloudy',
               tempPenang: Math.round(dataPenang.current_weather?.temperature ?? 30.5),
               weatherPenang: codeMap[penangCode] || 'Fair',
+              tempIpoh: Math.round(dataIpoh.current_weather?.temperature ?? 31.0),
+              weatherIpoh: codeMap[ipohCode] || 'Fair',
+              tempJB: Math.round(dataJB.current_weather?.temperature ?? 29.5),
+              weatherJB: codeMap[jbCode] || 'Partly Cloudy',
               lastUpdated: new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })
             });
             setLoadingWeather(false);
@@ -118,7 +134,7 @@ export const TelemetryHub: React.FC = () => {
     <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5 sm:gap-4 mb-6">
       
       {/* 1. Real-Time System Clock */}
-      <div className="bg-blue-500/10 border border-blue-500/30 rounded-2xl px-3.5 py-2.5 sm:px-4 sm:py-3 h-20 flex items-center justify-between backdrop-blur-md">
+      <div className="bg-blue-500/10 border border-blue-500/30 rounded-2xl px-3.5 py-2.5 sm:px-4 sm:py-3 min-h-20 flex items-center justify-between backdrop-blur-md">
         <div className="flex items-center gap-3">
           <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-blue-500/20 text-blue-400 flex items-center justify-center flex-shrink-0 border border-blue-500/30">
             <span className="material-symbols-outlined text-xl sm:text-2xl">schedule</span>
@@ -135,8 +151,8 @@ export const TelemetryHub: React.FC = () => {
         </div>
       </div>
 
-      {/* 2. Live Weather Widget (Kuala Lumpur & Penang) */}
-      <div className="bg-cyan-500/10 border border-cyan-500/30 rounded-2xl px-3.5 py-2.5 sm:px-4 sm:py-3 h-20 flex items-center justify-between backdrop-blur-md">
+      {/* 2. Live Weather Widget (Kuala Lumpur, Penang, Ipoh, JB) */}
+      <div className="bg-cyan-500/10 border border-cyan-500/30 rounded-2xl px-3.5 py-2 sm:px-4 sm:py-2.5 min-h-20 flex items-center justify-between backdrop-blur-md">
         <div className="flex items-center gap-3 w-full">
           <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-cyan-500/20 text-cyan-400 flex items-center justify-center flex-shrink-0 border border-cyan-500/30">
             <span className="material-symbols-outlined text-xl sm:text-2xl">thermostat</span>
@@ -147,7 +163,7 @@ export const TelemetryHub: React.FC = () => {
               {loadingWeather && <span className="material-symbols-outlined text-[10px] animate-spin">sync</span>}
             </div>
             
-            <div className="grid grid-cols-2 gap-2 mt-0.5">
+            <div className="grid grid-cols-2 gap-x-2 gap-y-0.5 mt-0.5">
               {/* KL Weather */}
               <div className="flex items-center gap-1 text-[11px] sm:text-xs font-bold text-slate-900 dark:text-white truncate">
                 <span className="text-cyan-400 font-extrabold">KL:</span>
@@ -165,13 +181,31 @@ export const TelemetryHub: React.FC = () => {
                   {getWeatherIcon(weather.weatherPenang)}
                 </span>
               </div>
+
+              {/* IPOH Weather */}
+              <div className="flex items-center gap-1 text-[11px] sm:text-xs font-bold text-slate-900 dark:text-white truncate">
+                <span className="text-cyan-400 font-extrabold">IPH:</span>
+                <span>{weather.tempIpoh}°C</span>
+                <span className="material-symbols-outlined text-cyan-400 text-sm animate-pulse ml-0.5" title={weather.weatherIpoh}>
+                  {getWeatherIcon(weather.weatherIpoh)}
+                </span>
+              </div>
+
+              {/* JB Weather */}
+              <div className="flex items-center gap-1 text-[11px] sm:text-xs font-bold text-slate-900 dark:text-white truncate">
+                <span className="text-cyan-400 font-extrabold">JB:</span>
+                <span>{weather.tempJB}°C</span>
+                <span className="material-symbols-outlined text-cyan-400 text-sm animate-pulse ml-0.5" title={weather.weatherJB}>
+                  {getWeatherIcon(weather.weatherJB)}
+                </span>
+              </div>
             </div>
           </div>
         </div>
       </div>
 
       {/* 3. Incident Counter Card */}
-      <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-2xl px-3.5 py-2.5 sm:px-4 sm:py-3 h-20 flex items-center justify-between backdrop-blur-md animate-pulse-glow">
+      <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-2xl px-3.5 py-2.5 sm:px-4 sm:py-3 min-h-20 flex items-center justify-between backdrop-blur-md animate-pulse-glow">
         <div className="flex items-center gap-3">
           <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center flex-shrink-0 border border-emerald-500/30">
             <span className="material-symbols-outlined text-xl sm:text-2xl">verified_user</span>
