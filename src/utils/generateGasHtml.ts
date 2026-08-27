@@ -102,7 +102,7 @@ export function generateGasIndexHtml(): string {
     <header class="glass-card p-4 sm:p-6 mb-6 flex flex-col md:flex-row items-center justify-between gap-4">
       <div class="flex items-center gap-4">
         <div class="w-12 h-12 flex items-center justify-center flex-shrink-0 overflow-hidden">
-          <img src="https://lh3.googleusercontent.com/d/1Nwa1uSh2j7JVDKnnJBI-Ttamib2FToVp" alt="EASTWAY Logo" class="w-full h-full object-contain mix-blend-multiply dark:mix-blend-normal" referrerpolicy="no-referrer" />
+          <img src="/EE LOGO.png" alt="EASTWAY Logo" class="w-full h-full object-contain mix-blend-multiply dark:mix-blend-normal" onerror="this.src='/icons/icon-192.png'" />
         </div>
         <div>
           <h1 class="text-xl sm:text-2xl font-extrabold tracking-tight">EASTWAY ENGINEERING MYSAFETY</h1>

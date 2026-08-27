@@ -15,6 +15,7 @@ import { ExportGasModal } from './components/ExportGasModal';
 import { SupabaseModal } from './components/SupabaseModal';
 import { AllIncidentsPage } from './components/AllIncidentsPage';
 import { SafetyViolationPage } from './components/SafetyViolationPage';
+import { PWAInstallModal } from './components/PWAInstallModal';
 
 import { formatToPreviewUrl } from './utils/formatDriveUrl';
 
@@ -34,11 +35,40 @@ export default function App() {
   const [inspectionFilterType, setInspectionFilterType] = useState<'Workplace' | 'First Aid Box' | 'Fire Extinguisher' | 'All'>('All');
   const [exportGasModalOpen, setExportGasModalOpen] = useState(false);
   const [supabaseModalOpen, setSupabaseModalOpen] = useState(false);
+
+  // PWA State
+  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+  const [isPwaInstalled, setIsPwaInstalled] = useState<boolean>(false);
+  const [pwaModalOpen, setPwaModalOpen] = useState<boolean>(false);
   
   // Sync Theme with HTML element
   useEffect(() => {
     document.documentElement.classList.remove('dark');
     localStorage.setItem('theme', 'light');
+  }, []);
+
+  // Listen for PWA BeforeInstallPrompt and AppInstalled events
+  useEffect(() => {
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches || (navigator as any).standalone === true;
+    setIsPwaInstalled(isStandalone);
+
+    const handleBeforeInstallPrompt = (e: Event) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+    };
+
+    const handleAppInstalled = () => {
+      setIsPwaInstalled(true);
+      setDeferredPrompt(null);
+    };
+
+    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+    window.addEventListener('appinstalled', handleAppInstalled);
+
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+      window.removeEventListener('appinstalled', handleAppInstalled);
+    };
   }, []);
 
   const toggleTheme = () => {
@@ -74,6 +104,9 @@ export default function App() {
           }}
           isDarkMode={isDarkMode}
           toggleTheme={toggleTheme}
+          onOpenPWAInstall={() => setPwaModalOpen(true)}
+          isPwaInstalled={isPwaInstalled}
+          canInstallPwa={!!deferredPrompt}
         />
 
         {/* Top Telemetry Hub */}
@@ -187,6 +220,13 @@ export default function App() {
       <SupabaseModal
         isOpen={supabaseModalOpen}
         onClose={() => setSupabaseModalOpen(false)}
+      />
+
+      <PWAInstallModal
+        isOpen={pwaModalOpen}
+        onClose={() => setPwaModalOpen(false)}
+        deferredPrompt={deferredPrompt}
+        onInstallSuccess={() => setIsPwaInstalled(true)}
       />
 
       

@@ -7,6 +7,9 @@ interface HeaderProps {
   isDarkMode: boolean;
   toggleTheme: () => void;
   onRefreshData?: () => void;
+  onOpenPWAInstall?: () => void;
+  isPwaInstalled?: boolean;
+  canInstallPwa?: boolean;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -15,6 +18,9 @@ export const Header: React.FC<HeaderProps> = ({
   isDarkMode,
   toggleTheme,
   onRefreshData,
+  onOpenPWAInstall,
+  isPwaInstalled = false,
+  canInstallPwa = false,
 }) => {
   return (
     <header className="bg-white/90 dark:bg-zinc-900/90 backdrop-blur-md border border-slate-200/80 dark:border-zinc-800 rounded-2xl p-3.5 sm:p-4 lg:p-5 mb-6 shadow-xl transition-all">
@@ -25,9 +31,12 @@ export const Header: React.FC<HeaderProps> = ({
           <div className="flex items-center gap-2.5 sm:gap-3 cursor-pointer" onClick={() => setActivePage('homePage')}>
             <div className="w-11 h-11 sm:w-14 sm:h-14 flex items-center justify-center flex-shrink-0 overflow-hidden">
               <img
-                src="https://lh3.googleusercontent.com/d/1Nwa1uSh2j7JVDKnnJBI-Ttamib2FToVp"
+                src="/EE LOGO.png"
                 alt="EASTWAY Logo"
                 className="w-full h-full object-contain"
+                onError={(e) => {
+                  (e.target as HTMLImageElement).src = '/icons/icon-192.png';
+                }}
               />
             </div>
             <div>
@@ -94,8 +103,22 @@ export const Header: React.FC<HeaderProps> = ({
           </nav>
 
           {/* Action Controls Desktop */}
-          {onRefreshData && (
-            <div className="hidden xl:flex items-center gap-2 flex-shrink-0 ml-1">
+          <div className="flex items-center gap-2 flex-shrink-0 ml-1">
+            {onOpenPWAInstall && !isPwaInstalled && (
+              <button
+                onClick={onOpenPWAInstall}
+                className="px-3 py-2 sm:px-3.5 sm:py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold text-xs uppercase tracking-wider flex items-center gap-1.5 shadow-md shadow-blue-500/20 transition-all cursor-pointer whitespace-nowrap"
+                title="Install Eastway Engineering Digital Hub App"
+              >
+                <span className="material-symbols-outlined text-base sm:text-lg animate-bounce">get_app</span>
+                <span>INSTALL APP</span>
+                {canInstallPwa && (
+                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+                )}
+              </button>
+            )}
+
+            {onRefreshData && (
               <button
                 onClick={onRefreshData}
                 className="p-2.5 rounded-xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-slate-700 dark:text-zinc-300 hover:bg-slate-100 dark:hover:bg-zinc-800 transition-colors shadow-sm"
@@ -103,8 +126,8 @@ export const Header: React.FC<HeaderProps> = ({
               >
                 <span className="material-symbols-outlined text-xl">refresh</span>
               </button>
-            </div>
-          )}
+            )}
+          </div>
         </div>
       </div>
     </header>

@@ -38,10 +38,12 @@ export const SplashScreen: React.FC<SplashScreenProps> = ({ onComplete }) => {
         <div className="absolute w-28 h-28 rounded-full bg-blue-600/30 animate-ping"></div>
         <div className="w-24 h-24 flex items-center justify-center overflow-hidden">
           <img
-            src="https://lh3.googleusercontent.com/d/1Nwa1uSh2j7JVDKnnJBI-Ttamib2FToVp"
+            src="/EE LOGO.png"
             alt="EASTWAY Logo"
             className="w-full h-full object-contain"
-            referrerPolicy="no-referrer"
+            onError={(e) => {
+              (e.target as HTMLImageElement).src = '/icons/icon-512.png';
+            }}
           />
         </div>
       </div>
