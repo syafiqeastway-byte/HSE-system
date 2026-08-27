@@ -230,9 +230,8 @@ export const EmergencyPlanPage: React.FC<EmergencyPlanPageProps> = ({
                                   type: 'pdf'
                                 });
                               }}
-                              className="inline-flex items-center justify-center px-2.5 py-0.5 rounded bg-blue-100 hover:bg-blue-200 dark:bg-blue-900/40 dark:hover:bg-blue-900/60 text-blue-700 dark:text-blue-300 font-semibold text-[11px] uppercase tracking-wider gap-1 transition-colors leading-tight"
+                              className="inline-flex items-center justify-center px-2.5 py-0.5 rounded bg-blue-100 hover:bg-blue-200 dark:bg-blue-900/40 dark:hover:bg-blue-900/60 text-blue-700 dark:text-blue-300 font-semibold text-[11px] uppercase tracking-wider transition-colors leading-tight"
                             >
-                              <span className="material-symbols-outlined text-[13px]">visibility</span>
                               View Cert
                             </button>
                           </div>
