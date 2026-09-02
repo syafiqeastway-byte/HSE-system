@@ -131,10 +131,10 @@ export interface WeatherInfo {
   weatherKL: string;
   tempPenang: number;
   weatherPenang: string;
-  tempIpoh: number;
-  weatherIpoh: string;
-  tempJB: number;
-  weatherJB: string;
+  tempIpoh?: number;
+  weatherIpoh?: string;
+  tempJB?: number;
+  weatherJB?: string;
   lastUpdated: string;
 }
 

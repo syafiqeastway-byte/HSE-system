@@ -1,20 +1,28 @@
 import React, { useEffect, useState } from 'react';
 import { WeatherInfo } from '../types';
-import { fetchDaysWithoutIncident } from '../utils/gasBridge';
+import { fetchDaysWithoutIncident, fetchLatestJkkMeeting, JkkMeetingSummary } from '../utils/gasBridge';
 
-export const TelemetryHub: React.FC = () => {
+interface TelemetryHubProps {
+  onNavigateMinuteMeetings?: () => void;
+}
+
+export const TelemetryHub: React.FC<TelemetryHubProps> = ({ onNavigateMinuteMeetings }) => {
   const [timeStr, setTimeStr] = useState<string>('-- MMM YYYY | --:--:--');
   const [daysCount, setDaysCount] = useState<number>(438);
   const [loadingDays, setLoadingDays] = useState<boolean>(true);
+  const [jkkMeeting, setJkkMeeting] = useState<JkkMeetingSummary>({
+    date: '09/10/2026',
+    meetingTitle: '13th Minute Meeting',
+    location: 'IJOK',
+    meetingNo: '13',
+    totalMeetings: 13
+  });
+  const [loadingJkk, setLoadingJkk] = useState<boolean>(true);
   const [weather, setWeather] = useState<WeatherInfo>({
     tempKL: 31.8,
     weatherKL: 'Partly Cloudy',
     tempPenang: 30.5,
     weatherPenang: 'Fair & Sunny',
-    tempIpoh: 31.0,
-    weatherIpoh: 'Fair',
-    tempJB: 29.5,
-    weatherJB: 'Partly Cloudy',
     lastUpdated: 'Just Now'
   });
   const [loadingWeather, setLoadingWeather] = useState<boolean>(true);
@@ -51,6 +59,23 @@ export const TelemetryHub: React.FC = () => {
     return () => { isMounted = false; };
   }, []);
 
+  // Fetch JKK Meeting Data (Dynamic from Sheet JKK MEETING column D / latest row)
+  useEffect(() => {
+    let isMounted = true;
+    setLoadingJkk(true);
+    fetchLatestJkkMeeting()
+      .then((data) => {
+        if (isMounted) {
+          setJkkMeeting(data);
+          setLoadingJkk(false);
+        }
+      })
+      .catch(() => {
+        if (isMounted) setLoadingJkk(false);
+      });
+    return () => { isMounted = false; };
+  }, []);
+
   // Open-Meteo Live Weather API Fetch
   useEffect(() => {
     let isMounted = true;
@@ -58,21 +83,15 @@ export const TelemetryHub: React.FC = () => {
       try {
         setLoadingWeather(true);
         // Kuala Lumpur: Lat 3.1390, Lon 101.6869
-        // Penang: Lat 5.4164, Lon 100.3327
-        // Ipoh: Lat 4.5975, Lon 101.0901
-        // Johor Bahru (JB): Lat 1.4854, Lon 103.7618
-        const [resKL, resPenang, resIpoh, resJB] = await Promise.all([
+        // Pulau Pinang (Penang): Lat 5.4164, Lon 100.3327
+        const [resKL, resPenang] = await Promise.all([
           fetch('https://api.open-meteo.com/v1/forecast?latitude=3.1390&longitude=101.6869&current_weather=true'),
-          fetch('https://api.open-meteo.com/v1/forecast?latitude=5.4164&longitude=100.3327&current_weather=true'),
-          fetch('https://api.open-meteo.com/v1/forecast?latitude=4.5975&longitude=101.0901&current_weather=true'),
-          fetch('https://api.open-meteo.com/v1/forecast?latitude=1.4854&longitude=103.7618&current_weather=true')
+          fetch('https://api.open-meteo.com/v1/forecast?latitude=5.4164&longitude=100.3327&current_weather=true')
         ]);
 
-        if (resKL.ok && resPenang.ok && resIpoh.ok && resJB.ok) {
+        if (resKL.ok && resPenang.ok) {
           const dataKL = await resKL.json();
           const dataPenang = await resPenang.json();
-          const dataIpoh = await resIpoh.json();
-          const dataJB = await resJB.json();
 
           const codeMap: Record<number, string> = {
             0: 'Clear Sky',
@@ -88,8 +107,6 @@ export const TelemetryHub: React.FC = () => {
 
           const klCode = dataKL.current_weather?.weathercode ?? 2;
           const penangCode = dataPenang.current_weather?.weathercode ?? 0;
-          const ipohCode = dataIpoh.current_weather?.weathercode ?? 0;
-          const jbCode = dataJB.current_weather?.weathercode ?? 2;
 
           if (isMounted) {
             setWeather({
@@ -97,10 +114,6 @@ export const TelemetryHub: React.FC = () => {
               weatherKL: codeMap[klCode] || 'Partly Cloudy',
               tempPenang: Math.round(dataPenang.current_weather?.temperature ?? 30.5),
               weatherPenang: codeMap[penangCode] || 'Fair',
-              tempIpoh: Math.round(dataIpoh.current_weather?.temperature ?? 31.0),
-              weatherIpoh: codeMap[ipohCode] || 'Fair',
-              tempJB: Math.round(dataJB.current_weather?.temperature ?? 29.5),
-              weatherJB: codeMap[jbCode] || 'Partly Cloudy',
               lastUpdated: new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })
             });
             setLoadingWeather(false);
@@ -131,7 +144,7 @@ export const TelemetryHub: React.FC = () => {
   };
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5 sm:gap-4 mb-6">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4 mb-6">
       
       {/* 1. Real-Time System Clock */}
       <div className="bg-blue-500/10 border border-blue-500/30 rounded-2xl px-3.5 py-2.5 sm:px-4 sm:py-3 min-h-20 flex items-center justify-between backdrop-blur-md">
@@ -151,7 +164,7 @@ export const TelemetryHub: React.FC = () => {
         </div>
       </div>
 
-      {/* 2. Live Weather Widget (Kuala Lumpur, Penang, Ipoh, JB) */}
+      {/* 2. Live Weather Widget (Kuala Lumpur, Pulau Pinang) */}
       <div className="bg-cyan-500/10 border border-cyan-500/30 rounded-2xl px-3.5 py-2 sm:px-4 sm:py-2.5 min-h-20 flex items-center justify-between backdrop-blur-md">
         <div className="flex items-center gap-3 w-full">
           <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-cyan-500/20 text-cyan-400 flex items-center justify-center flex-shrink-0 border border-cyan-500/30">
@@ -163,40 +176,26 @@ export const TelemetryHub: React.FC = () => {
               {loadingWeather && <span className="material-symbols-outlined text-[10px] animate-spin">sync</span>}
             </div>
             
-            <div className="grid grid-cols-2 gap-x-2 gap-y-0.5 mt-0.5">
-              {/* KL Weather */}
-              <div className="flex items-center gap-1 text-[11px] sm:text-xs font-bold text-slate-900 dark:text-white truncate">
-                <span className="text-cyan-400 font-extrabold">KL:</span>
-                <span>{weather.tempKL}°C</span>
-                <span className="material-symbols-outlined text-cyan-400 text-sm animate-pulse ml-0.5" title={weather.weatherKL}>
-                  {getWeatherIcon(weather.weatherKL)}
+            <div className="flex flex-col gap-0.5 mt-0.5">
+              {/* KUALA LUMPUR Weather */}
+              <div className="flex items-center justify-between text-[11px] sm:text-xs font-bold text-slate-900 dark:text-white">
+                <span className="text-cyan-400 font-extrabold truncate">KUALA LUMPUR:</span>
+                <span className="flex items-center gap-1 flex-shrink-0 ml-1">
+                  <span>{weather.tempKL}°C</span>
+                  <span className="material-symbols-outlined text-cyan-400 text-sm animate-pulse" title={weather.weatherKL}>
+                    {getWeatherIcon(weather.weatherKL)}
+                  </span>
                 </span>
               </div>
               
-              {/* PENANG Weather */}
-              <div className="flex items-center gap-1 text-[11px] sm:text-xs font-bold text-slate-900 dark:text-white truncate">
-                <span className="text-cyan-400 font-extrabold">PNG:</span>
-                <span>{weather.tempPenang}°C</span>
-                <span className="material-symbols-outlined text-cyan-400 text-sm animate-pulse ml-0.5" title={weather.weatherPenang}>
-                  {getWeatherIcon(weather.weatherPenang)}
-                </span>
-              </div>
-
-              {/* IPOH Weather */}
-              <div className="flex items-center gap-1 text-[11px] sm:text-xs font-bold text-slate-900 dark:text-white truncate">
-                <span className="text-cyan-400 font-extrabold">IPH:</span>
-                <span>{weather.tempIpoh}°C</span>
-                <span className="material-symbols-outlined text-cyan-400 text-sm animate-pulse ml-0.5" title={weather.weatherIpoh}>
-                  {getWeatherIcon(weather.weatherIpoh)}
-                </span>
-              </div>
-
-              {/* JB Weather */}
-              <div className="flex items-center gap-1 text-[11px] sm:text-xs font-bold text-slate-900 dark:text-white truncate">
-                <span className="text-cyan-400 font-extrabold">JB:</span>
-                <span>{weather.tempJB}°C</span>
-                <span className="material-symbols-outlined text-cyan-400 text-sm animate-pulse ml-0.5" title={weather.weatherJB}>
-                  {getWeatherIcon(weather.weatherJB)}
+              {/* PULAU PINANG Weather */}
+              <div className="flex items-center justify-between text-[11px] sm:text-xs font-bold text-slate-900 dark:text-white">
+                <span className="text-cyan-400 font-extrabold truncate">PULAU PINANG:</span>
+                <span className="flex items-center gap-1 flex-shrink-0 ml-1">
+                  <span>{weather.tempPenang}°C</span>
+                  <span className="material-symbols-outlined text-cyan-400 text-sm animate-pulse" title={weather.weatherPenang}>
+                    {getWeatherIcon(weather.weatherPenang)}
+                  </span>
                 </span>
               </div>
             </div>
@@ -223,6 +222,42 @@ export const TelemetryHub: React.FC = () => {
               <span className="text-[10px] sm:text-xs font-bold text-emerald-600 dark:text-emerald-400/90 uppercase tracking-wider">
                 DAYS SAFE
               </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* 4. JKK Meeting Card (Placed beside DAYS WITHOUT INCIDENT) */}
+      <div 
+        onClick={onNavigateMinuteMeetings}
+        className={`bg-purple-500/10 border border-purple-500/30 rounded-2xl px-3.5 py-2.5 sm:px-4 sm:py-3 min-h-20 flex items-center justify-between backdrop-blur-md transition-all ${
+          onNavigateMinuteMeetings ? 'cursor-pointer hover:scale-[1.02] hover:border-purple-500/50 hover:bg-purple-500/15 active:scale-[0.98]' : ''
+        }`}
+        title={onNavigateMinuteMeetings ? "Click to view JKK Minute Meetings" : undefined}
+      >
+        <div className="flex items-center gap-3 w-full">
+          <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-purple-500/20 text-purple-400 flex items-center justify-center flex-shrink-0 border border-purple-500/30">
+            <span className="material-symbols-outlined text-xl sm:text-2xl">groups</span>
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="text-xs font-bold text-purple-400 uppercase tracking-wider flex items-center justify-between">
+              <span>NEXT JKK MEETING</span>
+              {loadingJkk && <span className="material-symbols-outlined text-[10px] animate-spin">sync</span>}
+            </div>
+            <div className="text-base sm:text-lg font-extrabold font-mono text-slate-900 dark:text-white mt-0.5 tracking-tight flex items-baseline gap-1.5">
+              {loadingJkk ? (
+                <span className="text-slate-400 text-sm">--/--/----</span>
+              ) : (
+                <span>{jkkMeeting.date}</span>
+              )}
+            </div>
+            <div className="flex items-center justify-between text-[10px] sm:text-[11px] font-bold text-purple-600 dark:text-purple-400 uppercase tracking-wider mt-0.5">
+              <span className="truncate">{jkkMeeting.meetingTitle || 'LATEST SESSION'}</span>
+              {jkkMeeting.location && (
+                <span className="px-1.5 py-0.5 text-[9px] rounded bg-purple-500/20 text-purple-600 dark:text-purple-300 font-semibold uppercase flex-shrink-0 ml-1">
+                  {jkkMeeting.location}
+                </span>
+              )}
             </div>
           </div>
         </div>

@@ -154,17 +154,22 @@ export const SafetyViolationPage: React.FC<SafetyViolationPageProps> = ({
                           }`}
                         >
                           {row.map((cell, cIdx) => {
-                            // Center align No, Date, Demerit, Status, and Offence columns for better visual aesthetics
-                            const isCenterCol = [0, 1, 7, 8, 9, 10, 13].includes(cIdx);
-                            
-                            // Custom style tags for status
-                            const isStatusCol = cIdx === 13;
-                            const isDemeritCol = cIdx === 10;
+                            // Find column indexes dynamically from headers
+                            const headerText = (headers[cIdx] || '').toUpperCase();
+                            const isPointCol = headerText.includes('POINT') || headerText.includes('DEMERIT');
+                            const isCodeCol = headerText === 'CODE';
+                            const isNoCol = headerText === 'NO' || headerText === 'NO.';
+                            const isDateCol = headerText.includes('DATE');
+                            const isIdCol = headerText.includes('ID') || headerText.includes('EMPLOYEE');
+                            const isStatusCol = headerText.includes('STATUS');
+
+                            const isCenterCol = isNoCol || isIdCol || isCodeCol || isPointCol || isDateCol;
+                            const isDemeritCol = isPointCol;
                             
                             return (
                               <td
                                 key={cIdx}
-                                className={`py-1 px-3 border border-slate-300 dark:border-zinc-700 leading-none ${
+                                className={`py-1.5 px-3 border border-slate-300 dark:border-zinc-700 leading-normal text-xs sm:text-sm ${
                                   isCenterCol ? 'text-center' : 'text-left'
                                 }`}
                               >
@@ -199,7 +204,7 @@ export const SafetyViolationPage: React.FC<SafetyViolationPageProps> = ({
                                     );
                                   })()
                                 ) : isDemeritCol ? (
-                                  <span className="font-mono font-bold text-red-600 dark:text-red-400 text-xs">
+                                  <span className="font-mono font-bold text-red-600 dark:text-red-400 text-xs bg-red-100/30 dark:bg-red-950/40 px-2 py-0.5 rounded border border-red-500/10">
                                     {cell && cell.trim() !== '' && cell !== '-' ? cell : '-'}
                                   </span>
                                 ) : (
@@ -223,13 +228,13 @@ export const SafetyViolationPage: React.FC<SafetyViolationPageProps> = ({
             </div>
           </div>
 
-          {/* Secondary Table Section (P3:T37) */}
+          {/* Secondary Table Section (DEMERIT K3:O37) */}
           {summaryTableData.length > 0 && (
             <div className="glass-card overflow-hidden mt-6">
               <div className="p-4 bg-slate-50 dark:bg-zinc-900/80 border-b border-slate-200 dark:border-zinc-800 flex items-center justify-between">
                 <h3 className="text-sm font-extrabold text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-2">
                   <span className="material-symbols-outlined text-amber-500 text-base">table_chart</span>
-                  <span>Safety Violation Summary & Demerit Matrix </span>
+                  <span>Safety Violation Summary & Demerit Matrix</span>
                 </h3>
               </div>
               <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-slate-300 dark:scrollbar-thumb-zinc-700">
@@ -239,7 +244,7 @@ export const SafetyViolationPage: React.FC<SafetyViolationPageProps> = ({
                       {summaryHeaders.map((hdr, idx) => (
                         <th
                           key={idx}
-                          className="py-1 px-3 font-bold uppercase tracking-wider text-center border border-slate-300 dark:border-zinc-700 text-xs"
+                          className="py-2 px-3 font-bold uppercase tracking-wider text-center border border-slate-300 dark:border-zinc-700 text-xs sm:text-sm"
                         >
                           {hdr || `Col ${idx + 1}`}
                         </th>
@@ -269,16 +274,48 @@ export const SafetyViolationPage: React.FC<SafetyViolationPageProps> = ({
                                 : 'hover:bg-slate-50 dark:hover:bg-zinc-800/50 text-slate-700 dark:text-zinc-300'
                             }`}
                           >
-                            {row.map((cell, cIdx) => (
-                              <td
-                                key={cIdx}
-                                className={`py-1 px-3 border border-slate-300 dark:border-zinc-700 leading-none ${
-                                  cIdx === 0 || cIdx === 2 || cIdx === 3 ? 'text-center font-semibold' : 'text-left'
-                                }`}
-                              >
-                                {cell || '-'}
-                              </td>
-                            ))}
+                            {row.map((cell, cIdx) => {
+                              const headerTitle = (summaryHeaders[cIdx] || '').toUpperCase();
+                              const isCodeCol = headerTitle.includes('KOD') || headerTitle.includes('CODE');
+                              const isCategoryCol = headerTitle.includes('KATEGORI') || headerTitle.includes('CATEGORY');
+                              const isDemeritCol = headerTitle.includes('DEMERIT') || headerTitle.includes('POINT');
+                              const isCenterCol = isCodeCol || isDemeritCol || isCategoryCol;
+
+                              const cellTrimmed = (cell || '').trim();
+
+                              return (
+                                <td
+                                  key={cIdx}
+                                  className={`py-1.5 px-3 border border-slate-300 dark:border-zinc-700 leading-normal text-xs sm:text-sm ${
+                                    isCenterCol ? 'text-center' : 'text-left'
+                                  }`}
+                                >
+                                  {isCodeCol ? (
+                                    <span className="font-mono font-bold text-slate-900 dark:text-slate-100 bg-slate-200/60 dark:bg-slate-800 px-2 py-0.5 rounded border border-slate-300 dark:border-slate-700">
+                                      {cellTrimmed || '-'}
+                                    </span>
+                                  ) : isCategoryCol ? (
+                                    <span className={`inline-block px-2 py-0.5 rounded text-xs font-semibold uppercase ${
+                                      cellTrimmed.toLowerCase().includes('kritikal')
+                                        ? 'bg-rose-100 text-rose-800 dark:bg-rose-950/60 dark:text-rose-300 border border-rose-500/20'
+                                        : cellTrimmed.toLowerCase().includes('serius')
+                                        ? 'bg-orange-100 text-orange-800 dark:bg-orange-950/60 dark:text-orange-300 border border-orange-500/20'
+                                        : cellTrimmed.toLowerCase().includes('sederhana')
+                                        ? 'bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300 border border-amber-500/20'
+                                        : 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300 border border-emerald-500/20'
+                                    }`}>
+                                      {cellTrimmed || '-'}
+                                    </span>
+                                  ) : isDemeritCol ? (
+                                    <span className="font-mono font-bold text-red-600 dark:text-red-400 text-xs bg-red-100/30 dark:bg-red-950/40 px-2 py-0.5 rounded border border-red-500/10">
+                                      {cellTrimmed || '-'}
+                                    </span>
+                                  ) : (
+                                    cell || '-'
+                                  )}
+                                </td>
+                              );
+                            })}
                           </tr>
                         );
                       })

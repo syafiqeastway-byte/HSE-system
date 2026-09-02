@@ -110,7 +110,7 @@ export default function App() {
         />
 
         {/* Top Telemetry Hub */}
-        <TelemetryHub />
+        <TelemetryHub onNavigateMinuteMeetings={() => setActivePage('minuteMeetingPage')} />
 
         {/* View Container Switcher */}
         <main>

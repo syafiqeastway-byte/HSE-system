@@ -384,6 +384,85 @@ export async function fetchLiveIncidentRecords(requireAuth: boolean = false): Pr
 }
 
 // 12. Minute Meetings
+export interface JkkMeetingSummary {
+  date: string;
+  meetingTitle: string;
+  location?: string;
+  meetingNo?: string;
+  totalMeetings?: number;
+}
+
+export async function fetchLatestJkkMeeting(): Promise<JkkMeetingSummary> {
+  const SPREADSHEET_ID = '1o9P6GnlsAwSJEUYHxITt1Opz973uX37MLBiv0LdFdIs';
+  // Query JKK MEETING sheet column D (and A:D)
+  const url = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:csv&sheet=JKK%20MEETING&range=A:D`;
+
+  const fallback: JkkMeetingSummary = {
+    date: '09/10/2026',
+    meetingTitle: '13th Minute Meeting',
+    location: 'IJOK',
+    meetingNo: '13',
+    totalMeetings: 13
+  };
+
+  try {
+    const res = await fetch(url);
+    if (!res.ok) throw new Error('Failed to fetch from JKK MEETING sheet');
+    const csvText = await res.text();
+
+    if (csvText.includes('<!DOCTYPE html>') || csvText.includes('google-signin-button')) {
+      throw new Error('Returned HTML instead of CSV data');
+    }
+
+    return new Promise((resolve) => {
+      Papa.parse(csvText, {
+        header: false,
+        skipEmptyLines: true,
+        complete: (results) => {
+          if (results.data && results.data.length > 0) {
+            const rows: string[][] = results.data
+              .map((row: any) => Array.isArray(row) ? row.map(c => String(c || '').trim()) : [])
+              .filter((row: string[]) => row.some(c => c !== ''));
+
+            const dataRows = rows.length > 1 && rows[0].some(c => c.toUpperCase().includes('MEETING') || c.toUpperCase().includes('DATE'))
+              ? rows.slice(1)
+              : rows;
+
+            const validDateRows = dataRows.filter(r => {
+              const dateVal = r.length >= 4 ? r[3] : r[0];
+              return dateVal && dateVal !== '' && dateVal.toUpperCase() !== 'DATE';
+            });
+
+            if (validDateRows.length > 0) {
+              const lastRow = validDateRows[validDateRows.length - 1];
+              const dateVal = lastRow.length >= 4 ? lastRow[3] : lastRow[0];
+              const meetingTitle = lastRow.length >= 2 ? lastRow[1] : `Meeting #${validDateRows.length}`;
+              const location = lastRow.length >= 3 ? lastRow[2] : 'IJOK';
+              const meetingNo = lastRow.length >= 1 ? lastRow[0] : String(validDateRows.length);
+
+              resolve({
+                date: dateVal || '09/10/2026',
+                meetingTitle: meetingTitle || 'Latest Minute Meeting',
+                location: location || 'IJOK',
+                meetingNo: meetingNo || String(validDateRows.length),
+                totalMeetings: validDateRows.length
+              });
+              return;
+            }
+          }
+          resolve(fallback);
+        },
+        error: () => {
+          resolve(fallback);
+        }
+      });
+    });
+  } catch (err) {
+    console.warn('Error fetching JKK Meeting data:', err);
+    return fallback;
+  }
+}
+
 export async function fetchDynamicMinuteMeetings(): Promise<any[]> {
   const SPREADSHEET_ID = '1o9P6GnlsAwSJEUYHxITt1Opz973uX37MLBiv0LdFdIs';
   const url = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:csv&gid=1985060946&range=A4:E`;
@@ -509,21 +588,44 @@ export async function fetchDynamicSOP(): Promise<any[]> {
 
 export async function fetchSafetyViolationSummaryTable(): Promise<string[][]> {
   const SPREADSHEET_ID = '1o9P6GnlsAwSJEUYHxITt1Opz973uX37MLBiv0LdFdIs';
-  const GID = '817838002';
-  const url = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:csv&gid=${GID}&range=P3:T37`;
+  const url = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:csv&sheet=DEMERIT&range=K3:O37`;
 
   const fallbackData: string[][] = [
-    ["No", "Company / Subcontractor / Dept", "Total Violations", "Accumulated Demerit", "Action / Status"],
-    ["1", "Subcon - Lin & Co", "3", "75", "High Risk - Final Warning"],
-    ["2", "Subcon - Tan Weld", "2", "55", "Medium Risk - Written Warning"],
-    ["3", "Subcon - Syarikat Jaya", "3", "55", "Medium Risk - Written Warning"],
-    ["4", "Subcon - Elite Power", "2", "65", "High Risk - Suspension Review"],
-    ["5", "Logistics Dept", "5", "85", "Under HSE Monitoring"],
-    ["6", "Maintenance Dept", "3", "55", "Safety Audit Scheduled"],
-    ["7", "Production Line 1", "2", "25", "Low Risk"],
-    ["8", "Production Line 2", "2", "30", "Low Risk"],
-    ["9", "Production Line 3", "1", "30", "Low Risk"],
-    ["10", "Operations Dept", "1", "45", "Written Warning Issued"]
+    ["Kod Kesalahan", "Kategori", "Penerangan Salah Laku", "Demerit", "Tindakan"],
+    ["A1", "Ringan", "Tidak memakai PPE lengkap/bersesuaian", "5", "1) Teguran dan nasihat"],
+    ["A2", "Ringan", "Tidak hadir toolbox talk/taklimat/latihan tanpa sebab munasabah", "5", "2) Rekod dalam HSE fie"],
+    ["A3", "Ringan", "Housekeeping tidak memuaskan di kawasan kerja", "5", "3) Briefing semula"],
+    ["A4", "Ringan", "Merokok/Makan di kawasan larangan", "5", ""],
+    ["A5", "Ringan", "Menggunakan PPE rosak", "5", ""],
+    ["A6", "Ringan", "Tidak lapor unsafe condition", "5", ""],
+    ["A7", "Ringan", "Tidak patuhi arahan keselamatan am", "5", ""],
+    ["A8", "Ringan", "Menggunakan telefon semasa kerja", "5", ""],
+    ["A9", "Ringan", "Bergurau, bermain, atau membuat aksi berbahaya di tempat kerja", "5", ""],
+    ["A10", "Ringan", "Apa-apa salahlaku yang Ringan", "5", ""],
+    ["B1", "Sederhana", "Tidak buat pemeriksaan harian mesin", "10", "1) Teguran keras"],
+    ["B2", "Sederhana", "Mengendalikan mesin tanpa latihan rasmi", "10", "2) Rekod dalam HSE fie"],
+    ["B3", "Sederhana", "Tidak memakai harness semasa kerja di tempat tinggi", "10", "3) Briefing semula"],
+    ["B4", "Sederhana", "Menggunakan peralatan tidak diperiksa", "10", ""],
+    ["B5", "Sederhana", "Tidak patuhi SOP ", "10", ""],
+    ["B6", "Sederhana", "Tiada barricade atau signage keselamatan", "10", ""],
+    ["B7", "Sederhana", "Mengangkat beban tanpa penilaian risiko", "10", ""],
+    ["B8", "Sederhana", "Tidak patuhi prosedur LOTO bukan elektrik", "10", ""],
+    ["B9", "Sederhana", "Near miss akibat kecuaian", "10", ""],
+    ["B10", "Sederhana", "Apa-apa salahlaku yang Sederhana", "10", ""],
+    ["C1", "Serius", "Operasi forklift / MEWP/ Kenderaan syarikat tanpa kebenaran", "20", "1) Teguran keras"],
+    ["C2", "Serius", "Mengangkat beban melebihi kapasiti mesin", "20", "2) Rekod dalam HSE fie"],
+    ["C3", "Serius", "Bypass safety device mesin", "20", "3) Surat amaran"],
+    ["C4", "Serius", "Kerja elektrik tanpa LOTO", "20", ""],
+    ["C5", "Serius", "Ingkar arahan keselamatan penyelia / HSE", "20", ""],
+    ["C6", "Serius", "Menggunakan mesin ber-tag DO NOT USE", "20", ""],
+    ["C7", "Serius", "Apa-apa salahlaku yang Serius", "20", ""],
+    ["D1", "Kritikal", "Menyebabkan kemalangan serius atau maut diri sendiri/orang lain", "50", "1) Teguran keras"],
+    ["D2", "Kritikal", "Kerja tempat tinggi tanpa PPE yang lengkap", "50", "2) Rekod dalam HSE fie"],
+    ["D3", "Kritikal", "Operasi mesin dalam keadaan mabuk / dadah", "50", "3) Surat amaran"],
+    ["D4", "Kritikal", "Sengaja melanggar arahan keselamatan bertulis", "50", "4) Pergantungan /Penamatan perkhidmatan"],
+    ["D5", "Kritikal", "Menyembunyikan / memalsukan laporan kemalangan", "50", ""],
+    ["D6", "Kritikal", "Tidak memberi bantuan semasa kecemasan ", "50", ""],
+    ["D7", "Kritikal", "Apa-apa salahlaku yang Kritikal", "50", ""]
   ];
 
   try {
@@ -555,7 +657,7 @@ export async function fetchSafetyViolationSummaryTable(): Promise<string[][]> {
       });
     });
   } catch (err) {
-    console.warn('Error fetching Safety Violation Summary (P3:T37):', err);
+    console.warn('Error fetching Safety Violation Summary (DEMERIT K3:O37):', err);
     return fallbackData;
   }
 }
@@ -564,19 +666,14 @@ export async function fetchSafetyViolationSummaryTable(): Promise<string[][]> {
 export async function fetchSafetyViolationScoring(): Promise<string[][]> {
   const SPREADSHEET_ID = '1o9P6GnlsAwSJEUYHxITt1Opz973uX37MLBiv0LdFdIs';
   const GID = '817838002';
-  const url = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:csv&gid=${GID}&range=A3:N33`;
+  const url = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:csv&gid=${GID}&range=A3:I`;
 
   const fallbackData: string[][] = [
-    [
-      "No", "Date", "Worker Name / ID", "Department / Company", "Location", 
-      "Violation Description", "Category", "First Offence", "Second Offence", 
-      "Third Offence", "Demerit Points", "Action Taken / Fine (RM)", "Inspector Name", "Status"
-    ],
-    ["1", "2026-08-01", "Ahmad Razak (EE-104)", "Logistics Dept", "Warehouse A", "Not wearing safety helmet in designated zone", "PPE Non-Compliance", "Warning", "N/A", "N/A", "10", "RM 50 Fine", "M. Syahmi (SHO)", "Closed"],
-    ["2", "2026-08-02", "Subcon - Lin & Co", "Electrical Subcontractor", "Block C Level 2", "Working at height without safety harness hook", "Height Safety", "N/A", "Suspension", "N/A", "30", "Stop Work Order", "M. Syahmi (SHO)", "Closed"],
-    ["3", "2026-08-03", "Johnathan Doe (EE-089)", "Production Line 1", "Fabrication Area", "Using damaged grinding machine without guard", "Equipment Safety", "Warning", "N/A", "N/A", "15", "Machine Confiscated", "M. Syahmi (SHO)", "Closed"],
-    ["4", "2026-08-04", "Kamaluddin (EE-212)", "Maintenance Dept", "Boiler Room", "Blocked fire extinguisher and exit pathway", "Fire Hazard", "Warning", "N/A", "N/A", "10", "Verbal Warning", "M. Syahmi (SHO)", "Closed"],
-    ["5", "2026-08-05", "Tan Kah Seng (EE-115)", "Warehouse Operations", "Loading Bay 2", "Operating forklift above speed limit (15km/h)", "Vehicle Safety", "N/A", "Written Warning", "N/A", "20", "RM 100 Fine", "M. Syahmi (SHO)", "Closed"]
+    ["NO", "NAME", "EMPLOYEE ID", "DEPARTMENT", "POSITION", "CODE", "POINT", "DATE", "DESCRIPTION"],
+    ["1", "Nikod", "1410001", "CI & PROJECT", "TEAM LEADER", "B7", "10", "16/1/25", ""],
+    ["2", "Firdaus", "2203001", "O&M (IJOK)", "TEAM LEADER", "B5", "10", "13/8/26", ""],
+    ["3", "Yunus", "1509001", "O&M (IJOK)", "ASSISTANT TECH", "B7", "10", "1/4/26", ""],
+    ["4", "Roziman", "2508003", "O&M (IJOK)", "ENGINEER", "A1", "5", "29/8/26", "TIDAK MEAMAKAI SAFETY BOOT SEMASA MENGENDALIKAN FORKLIFT"]
   ];
 
   try {
@@ -594,10 +691,10 @@ export async function fetchSafetyViolationScoring(): Promise<string[][]> {
         skipEmptyLines: true,
         complete: (results) => {
           if (results.data && results.data.length > 0) {
-            const formatted: string[][] = results.data.map((row: any) => 
-              Array.isArray(row) ? row.map(cell => String(cell || '').trim()) : []
-            );
-            resolve(formatted);
+            const formatted: string[][] = results.data
+              .map((row: any) => Array.isArray(row) ? row.map(cell => String(cell || '').trim()) : [])
+              .filter((row: string[]) => row.some(c => c !== ''));
+            resolve(formatted.length > 0 ? formatted : fallbackData);
           } else {
             resolve(fallbackData);
           }
