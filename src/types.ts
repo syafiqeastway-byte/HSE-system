@@ -112,6 +112,7 @@ export interface InspectionRecord {
 
 export interface FirstAidCert {
   id: string;
+  employeeId?: string;
   name: string;
   department: string;
   expiryDate: string;

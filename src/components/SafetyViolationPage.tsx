@@ -203,6 +203,17 @@ export const SafetyViolationPage: React.FC<SafetyViolationPageProps> = ({
                                       </span>
                                     );
                                   })()
+                                ) : isIdCol ? (
+                                  <span className="font-mono font-medium">
+                                    {(() => {
+                                      const val = (cell || '').trim();
+                                      if (!val || val === '-') return '-';
+                                      if (val.length >= 3) {
+                                        return '***' + val.slice(3);
+                                      }
+                                      return '***';
+                                    })()}
+                                  </span>
                                 ) : isDemeritCol ? (
                                   <span className="font-mono font-bold text-red-600 dark:text-red-400 text-xs bg-red-100/30 dark:bg-red-950/40 px-2 py-0.5 rounded border border-red-500/10">
                                     {cell && cell.trim() !== '' && cell !== '-' ? cell : '-'}

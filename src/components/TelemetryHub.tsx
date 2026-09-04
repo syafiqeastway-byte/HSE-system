@@ -157,7 +157,7 @@ export const TelemetryHub: React.FC<TelemetryHubProps> = ({ onNavigateMinuteMeet
               <span>DATE/TIME</span>
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
             </div>
-            <div className="text-xs sm:text-sm font-bold font-mono text-slate-900 dark:text-white mt-0.5 tracking-tight">
+            <div className="text-xs sm:text-sm font-bold text-black dark:text-white mt-0.5 tracking-tight">
               {timeStr}
             </div>
           </div>
@@ -178,22 +178,22 @@ export const TelemetryHub: React.FC<TelemetryHubProps> = ({ onNavigateMinuteMeet
             
             <div className="flex flex-col gap-0.5 mt-0.5">
               {/* KUALA LUMPUR Weather */}
-              <div className="flex items-center justify-between text-[11px] sm:text-xs font-bold text-slate-900 dark:text-white">
-                <span className="text-cyan-400 font-extrabold truncate">KUALA LUMPUR:</span>
+              <div className="flex items-center justify-between text-xs sm:text-sm font-bold text-black dark:text-white">
+                <span className="truncate">KUALA LUMPUR:</span>
                 <span className="flex items-center gap-1 flex-shrink-0 ml-1">
                   <span>{weather.tempKL}°C</span>
-                  <span className="material-symbols-outlined text-cyan-400 text-sm animate-pulse" title={weather.weatherKL}>
+                  <span className="material-symbols-outlined text-black dark:text-white text-base" title={weather.weatherKL}>
                     {getWeatherIcon(weather.weatherKL)}
                   </span>
                 </span>
               </div>
               
               {/* PULAU PINANG Weather */}
-              <div className="flex items-center justify-between text-[11px] sm:text-xs font-bold text-slate-900 dark:text-white">
-                <span className="text-cyan-400 font-extrabold truncate">PULAU PINANG:</span>
+              <div className="flex items-center justify-between text-xs sm:text-sm font-bold text-black dark:text-white">
+                <span className="truncate">PULAU PINANG:</span>
                 <span className="flex items-center gap-1 flex-shrink-0 ml-1">
                   <span>{weather.tempPenang}°C</span>
-                  <span className="material-symbols-outlined text-cyan-400 text-sm animate-pulse" title={weather.weatherPenang}>
+                  <span className="material-symbols-outlined text-black dark:text-white text-base" title={weather.weatherPenang}>
                     {getWeatherIcon(weather.weatherPenang)}
                   </span>
                 </span>
@@ -213,13 +213,13 @@ export const TelemetryHub: React.FC<TelemetryHubProps> = ({ onNavigateMinuteMeet
             <div className="text-xs font-bold text-emerald-400 uppercase tracking-wider">
               DAYS WITHOUT INCIDENT
             </div>
-            <div className="text-2xl sm:text-3xl font-extrabold text-emerald-400 flex items-baseline gap-1.5 mt-0.5 font-mono">
+            <div className="text-xs sm:text-sm font-bold text-black dark:text-white flex items-baseline gap-1.5 mt-0.5">
               {loadingDays ? (
-                <span className="text-slate-400 text-base">--</span>
+                <span>--</span>
               ) : (
                 <span>{daysCount}</span>
               )}
-              <span className="text-[10px] sm:text-xs font-bold text-emerald-600 dark:text-emerald-400/90 uppercase tracking-wider">
+              <span className="uppercase tracking-wider">
                 DAYS SAFE
               </span>
             </div>
@@ -244,20 +244,20 @@ export const TelemetryHub: React.FC<TelemetryHubProps> = ({ onNavigateMinuteMeet
               <span>NEXT JKK MEETING</span>
               {loadingJkk && <span className="material-symbols-outlined text-[10px] animate-spin">sync</span>}
             </div>
-            <div className="text-base sm:text-lg font-extrabold font-mono text-slate-900 dark:text-white mt-0.5 tracking-tight flex items-baseline gap-1.5">
+            <div className="text-xs sm:text-sm font-bold text-black dark:text-white mt-0.5 tracking-tight flex items-center justify-between">
               {loadingJkk ? (
-                <span className="text-slate-400 text-sm">--/--/----</span>
+                <span>--/--/----</span>
               ) : (
                 <span>{jkkMeeting.date}</span>
               )}
-            </div>
-            <div className="flex items-center justify-between text-[10px] sm:text-[11px] font-bold text-purple-600 dark:text-purple-400 uppercase tracking-wider mt-0.5">
-              <span className="truncate">{jkkMeeting.meetingTitle || 'LATEST SESSION'}</span>
               {jkkMeeting.location && (
-                <span className="px-1.5 py-0.5 text-[9px] rounded bg-purple-500/20 text-purple-600 dark:text-purple-300 font-semibold uppercase flex-shrink-0 ml-1">
-                  {jkkMeeting.location}
+                <span className="text-xs sm:text-sm font-bold text-black dark:text-white ml-1">
+                  ({jkkMeeting.location})
                 </span>
               )}
+            </div>
+            <div className="text-xs sm:text-sm font-bold text-black dark:text-white truncate mt-0.5">
+              <span>{jkkMeeting.meetingTitle || 'LATEST SESSION'}</span>
             </div>
           </div>
         </div>

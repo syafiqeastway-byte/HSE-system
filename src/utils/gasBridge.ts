@@ -288,12 +288,16 @@ export async function fetchFireExtinguisherData(): Promise<FireExtinguisherRecor
 // 10. First Aid Certifications
 export async function fetchFirstAidCertData(requireAuth: boolean = false): Promise<FirstAidCert[]> {
   const SPREADSHEET_ID = '1o9P6GnlsAwSJEUYHxITt1Opz973uX37MLBiv0LdFdIs';
-  const url = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:csv&sheet=FIRST+AID+KIT+INSPECTION&range=AA6:AD12`;
+  const url = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:csv&sheet=FIRST%20AID%20KIT%20INSPECTION&range=AA5:AE12`;
 
   try {
     const res = await fetch(url);
     if (!res.ok) throw new Error('Failed to fetch from sheets');
     const csvText = await res.text();
+
+    if (csvText.includes('<!DOCTYPE html>') || csvText.includes('google-signin-button')) {
+      throw new Error('Returned HTML instead of CSV data');
+    }
     
     return new Promise((resolve) => {
       Papa.parse(csvText, {
@@ -302,14 +306,30 @@ export async function fetchFirstAidCertData(requireAuth: boolean = false): Promi
         complete: (results) => {
           const certs: FirstAidCert[] = [];
           if (results.data && results.data.length > 0) {
-            results.data.forEach((row: any, index: number) => {
-              if (row.length >= 4 && row[0]?.trim() !== '') {
+            // Row 5 in sheet is index 0 in CSV (header row: EMPLOYEE ID, NAME, DEPARTMENT, CERT EXPIRED, CERT PDF)
+            const firstRow = results.data[0] as any;
+            const isFirstRowHeader = Array.isArray(firstRow) && firstRow.some((c: any) => 
+              String(c || '').toUpperCase().includes('EMPLOYEE') || 
+              String(c || '').toUpperCase().includes('NAME') ||
+              String(c || '').toUpperCase().includes('CERT')
+            );
+            const dataRows = isFirstRowHeader ? results.data.slice(1) : results.data;
+
+            dataRows.forEach((row: any, index: number) => {
+              if (Array.isArray(row) && row.length >= 2 && row.some((c: any) => c && String(c).trim() !== '')) {
+                const rawEmpId = (row[0] || '').trim();
+                let maskedEmpId = '-';
+                if (rawEmpId) {
+                  maskedEmpId = rawEmpId.length >= 3 ? '***' + rawEmpId.slice(3) : '***';
+                }
+
                 certs.push({
-                  id: `FA-${index}`,
-                  name: row[0],
-                  department: row[1],
-                  expiryDate: row[2],
-                  certLink: row[3]
+                  id: `FA-${index + 1}`,
+                  employeeId: maskedEmpId,
+                  name: (row[1] || '').trim(),
+                  department: (row[2] || '-').trim(),
+                  expiryDate: (row[3] || '-').trim(),
+                  certLink: (row[4] || '').trim()
                 });
               }
             });
