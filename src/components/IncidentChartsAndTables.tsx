@@ -277,6 +277,38 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
     const textColor = isDarkMode ? '#F8FAFC' : '#0F172A';
     const gridColor = isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(15, 23, 42, 0.08)';
 
+    // Common interactive movement options for multi-device support (PC, iOS, Android, Smartphones)
+    const getMovementOptions = (chartType: 'bar' | 'line' | 'pie' | 'doughnut' | 'polarArea', isHorizontal: boolean = false) => {
+      const isCircular = chartType === 'pie' || chartType === 'doughnut' || chartType === 'polarArea';
+      return {
+        responsive: true,
+        maintainAspectRatio: false,
+        animation: {
+          duration: 1000,
+          easing: 'easeOutQuart' as const,
+        },
+        transitions: {
+          active: {
+            animation: {
+              duration: 250,
+              easing: 'easeOutQuart' as const,
+            },
+          },
+        },
+        // Enable full spectrum of mouse and touch gestures across all smartphones, iOS and Android
+        events: ['mousemove' as const, 'mouseout' as const, 'click' as const, 'touchstart' as const, 'touchmove' as const],
+        interaction: {
+          mode: isCircular ? ('nearest' as const) : ('index' as const),
+          intersect: false,
+          axis: isHorizontal ? ('y' as const) : ('x' as const),
+        },
+        hover: {
+          mode: isCircular ? ('nearest' as const) : ('index' as const),
+          intersect: false,
+        },
+      };
+    };
+
     // Render Occupational Incidents (YES only) Sharp Line Chart
     if (occupationalChartRef.current) {
       const occCtx = occupationalChartRef.current.getContext('2d');
@@ -314,6 +346,7 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
 
         const occYears = Object.keys(occCountsByYear).sort();
         const occData = occYears.map((y) => occCountsByYear[y]);
+        const baseLineOpts = getMovementOptions('line');
 
         occupationalChartInstance.current = new Chart(occCtx, {
           type: 'line',
@@ -331,15 +364,16 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
                 pointBorderColor: isDarkMode ? '#1E293B' : '#FFFFFF',
                 pointBorderWidth: 2,
                 pointRadius: 6,
-                pointHoverRadius: 8,
+                pointHoverRadius: 10,
+                pointHitRadius: 25,
+                pointHoverBorderWidth: 3,
+                pointHoverBackgroundColor: '#FBBF24',
                 fill: true,
               },
             ],
           },
           options: {
-            animation: { duration: 1500, easing: 'easeOutQuart' },
-            responsive: true,
-            maintainAspectRatio: false,
+            ...baseLineOpts,
             scales: {
               x: {
                 ticks: { color: textColor, font: { weight: 'bold', size: 11 } },
@@ -353,6 +387,12 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
             },
             plugins: {
               legend: { display: false },
+              tooltip: {
+                enabled: true,
+                animation: { duration: 200 },
+                padding: 10,
+                cornerRadius: 8,
+              },
               title: {
                 display: true,
                 text: 'OCCUPATIONAL INCIDENTS ANNUAL TREND',
@@ -390,6 +430,7 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
           }
         });
 
+        const baseBarOpts = getMovementOptions('bar');
         chartInstance1.current = new Chart(ctx1, {
           type: 'bar',
           data: {
@@ -399,19 +440,27 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
                 label: 'Incidents Count',
                 data: months.map((m) => monthCounts[m]),
                 backgroundColor: '#10B981',
+                hoverBackgroundColor: '#059669',
+                hoverBorderColor: textColor,
+                hoverBorderWidth: 2,
                 borderRadius: 6,
               },
             ],
           },
-          options: { animation: { duration: 1500, easing: 'easeOutQuart' },
-            responsive: true,
-            maintainAspectRatio: false,
+          options: {
+            ...baseBarOpts,
             scales: {
               x: { ticks: { color: textColor }, grid: { color: gridColor } },
               y: { ticks: { color: textColor, precision: 0 }, grid: { color: gridColor } },
             },
             plugins: {
               legend: { display: false },
+              tooltip: {
+                enabled: true,
+                animation: { duration: 200 },
+                padding: 10,
+                cornerRadius: 8,
+              },
               title: {
                 display: true,
                 text: 'INCIDENT FREQUENCY BY MONTH OF YEAR',
@@ -428,6 +477,7 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
         const counts = getFrequencyMap((r) => r.year || 'N/A');
         const labels = Object.keys(counts).sort();
         const data = labels.map((l) => counts[l]);
+        const baseBarOpts = getMovementOptions('bar');
 
         chartInstance1.current = new Chart(ctx1, {
           type: 'bar',
@@ -438,19 +488,26 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
                 label: 'Total Incidents',
                 data,
                 backgroundColor: ['#3B82F6', '#8B5CF6', '#EC4899', '#10B981'],
+                hoverBorderColor: textColor,
+                hoverBorderWidth: 2,
                 borderRadius: 8,
               },
             ],
           },
-          options: { animation: { duration: 1500, easing: 'easeOutQuart' },
-            responsive: true,
-            maintainAspectRatio: false,
+          options: {
+            ...baseBarOpts,
             scales: {
               x: { ticks: { color: textColor }, grid: { color: gridColor } },
               y: { ticks: { color: textColor, precision: 0 }, grid: { color: gridColor } },
             },
             plugins: {
               legend: { display: false },
+              tooltip: {
+                enabled: true,
+                animation: { duration: 200 },
+                padding: 10,
+                cornerRadius: 8,
+              },
               title: {
                 display: true,
                 text: 'INCIDENTS BREAKDOWN BY YEAR',
@@ -467,6 +524,7 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
         const counts = getFrequencyMap((r) => r.location);
         const labels = Object.keys(counts);
         const data = Object.values(counts);
+        const baseBarOpts = getMovementOptions('bar', true);
 
         chartInstance1.current = new Chart(ctx1, {
           type: 'bar',
@@ -477,20 +535,28 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
                 label: 'Incidents Count',
                 data,
                 backgroundColor: '#3B82F6',
+                hoverBackgroundColor: '#2563EB',
+                hoverBorderColor: textColor,
+                hoverBorderWidth: 2,
                 borderRadius: 6,
               },
             ],
           },
-          options: { animation: { duration: 1500, easing: 'easeOutQuart' },
+          options: {
+            ...baseBarOpts,
             indexAxis: 'y',
-            responsive: true,
-            maintainAspectRatio: false,
             scales: {
               x: { ticks: { color: textColor, precision: 0 }, grid: { color: gridColor } },
               y: { ticks: { color: textColor }, grid: { color: gridColor } },
             },
             plugins: {
               legend: { display: false },
+              tooltip: {
+                enabled: true,
+                animation: { duration: 200 },
+                padding: 10,
+                cornerRadius: 8,
+              },
               title: {
                 display: true,
                 text: 'INCIDENTS DISTRIBUTION BY LOCATION',
@@ -505,14 +571,6 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
 
       case 'DESCRIPTION': {
         // Extract common keywords/incident types from description
-        const keywords = [
-          'Motorcycle',
-          'Company car / lorry',
-          'Power tools / Grinder',
-          'Fire / Platform',
-          'Fell / Hit',
-          'Bitten by dog',
-        ];
         const kwCounts: Record<string, number> = {
           'Motorcycle Accident': 0,
           'Vehicle Incident (Car/Lorry)': 0,
@@ -536,6 +594,7 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
 
         const labels = Object.keys(kwCounts);
         const data = Object.values(kwCounts);
+        const baseBarOpts = getMovementOptions('bar');
 
         chartInstance1.current = new Chart(ctx1, {
           type: 'bar',
@@ -546,19 +605,26 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
                 label: 'Incidents Count',
                 data,
                 backgroundColor: PALETTE.slice(0, labels.length),
+                hoverBorderColor: textColor,
+                hoverBorderWidth: 2,
                 borderRadius: 6,
               },
             ],
           },
-          options: { animation: { duration: 1500, easing: 'easeOutQuart' },
-            responsive: true,
-            maintainAspectRatio: false,
+          options: {
+            ...baseBarOpts,
             scales: {
               x: { ticks: { color: textColor, font: { size: 10 } }, grid: { color: gridColor } },
               y: { ticks: { color: textColor, precision: 0 }, grid: { color: gridColor } },
             },
             plugins: {
               legend: { display: false },
+              tooltip: {
+                enabled: true,
+                animation: { duration: 200 },
+                padding: 10,
+                cornerRadius: 8,
+              },
               title: {
                 display: true,
                 text: 'COMMON INCIDENT TYPES (EXTRACTED FROM DESCRIPTION)',
@@ -575,6 +641,7 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
         const counts = getFrequencyMap((r) => r.occupationalIncident || 'NO');
         const labels = Object.keys(counts);
         const data = Object.values(counts);
+        const basePieOpts = getMovementOptions('pie');
 
         chartInstance1.current = new Chart(ctx1, {
           type: 'pie',
@@ -586,16 +653,22 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
                 backgroundColor: ['#10B981', '#EF4444', '#F59E0B'],
                 borderWidth: 2,
                 borderColor: isDarkMode ? '#1E293B' : '#FFFFFF',
-                hoverOffset: 14,
+                hoverOffset: 16,
                 hoverBorderWidth: 3,
+                hoverBorderColor: textColor,
               },
             ],
           },
-          options: { animation: { duration: 1200, easing: 'easeOutQuart' },
-            responsive: true,
-            maintainAspectRatio: false,
+          options: {
+            ...basePieOpts,
             plugins: {
               legend: { labels: { color: textColor, font: { size: 12, weight: 'bold' } } },
+              tooltip: {
+                enabled: true,
+                animation: { duration: 200 },
+                padding: 10,
+                cornerRadius: 8,
+              },
               title: {
                 display: true,
                 text: 'OCCUPATIONAL vs NON-OCCUPATIONAL INCIDENTS',
@@ -612,6 +685,7 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
         const counts = getFrequencyMap((r) => r.category);
         const labels = Object.keys(counts);
         const data = Object.values(counts);
+        const baseDoughnutOpts = getMovementOptions('doughnut');
 
         chartInstance1.current = new Chart(ctx1, {
           type: 'doughnut',
@@ -623,16 +697,22 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
                 backgroundColor: ['#F59E0B', '#3B82F6', '#EF4444', '#10B981', '#8B5CF6'],
                 borderWidth: 2,
                 borderColor: isDarkMode ? '#1E293B' : '#FFFFFF',
-                hoverOffset: 14,
+                hoverOffset: 16,
                 hoverBorderWidth: 3,
+                hoverBorderColor: textColor,
               },
             ],
           },
-          options: { animation: { duration: 1200, easing: 'easeOutQuart' },
-            responsive: true,
-            maintainAspectRatio: false,
+          options: {
+            ...baseDoughnutOpts,
             plugins: {
               legend: { labels: { color: textColor, font: { size: 11, weight: 'bold' } } },
+              tooltip: {
+                enabled: true,
+                animation: { duration: 200 },
+                padding: 10,
+                cornerRadius: 8,
+              },
               title: {
                 display: true,
                 text: 'INCIDENT CATEGORY DISTRIBUTION',
@@ -649,6 +729,7 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
         const counts = getFrequencyMap((r) => r.propertyDamage || 'N/A');
         const labels = Object.keys(counts);
         const data = Object.values(counts);
+        const basePieOpts = getMovementOptions('pie');
 
         chartInstance1.current = new Chart(ctx1, {
           type: 'pie',
@@ -660,16 +741,22 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
                 backgroundColor: ['#EF4444', '#10B981', '#64748B'],
                 borderWidth: 2,
                 borderColor: isDarkMode ? '#1E293B' : '#FFFFFF',
-                hoverOffset: 14,
+                hoverOffset: 16,
                 hoverBorderWidth: 3,
+                hoverBorderColor: textColor,
               },
             ],
           },
-          options: { animation: { duration: 1500, easing: 'easeOutQuart' },
-            responsive: true,
-            maintainAspectRatio: false,
+          options: {
+            ...basePieOpts,
             plugins: {
               legend: { labels: { color: textColor, font: { size: 12, weight: 'bold' } } },
+              tooltip: {
+                enabled: true,
+                animation: { duration: 200 },
+                padding: 10,
+                cornerRadius: 8,
+              },
               title: {
                 display: true,
                 text: 'PROPERTY DAMAGE INVOLVEMENT (YES / NO)',
@@ -686,6 +773,7 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
         const counts = getFrequencyMap((r) => r.damageLevel || 'N/A');
         const labels = Object.keys(counts);
         const data = Object.values(counts);
+        const baseBarOpts = getMovementOptions('bar');
 
         chartInstance1.current = new Chart(ctx1, {
           type: 'bar',
@@ -696,19 +784,26 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
                 label: 'Incidents Count',
                 data,
                 backgroundColor: ['#F59E0B', '#EF4444', '#64748B', '#3B82F6'],
+                hoverBorderColor: textColor,
+                hoverBorderWidth: 2,
                 borderRadius: 6,
               },
             ],
           },
-          options: { animation: { duration: 1500, easing: 'easeOutQuart' },
-            responsive: true,
-            maintainAspectRatio: false,
+          options: {
+            ...baseBarOpts,
             scales: {
               x: { ticks: { color: textColor }, grid: { color: gridColor } },
               y: { ticks: { color: textColor, precision: 0 }, grid: { color: gridColor } },
             },
             plugins: {
               legend: { display: false },
+              tooltip: {
+                enabled: true,
+                animation: { duration: 200 },
+                padding: 10,
+                cornerRadius: 8,
+              },
               title: {
                 display: true,
                 text: 'DAMAGE SEVERITY LEVEL BREAKDOWN',
@@ -725,6 +820,7 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
         const counts = getFrequencyMap((r) => r.classification);
         const labels = Object.keys(counts);
         const data = Object.values(counts);
+        const baseBarOpts = getMovementOptions('bar');
 
         chartInstance1.current = new Chart(ctx1, {
           type: 'bar',
@@ -735,19 +831,27 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
                 label: 'Incidents Count',
                 data,
                 backgroundColor: '#8B5CF6',
+                hoverBackgroundColor: '#7C3AED',
+                hoverBorderColor: textColor,
+                hoverBorderWidth: 2,
                 borderRadius: 6,
               },
             ],
           },
-          options: { animation: { duration: 1500, easing: 'easeOutQuart' },
-            responsive: true,
-            maintainAspectRatio: false,
+          options: {
+            ...baseBarOpts,
             scales: {
               x: { ticks: { color: textColor, font: { size: 10 } }, grid: { color: gridColor } },
               y: { ticks: { color: textColor, precision: 0 }, grid: { color: gridColor } },
             },
             plugins: {
               legend: { display: false },
+              tooltip: {
+                enabled: true,
+                animation: { duration: 200 },
+                padding: 10,
+                cornerRadius: 8,
+              },
               title: {
                 display: true,
                 text: 'SAFETY CLASSIFICATION (ACTS vs CONDITIONS vs VEHICLES)',
@@ -764,6 +868,7 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
         const counts = getFrequencyMap((r) => r.injuryType || 'N/A');
         const labels = Object.keys(counts);
         const data = Object.values(counts);
+        const baseDoughnutOpts = getMovementOptions('doughnut');
 
         chartInstance1.current = new Chart(ctx1, {
           type: 'doughnut',
@@ -775,14 +880,22 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
                 backgroundColor: PALETTE.slice(0, labels.length),
                 borderWidth: 2,
                 borderColor: isDarkMode ? '#1E293B' : '#FFFFFF',
+                hoverOffset: 16,
+                hoverBorderWidth: 3,
+                hoverBorderColor: textColor,
               },
             ],
           },
-          options: { animation: { duration: 1500, easing: 'easeOutQuart' },
-            responsive: true,
-            maintainAspectRatio: false,
+          options: {
+            ...baseDoughnutOpts,
             plugins: {
               legend: { labels: { color: textColor, font: { size: 11, weight: 'bold' } } },
+              tooltip: {
+                enabled: true,
+                animation: { duration: 200 },
+                padding: 10,
+                cornerRadius: 8,
+              },
               title: {
                 display: true,
                 text: 'INJURY TYPE DISTRIBUTION',
@@ -799,6 +912,7 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
         const counts = getFrequencyMap((r) => r.personInvolved || (r as any).person_involved || 'N/A');
         const labels = Object.keys(counts);
         const data = Object.values(counts);
+        const baseBarOpts = getMovementOptions('bar');
 
         chartInstance1.current = new Chart(ctx1, {
           type: 'bar',
@@ -809,19 +923,27 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
                 label: 'Incidents Count',
                 data,
                 backgroundColor: '#EC4899',
+                hoverBackgroundColor: '#DB2777',
+                hoverBorderColor: textColor,
+                hoverBorderWidth: 2,
                 borderRadius: 6,
               },
             ],
           },
-          options: { animation: { duration: 1500, easing: 'easeOutQuart' },
-            responsive: true,
-            maintainAspectRatio: false,
+          options: {
+            ...baseBarOpts,
             scales: {
               x: { ticks: { color: textColor, font: { size: 10 } }, grid: { color: gridColor } },
               y: { ticks: { color: textColor, precision: 0 }, grid: { color: gridColor } },
             },
             plugins: {
               legend: { display: false },
+              tooltip: {
+                enabled: true,
+                animation: { duration: 200 },
+                padding: 10,
+                cornerRadius: 8,
+              },
               title: {
                 display: true,
                 text: 'INCIDENTS FREQUENCY BY PERSON INVOLVED',
@@ -838,6 +960,7 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
         const counts = getFrequencyMap((r) => r.experienceLevel || 'N/A');
         const labels = Object.keys(counts);
         const data = Object.values(counts);
+        const basePolarOpts = getMovementOptions('polarArea');
 
         chartInstance1.current = new Chart(ctx1, {
           type: 'polarArea',
@@ -847,14 +970,21 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
               {
                 data,
                 backgroundColor: PALETTE.slice(0, labels.length).map((c) => c + 'B3'),
+                hoverBorderColor: textColor,
+                hoverBorderWidth: 3,
               },
             ],
           },
-          options: { animation: { duration: 1500, easing: 'easeOutQuart' },
-            responsive: true,
-            maintainAspectRatio: false,
+          options: {
+            ...basePolarOpts,
             plugins: {
               legend: { labels: { color: textColor, font: { size: 11, weight: 'bold' } } },
+              tooltip: {
+                enabled: true,
+                animation: { duration: 200 },
+                padding: 10,
+                cornerRadius: 8,
+              },
               title: {
                 display: true,
                 text: 'WORK EXPERIENCE LEVEL CORRELATION',
@@ -1102,7 +1232,7 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
             <div className="flex flex-col gap-6">
               <div className="relative p-4 rounded-2xl bg-white dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 h-80 shadow-sm w-full">
-                <canvas ref={chartRef1}></canvas>
+                <canvas ref={chartRef1} className="w-full h-full cursor-pointer" style={{ touchAction: 'pan-y' }}></canvas>
               </div>
 
               {/* On smartphone/mobile/tablet, the table goes here right below the first interactive chart */}
@@ -1112,7 +1242,7 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
             <div className="p-5 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 flex flex-col justify-between space-y-4">
               {/* Annual Occupational Incidents Sharp Line Chart */}
               <div className="relative p-3 bg-white dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800/80 rounded-xl shadow-sm h-40 w-full">
-                <canvas ref={occupationalChartRef}></canvas>
+                <canvas ref={occupationalChartRef} className="w-full h-full cursor-pointer" style={{ touchAction: 'pan-y' }}></canvas>
               </div>
 
               <div className="flex flex-col space-y-3">
