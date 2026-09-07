@@ -5,6 +5,8 @@ import {
   MOCK_INSPECTION_RECORDS,
   MOCK_FIRST_AID_CERTS,
   MOCK_MINUTE_MEETINGS,
+  MOCK_HIRARCS,
+  MOCK_SOPS,
   INITIAL_DAYS_WITHOUT_INCIDENT
 } from '../data/mockData';
 import Papa from 'papaparse';
@@ -44,6 +46,19 @@ export function callGasFunction<T>(functionName: string, mockFallbackData: T, de
       resolve(mockFallbackData);
     }, delayMs);
   });
+}
+
+/**
+ * Fetch helper with timeout to prevent hanging UI requests
+ */
+async function fetchWithTimeout(url: string, timeoutMs: number = 6000): Promise<Response> {
+  const controller = typeof AbortController !== 'undefined' ? new AbortController() : null;
+  const timeoutId = controller ? setTimeout(() => controller.abort(), timeoutMs) : null;
+  try {
+    return await fetch(url, { signal: controller ? controller.signal : undefined });
+  } finally {
+    if (timeoutId) clearTimeout(timeoutId);
+  }
 }
 
 // 1. Days Without Incident
@@ -354,7 +369,7 @@ export async function fetchLiveIncidentRecords(requireAuth: boolean = false): Pr
   const url = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:csv&gid=88563672&range=A4:O`;
 
   try {
-    const res = await fetch(url);
+    const res = await fetchWithTimeout(url, 5000);
     if (!res.ok) throw new Error('Failed to fetch from sheets');
     const csvText = await res.text();
     
@@ -528,6 +543,14 @@ export async function fetchDynamicHIRARC(): Promise<any[]> {
   const SPREADSHEET_ID = '1o9P6GnlsAwSJEUYHxITt1Opz973uX37MLBiv0LdFdIs';
   const url = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:csv&gid=1423932800&range=B57:F`;
 
+  const fallbackHirarc = MOCK_HIRARCS.map((h, index) => ({
+    id: h.code || `HIRARC-${index + 1}`,
+    title: h.activityName,
+    date: '15/01/2026',
+    revDate: '15/02/2026',
+    documentUrl: h.documentUrl
+  }));
+
   try {
     const res = await fetch(url);
     if (!res.ok) throw new Error('Failed to fetch from sheets');
@@ -552,22 +575,30 @@ export async function fetchDynamicHIRARC(): Promise<any[]> {
               }
             });
           }
-          resolve(records);
+          resolve(records.length > 0 ? records : fallbackHirarc);
         },
         error: () => {
-          resolve([]);
+          resolve(fallbackHirarc);
         }
       });
     });
   } catch (err) {
     console.warn('Error fetching HIRARC:', err);
-    return [];
+    return fallbackHirarc;
   }
 }
 
 export async function fetchDynamicSOP(): Promise<any[]> {
   const SPREADSHEET_ID = '1o9P6GnlsAwSJEUYHxITt1Opz973uX37MLBiv0LdFdIs';
   const url = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:csv&gid=1423932800&range=B24:F54`;
+
+  const fallbackSop = MOCK_SOPS.map((s, index) => ({
+    id: s.code || `SOP-${index + 1}`,
+    title: s.title,
+    date: '10/01/2026',
+    revDate: s.revisionDate,
+    documentUrl: s.documentUrl
+  }));
 
   try {
     const res = await fetch(url);
@@ -593,16 +624,16 @@ export async function fetchDynamicSOP(): Promise<any[]> {
               }
             });
           }
-          resolve(records);
+          resolve(records.length > 0 ? records : fallbackSop);
         },
         error: () => {
-          resolve([]);
+          resolve(fallbackSop);
         }
       });
     });
   } catch (err) {
     console.warn('Error fetching SOP:', err);
-    return [];
+    return fallbackSop;
   }
 }
 
@@ -751,12 +782,7 @@ export interface SummaryTableSectionData {
 
 export type SummaryTablesMap = Record<string, SummaryTableSectionData>;
 
-export async function fetchSummaryTablesFromGoogleSheet(): Promise<SummaryTablesMap> {
-  const SPREADSHEET_ID = '1o9P6GnlsAwSJEUYHxITt1Opz973uX37MLBiv0LdFdIs';
-  const GID = '88563672';
-  const url = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:csv&gid=${GID}&range=Q25:W102`;
-
-  const fallbackTables: SummaryTablesMap = {
+export const FALLBACK_SUMMARY_TABLES: SummaryTablesMap = {
     LOCATION: {
       title: 'LOCATION OF INCIDENTS',
       headers: ['NO', 'LOCATION', '2022', '2023', '2024', '2025', '2026', 'TOTAL INCIDENTS'],
@@ -833,8 +859,14 @@ export async function fetchSummaryTablesFromGoogleSheet(): Promise<SummaryTables
     },
   };
 
+export async function fetchSummaryTablesFromGoogleSheet(): Promise<SummaryTablesMap> {
+  const SPREADSHEET_ID = '1o9P6GnlsAwSJEUYHxITt1Opz973uX37MLBiv0LdFdIs';
+  const GID = '88563672';
+  const url = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:csv&gid=${GID}&range=Q25:W102`;
+  const fallbackTables = FALLBACK_SUMMARY_TABLES;
+
   try {
-    const res = await fetch(url);
+    const res = await fetchWithTimeout(url, 5000);
     if (!res.ok) throw new Error('Failed to fetch summary tables from sheets');
     const csvText = await res.text();
 

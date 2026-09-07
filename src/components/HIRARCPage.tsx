@@ -12,36 +12,51 @@ export const HIRARCPage: React.FC<HIRARCPageProps> = ({
 }) => {
   const [records, setRecords] = useState<HIRARCRecord[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
 
-  useEffect(() => {
+  const loadHIRARC = (isBackground: boolean = false) => {
     let isMounted = true;
-    setLoading(true);
+    if (isBackground) {
+      setIsRefreshing(true);
+    } else {
+      setLoading(true);
+    }
+
     fetchDynamicHIRARC()
       .then((data) => {
-        if (isMounted) {
+        if (isMounted && data && data.length > 0) {
           setRecords(data);
-          setLoading(false);
         }
       })
       .catch((err) => {
         console.error('Error fetching HIRARC records:', err);
-        if (isMounted) setLoading(false);
+      })
+      .finally(() => {
+        if (isMounted) {
+          setLoading(false);
+          setIsRefreshing(false);
+        }
       });
     return () => { isMounted = false; };
+  };
+
+  useEffect(() => {
+    return loadHIRARC(false);
   }, []);
 
   const filteredRecords = records.filter((r) => {
+    if (!r) return false;
     const q = searchQuery.trim().toLowerCase();
     if (!q) return true;
     return (
-      (r.title || '').toLowerCase().includes(q) ||
-      (r.id || '').toString().toLowerCase().includes(q) ||
-      (r.code || '').toLowerCase().includes(q) ||
-      (r.category || '').toLowerCase().includes(q) ||
-      (r.date || '').toLowerCase().includes(q) ||
-      (r.revDate || '').toLowerCase().includes(q)
+      String(r.title || '').toLowerCase().includes(q) ||
+      String(r.id || '').toLowerCase().includes(q) ||
+      String((r as any).code || '').toLowerCase().includes(q) ||
+      String((r as any).category || '').toLowerCase().includes(q) ||
+      String(r.date || '').toLowerCase().includes(q) ||
+      String(r.revDate || '').toLowerCase().includes(q)
     );
   });
 
@@ -67,28 +82,40 @@ export const HIRARCPage: React.FC<HIRARCPageProps> = ({
           </div>
         </div>
         
-        {/* Search Bar */}
-        <div className="relative w-full sm:w-72">
-          <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-lg">
-            search
-          </span>
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="SEARCH RECORDS..."
-            className="w-full pl-9 pr-9 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs sm:text-sm text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-          {searchQuery && (
-            <button
-              type="button"
-              onClick={() => setSearchQuery('')}
-              className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-0.5 rounded-full"
-              title="Clear search"
-            >
-              <span className="material-symbols-outlined text-base">close</span>
-            </button>
-          )}
+        {/* Search Bar & Refresh */}
+        <div className="flex items-center gap-2 w-full sm:w-auto">
+          <div className="relative flex-1 sm:w-72">
+            <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-lg">
+              search
+            </span>
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="SEARCH RECORDS..."
+              className="w-full pl-9 pr-9 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs sm:text-sm text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            {searchQuery && (
+              <button
+                type="button"
+                onClick={() => setSearchQuery('')}
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-0.5 rounded-full"
+                title="Clear search"
+              >
+                <span className="material-symbols-outlined text-base">close</span>
+              </button>
+            )}
+          </div>
+          <button
+            onClick={() => loadHIRARC(true)}
+            disabled={isRefreshing}
+            className="p-2 rounded-xl bg-slate-100 dark:bg-zinc-800 hover:bg-slate-200 dark:hover:bg-zinc-700 text-slate-700 dark:text-slate-300 transition-colors border border-slate-200 dark:border-zinc-700 flex-shrink-0"
+            title="Refresh from Google Sheets"
+          >
+            <span className={`material-symbols-outlined text-xl ${isRefreshing ? 'animate-spin text-amber-500' : ''}`}>
+              sync
+            </span>
+          </button>
         </div>
       </div>
 

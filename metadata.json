@@ -1,6 +1,6 @@
 {
   "name": "Eastway Engineering MYSAFETY",
-  "description": "HSE Dashboard for Eastway Engineering featuring real-time telemetry, incident analytics, SOPs, HIRARC, inspection records, safety committee oversight, and emergency plans.",
+  "description": "HSE Dashboard for Eastway Engineering featuring real-time telemetry, incident analytics, First Aid Kit management with Supabase tracking, SOPs, HIRARC, inspection records, safety committee oversight, and emergency plans.",
   "requestFramePermissions": [],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

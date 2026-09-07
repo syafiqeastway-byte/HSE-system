@@ -1,10 +1,12 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { IncidentRecord } from '../types';
+import { MOCK_INCIDENT_RECORDS } from '../data/mockData';
 import {
   fetchLiveIncidentRecords,
   fetchSummaryTablesFromGoogleSheet,
   SummaryTablesMap,
   SummaryTableSectionData,
+  FALLBACK_SUMMARY_TABLES,
 } from '../utils/gasBridge';
 import { formatToPreviewUrl } from '../utils/formatDriveUrl';
 import * as XLSX from 'xlsx';
@@ -55,55 +57,61 @@ const PALETTE = [
 const centerDataLabelsPlugin = {
   id: 'centerDataLabels',
   afterDatasetsDraw(chart: any) {
-    const { ctx } = chart;
-    ctx.save();
-    ctx.font = 'bold 11px Inter, sans-serif';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
+    try {
+      const { ctx } = chart;
+      ctx.save();
+      ctx.font = 'bold 11px Inter, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
 
-    chart.data.datasets.forEach((dataset: any, datasetIndex: number) => {
-      const meta = chart.getDatasetMeta(datasetIndex);
-      if (!meta || !meta.data) return;
+      chart.data.datasets?.forEach((dataset: any, datasetIndex: number) => {
+        const meta = chart.getDatasetMeta(datasetIndex);
+        if (!meta || !meta.data) return;
 
-      const isHorizontalBar = chart.options?.indexAxis === 'y';
+        const isHorizontalBar = chart.options?.indexAxis === 'y';
 
-      meta.data.forEach((element: any, index: number) => {
-        const val = dataset.data[index];
-        if (val === undefined || val === null || val === 0) return;
+        meta.data.forEach((element: any, index: number) => {
+          const val = dataset.data?.[index];
+          if (val === undefined || val === null || val === 0) return;
 
-        let posX = element.x;
-        let posY = element.y;
+          let posX = element.x;
+          let posY = element.y;
 
-        if (meta.type === 'bar') {
-          if (isHorizontalBar) {
-            const base = element.base ?? 0;
-            posX = (base + element.x) / 2;
-            posY = element.y;
-          } else {
-            const base = element.base ?? (chart.chartArea ? chart.chartArea.bottom : element.y);
-            posX = element.x;
-            posY = (base + element.y) / 2;
+          if (meta.type === 'bar') {
+            if (isHorizontalBar) {
+              const base = element.base ?? 0;
+              posX = (base + element.x) / 2;
+              posY = element.y;
+            } else {
+              const base = element.base ?? (chart.chartArea ? chart.chartArea.bottom : element.y);
+              posX = element.x;
+              posY = (base + element.y) / 2;
+            }
+          } else if (element.tooltipPosition) {
+            const pos = element.tooltipPosition();
+            if (pos) {
+              posX = pos.x;
+              posY = pos.y;
+            }
           }
-        } else if (element.tooltipPosition) {
-          const pos = element.tooltipPosition();
-          posX = pos.x;
-          posY = pos.y;
-        }
 
-        const textStr = String(val);
+          const textStr = String(val);
 
-        // Optional shadow for contrast without rectangle box
-        ctx.shadowColor = 'rgba(0, 0, 0, 0.7)';
-        ctx.shadowBlur = 3;
-        ctx.shadowOffsetX = 0;
-        ctx.shadowOffsetY = 1;
+          // Optional shadow for contrast without rectangle box
+          ctx.shadowColor = 'rgba(0, 0, 0, 0.7)';
+          ctx.shadowBlur = 3;
+          ctx.shadowOffsetX = 0;
+          ctx.shadowOffsetY = 1;
 
-        // Centered white text
-        ctx.fillStyle = '#FFFFFF';
-        ctx.fillText(textStr, posX, posY + 0.5);
+          // Centered white text
+          ctx.fillStyle = '#FFFFFF';
+          ctx.fillText(textStr, posX, posY + 0.5);
+        });
       });
-    });
-    ctx.restore();
+      ctx.restore();
+    } catch {
+      // Safe fallback
+    }
   },
 };
 
@@ -112,9 +120,10 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
   onOpenAllIncidentsModal,
 }) => {
   const [activeTab, setActiveTab] = useState<TabHeaderKey>('YEAR');
-  const [incidents, setIncidents] = useState<IncidentRecord[]>([]);
-  const [summaryTables, setSummaryTables] = useState<SummaryTablesMap | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [incidents, setIncidents] = useState<IncidentRecord[]>(MOCK_INCIDENT_RECORDS);
+  const [summaryTables, setSummaryTables] = useState<SummaryTablesMap | null>(FALLBACK_SUMMARY_TABLES);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
   const [selectedSummaryRowIdx, setSelectedSummaryRowIdx] = useState<number | null>(null);
@@ -130,17 +139,22 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
 
   // Fetch Live Incident Records & Summary Tables from Google Sheets
   const loadData = async () => {
-    setLoading(true);
+    setIsRefreshing(true);
     try {
       const [data, tablesMap] = await Promise.all([
         fetchLiveIncidentRecords(),
         fetchSummaryTablesFromGoogleSheet(),
       ]);
-      setIncidents(data as IncidentRecord[]);
-      setSummaryTables(tablesMap);
+      if (Array.isArray(data) && data.length > 0) {
+        setIncidents(data as IncidentRecord[]);
+      }
+      if (tablesMap && Object.keys(tablesMap).length > 0) {
+        setSummaryTables(tablesMap);
+      }
     } catch (err) {
       console.error('Error loading incident records or summary tables:', err);
     } finally {
+      setIsRefreshing(false);
       setLoading(false);
     }
   };
@@ -260,18 +274,30 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
       // ignore duplicate registration
     }
 
-    // Destroy previous chart instances
-    if (chartInstance1.current) {
-      chartInstance1.current.destroy();
-      chartInstance1.current = null;
-    }
-    if (chartInstance2.current) {
-      chartInstance2.current.destroy();
-      chartInstance2.current = null;
-    }
-    if (occupationalChartInstance.current) {
-      occupationalChartInstance.current.destroy();
-      occupationalChartInstance.current = null;
+    // Destroy previous chart instances safely
+    try {
+      if (chartInstance1.current) {
+        chartInstance1.current.destroy();
+        chartInstance1.current = null;
+      }
+      if (chartInstance2.current) {
+        chartInstance2.current.destroy();
+        chartInstance2.current = null;
+      }
+      if (occupationalChartInstance.current) {
+        occupationalChartInstance.current.destroy();
+        occupationalChartInstance.current = null;
+      }
+      if (chartRef1.current) {
+        const existing1 = Chart.getChart(chartRef1.current);
+        if (existing1) existing1.destroy();
+      }
+      if (occupationalChartRef.current) {
+        const existingOcc = Chart.getChart(occupationalChartRef.current);
+        if (existingOcc) existingOcc.destroy();
+      }
+    } catch (e) {
+      console.warn('Error destroying chart instances:', e);
     }
 
     const textColor = isDarkMode ? '#F8FAFC' : '#0F172A';
@@ -1004,22 +1030,23 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
 
   // Client-Side Search Filter across all fields
   const filteredIncidents = incidents.filter((inc) => {
+    if (!inc) return false;
     const q = searchQuery.trim().toLowerCase();
     if (!q) return true;
-    const id = inc.id || '';
-    const date = inc.date || '';
-    const year = inc.year || '';
-    const location = inc.location || '';
-    const desc = (inc as any).rootCause || inc.description || (inc as any).root_cause || '';
-    const occupationalIncident = inc.occupationalIncident || '';
-    const category = inc.category || '';
-    const propertyDamage = inc.propertyDamage || '';
-    const damageLevel = inc.damageLevel || '';
-    const classification = inc.classification || '';
-    const injuryType = inc.injuryType || '';
-    const person = inc.personInvolved || (inc as any).person_involved || '';
-    const experienceLevel = inc.experienceLevel || '';
-    const reporter = inc.reportedBy || (inc as any).investigator || '';
+    const id = String(inc.id || '');
+    const date = String(inc.date || '');
+    const year = String(inc.year || '');
+    const location = String(inc.location || '');
+    const desc = String((inc as any).rootCause || inc.description || (inc as any).root_cause || '');
+    const occupationalIncident = String(inc.occupationalIncident || '');
+    const category = String(inc.category || '');
+    const propertyDamage = String(inc.propertyDamage || '');
+    const damageLevel = String(inc.damageLevel || '');
+    const classification = String(inc.classification || '');
+    const injuryType = String(inc.injuryType || '');
+    const person = String(inc.personInvolved || (inc as any).person_involved || '');
+    const experienceLevel = String(inc.experienceLevel || '');
+    const reporter = String(inc.reportedBy || (inc as any).investigator || '');
 
     return (
       id.toLowerCase().includes(q) ||
@@ -1041,13 +1068,13 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
 
   // Display all matched cases if searching, otherwise display 10 latest cases
   const sortedIncidents = [...filteredIncidents].sort((a, b) => {
-    const yearA = parseInt(a.year || '0', 10);
-    const yearB = parseInt(b.year || '0', 10);
+    const yearA = parseInt(String(a?.year || '0'), 10);
+    const yearB = parseInt(String(b?.year || '0'), 10);
     if (yearA !== yearB && !isNaN(yearA) && !isNaN(yearB) && yearA > 0 && yearB > 0) {
       return yearB - yearA;
     }
-    const idA = parseInt(a.id.replace(/\D/g, ''), 10);
-    const idB = parseInt(b.id.replace(/\D/g, ''), 10);
+    const idA = parseInt(String(a?.id || '').replace(/\D/g, ''), 10);
+    const idB = parseInt(String(b?.id || '').replace(/\D/g, ''), 10);
     if (!isNaN(idA) && !isNaN(idB) && idA !== idB && idA > 0 && idB > 0) {
       return idB - idA;
     }
@@ -1175,10 +1202,10 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
         <div className="flex items-center gap-2 w-full md:w-auto justify-between md:justify-end">
           <button
             onClick={loadData}
-            disabled={loading}
+            disabled={isRefreshing}
             className="px-3.5 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold text-xs flex items-center gap-2 transition-all border border-slate-200 dark:border-slate-700"
           >
-            <span className={`material-symbols-outlined text-base ${loading ? 'animate-spin text-blue-500' : ''}`}>
+            <span className={`material-symbols-outlined text-base ${isRefreshing ? 'animate-spin text-blue-500' : ''}`}>
               sync
             </span>
             <span>REFRESH</span>
@@ -1222,9 +1249,10 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
       </div>
 
       {/* Loading State */}
-      {loading ? (
+      {loading && incidents.length === 0 ? (
         <div className="p-12 text-center flex flex-col items-center justify-center">
           <span className="material-symbols-outlined text-4xl text-blue-500 animate-spin">sync</span>
+          <p className="mt-2 text-xs text-slate-500">Memuatkan data keselamatan...</p>
         </div>
       ) : (
         <div>

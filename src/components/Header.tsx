@@ -90,6 +90,18 @@ export const Header: React.FC<HeaderProps> = ({
             </button>
 
             <button
+              onClick={() => setActivePage('firstAidKitPage')}
+              className={`px-3 py-2 sm:px-3.5 sm:py-2.5 rounded-xl text-xs sm:text-sm font-bold uppercase tracking-wider flex items-center gap-1.5 sm:gap-2 transition-all whitespace-nowrap flex-shrink-0 ${
+                activePage === 'firstAidKitPage'
+                  ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/30'
+                  : 'text-slate-600 dark:text-zinc-300 hover:bg-slate-100/80 dark:hover:bg-zinc-800/80'
+              }`}
+            >
+              <span className="material-symbols-outlined text-lg sm:text-xl">medical_services</span>
+              <span>First Aid Kits</span>
+            </button>
+
+            <button
               onClick={() => setActivePage('emergencyPlanPage')}
               className={`px-3 py-2 sm:px-3.5 sm:py-2.5 rounded-xl text-xs sm:text-sm font-bold uppercase tracking-wider flex items-center gap-1.5 sm:gap-2 transition-all whitespace-nowrap flex-shrink-0 ${
                 activePage === 'emergencyPlanPage'

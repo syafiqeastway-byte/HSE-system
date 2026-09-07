@@ -12,15 +12,16 @@ interface AllIncidentsPageProps {
 }
 
 export const AllIncidentsPage: React.FC<AllIncidentsPageProps> = ({ onBackToHome, isDarkMode }) => {
-  const [incidents, setIncidents] = useState<IncidentRecord[]>([]);
+  const [incidents, setIncidents] = useState<IncidentRecord[]>(MOCK_INCIDENT_RECORDS);
   const [loading, setLoading] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [source, setSource] = useState<'Google Sheets Live' | 'Local Cache Fallback'>('Google Sheets Live');
   const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
 
   const fetchIncidents = async () => {
-    setLoading(true);
+    setIsRefreshing(true);
     try {
       const data = await fetchLiveIncidentRecords();
       if (data && data.length > 0) {
@@ -35,6 +36,7 @@ export const AllIncidentsPage: React.FC<AllIncidentsPageProps> = ({ onBackToHome
       setIncidents(MOCK_INCIDENT_RECORDS);
       setSource('Local Cache Fallback');
     } finally {
+      setIsRefreshing(false);
       setLoading(false);
     }
   };
@@ -68,23 +70,24 @@ export const AllIncidentsPage: React.FC<AllIncidentsPageProps> = ({ onBackToHome
   }, []);
 
   const filteredIncidents = incidents.filter(inc => {
+    if (!inc) return false;
     if (!searchQuery.trim()) return true;
     const query = searchQuery.toLowerCase();
     
-    const id = inc.id || '';
-    const date = inc.date || '';
-    const year = inc.year || '';
-    const location = inc.location || '';
-    const desc = (inc as any).rootCause || inc.description || (inc as any).root_cause || '';
-    const occupationalIncident = inc.occupationalIncident || '';
-    const category = inc.category || '';
-    const propertyDamage = inc.propertyDamage || '';
-    const damageLevel = inc.damageLevel || '';
-    const classification = inc.classification || '';
-    const injuryType = inc.injuryType || '';
-    const person = inc.personInvolved || (inc as any).person_involved || '';
-    const experienceLevel = inc.experienceLevel || '';
-    const reported = inc.reportedBy || (inc as any).investigator || '';
+    const id = String(inc.id || '');
+    const date = String(inc.date || '');
+    const year = String(inc.year || '');
+    const location = String(inc.location || '');
+    const desc = String((inc as any).rootCause || inc.description || (inc as any).root_cause || '');
+    const occupationalIncident = String(inc.occupationalIncident || '');
+    const category = String(inc.category || '');
+    const propertyDamage = String(inc.propertyDamage || '');
+    const damageLevel = String(inc.damageLevel || '');
+    const classification = String(inc.classification || '');
+    const injuryType = String(inc.injuryType || '');
+    const person = String(inc.personInvolved || (inc as any).person_involved || '');
+    const experienceLevel = String(inc.experienceLevel || '');
+    const reported = String(inc.reportedBy || (inc as any).investigator || '');
     return (
       id.toLowerCase().includes(query) ||
       date.toLowerCase().includes(query) ||
@@ -141,10 +144,10 @@ export const AllIncidentsPage: React.FC<AllIncidentsPageProps> = ({ onBackToHome
           </button>
           <button
             onClick={handleLoadLiveData}
-            disabled={loading}
+            disabled={isRefreshing}
             className="px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold text-xs flex items-center gap-2 transition-all border border-slate-200 dark:border-slate-700"
           >
-            <span className={`material-symbols-outlined text-base ${loading ? 'animate-spin text-blue-500' : ''}`}>
+            <span className={`material-symbols-outlined text-base ${isRefreshing ? 'animate-spin text-blue-500' : ''}`}>
               sync
             </span>
             <span>Refresh</span>

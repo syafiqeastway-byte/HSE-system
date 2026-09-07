@@ -11,13 +11,18 @@ export const SafetyViolationPage: React.FC<SafetyViolationPageProps> = ({
   const [tableData, setTableData] = useState<string[][]>([]);
   const [summaryTableData, setSummaryTableData] = useState<string[][]>([]);
   const [loading, setLoading] = useState(true);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedRowIndex, setSelectedRowIndex] = useState<number | null>(null);
   const [selectedSummaryRowIndex, setSelectedSummaryRowIndex] = useState<number | null>(null);
 
-  useEffect(() => {
+  const loadData = (isBackground: boolean = false) => {
     let isMounted = true;
-    setLoading(true);
+    if (isBackground) {
+      setIsRefreshing(true);
+    } else {
+      setLoading(true);
+    }
     
     Promise.all([
       fetchSafetyViolationScoring(),
@@ -27,15 +32,23 @@ export const SafetyViolationPage: React.FC<SafetyViolationPageProps> = ({
         if (isMounted) {
           setTableData(scoringData);
           setSummaryTableData(summaryData);
-          setLoading(false);
         }
       })
       .catch((err) => {
         console.error('Error fetching safety violation scoring data:', err);
-        if (isMounted) setLoading(false);
+      })
+      .finally(() => {
+        if (isMounted) {
+          setLoading(false);
+          setIsRefreshing(false);
+        }
       });
 
     return () => { isMounted = false; };
+  };
+
+  useEffect(() => {
+    return loadData(false);
   }, []);
 
   // First table (A3:N33)
@@ -48,15 +61,17 @@ export const SafetyViolationPage: React.FC<SafetyViolationPageProps> = ({
 
   // Filter rows based on search query
   const filteredRows = rows.filter((row) => {
+    if (!Array.isArray(row)) return false;
     const q = searchQuery.trim().toLowerCase();
     if (!q) return true;
-    return row.some((cell) => (cell || '').toLowerCase().includes(q));
+    return row.some((cell) => String(cell || '').toLowerCase().includes(q));
   });
 
   const filteredSummaryRows = summaryRows.filter((row) => {
+    if (!Array.isArray(row)) return false;
     const q = searchQuery.trim().toLowerCase();
     if (!q) return true;
-    return row.some((cell) => (cell || '').toLowerCase().includes(q));
+    return row.some((cell) => String(cell || '').toLowerCase().includes(q));
   });
 
   return (
@@ -103,6 +118,16 @@ export const SafetyViolationPage: React.FC<SafetyViolationPageProps> = ({
               </button>
             )}
           </div>
+          <button
+            onClick={() => loadData(true)}
+            disabled={isRefreshing}
+            className="p-2 rounded-xl bg-slate-100 dark:bg-zinc-800 hover:bg-slate-200 dark:hover:bg-zinc-700 text-slate-700 dark:text-slate-300 transition-colors border border-slate-200 dark:border-zinc-700 flex items-center justify-center flex-shrink-0"
+            title="Refresh from Google Sheets"
+          >
+            <span className={`material-symbols-outlined text-xl ${isRefreshing ? 'animate-spin text-red-500' : ''}`}>
+              sync
+            </span>
+          </button>
         </div>
       </div>
 

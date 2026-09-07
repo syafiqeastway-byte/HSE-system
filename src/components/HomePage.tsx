@@ -1,7 +1,6 @@
 import React from 'react';
 import { DocumentViewContext } from '../types';
-
-
+import { ErrorBoundary } from './ErrorBoundary';
 import { IncidentChartsAndTables } from './IncidentChartsAndTables';
 
 interface HomePageProps {
@@ -14,6 +13,7 @@ interface HomePageProps {
   onNavigateSOP: () => void;
   onOpenAllIncidentsModal?: () => void;
   onNavigateSafetyViolation: () => void;
+  onNavigateFirstAidKit?: () => void;
   isDarkMode: boolean;
   onOpenPWAInstall?: () => void;
   isPwaInstalled?: boolean;
@@ -30,6 +30,7 @@ export const HomePage: React.FC<HomePageProps> = ({
   onNavigateSOP,
   onOpenAllIncidentsModal,
   onNavigateSafetyViolation,
+  onNavigateFirstAidKit,
   isDarkMode,
   onOpenPWAInstall,
   isPwaInstalled,
@@ -39,10 +40,12 @@ export const HomePage: React.FC<HomePageProps> = ({
     <div className="space-y-8">
       
       {/* SECTION 1: INCIDENT RECORDS & SAFETY PERFORMANCE */}
-      <IncidentChartsAndTables
-        isDarkMode={isDarkMode}
-        onOpenAllIncidentsModal={onOpenAllIncidentsModal}
-      />
+      <ErrorBoundary fallbackTitle="Paparan Graf & Analitik Keselamatan">
+        <IncidentChartsAndTables
+          isDarkMode={isDarkMode}
+          onOpenAllIncidentsModal={onOpenAllIncidentsModal}
+        />
+      </ErrorBoundary>
 
       {/* SECTION 2 & 3 GRID: SAFETY DOCUMENTATION & COMMITTEE OVERSIGHT */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -237,7 +240,7 @@ export const HomePage: React.FC<HomePageProps> = ({
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-center">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 items-center">
           
           {/* SOP Dropdown */}
           <button
@@ -266,6 +269,22 @@ export const HomePage: React.FC<HomePageProps> = ({
               arrow_forward
             </span>
           </button>
+
+          {/* First Aid Kits Module Button */}
+          {onNavigateFirstAidKit && (
+            <button
+              onClick={onNavigateFirstAidKit}
+              className="w-full px-4 py-3.5 rounded-xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-slate-800 dark:text-zinc-100 font-semibold text-xs sm:text-sm flex items-center justify-between hover:border-emerald-500 dark:hover:border-emerald-400 transition-all shadow-sm group min-h-[44px]"
+            >
+              <div className="flex items-center gap-2 truncate">
+                <span className="material-symbols-outlined text-emerald-600 dark:text-emerald-400 text-xl">medical_services</span>
+                <span className="truncate font-bold">FIRST AID KITS</span>
+              </div>
+              <span className="material-symbols-outlined text-slate-400 group-hover:text-emerald-500 group-hover:translate-x-1 transition-transform">
+                arrow_forward
+              </span>
+            </button>
+          )}
 
           {/* Inspection Records Button */}
           <button

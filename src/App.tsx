@@ -15,6 +15,7 @@ import { ExportGasModal } from './components/ExportGasModal';
 import { SupabaseModal } from './components/SupabaseModal';
 import { AllIncidentsPage } from './components/AllIncidentsPage';
 import { SafetyViolationPage } from './components/SafetyViolationPage';
+import { FirstAidKitPage } from './components/FirstAidKitPage';
 import { PWAInstallModal } from './components/PWAInstallModal';
 
 import { formatToPreviewUrl } from './utils/formatDriveUrl';
@@ -125,6 +126,7 @@ export default function App() {
               onNavigateSOP={() => setActivePage('sopPage')}
               onOpenAllIncidentsModal={() => setActivePage('allIncidentsPage')}
               onNavigateSafetyViolation={() => setActivePage('safetyViolationPage')}
+              onNavigateFirstAidKit={() => setActivePage('firstAidKitPage')}
               isDarkMode={isDarkMode}
               onOpenPWAInstall={() => setPwaModalOpen(true)}
               isPwaInstalled={isPwaInstalled}
@@ -192,7 +194,14 @@ export default function App() {
               onBackToHome={() => setActivePage('homePage')}
             />
           )}
-</main>
+
+          {activePage === 'firstAidKitPage' && (
+            <FirstAidKitPage
+              onBackToHome={() => setActivePage('homePage')}
+              isDarkMode={isDarkMode}
+            />
+          )}
+        </main>
 
         {/* Footer */}
         <footer className="mt-8 py-6 border-t border-slate-200 dark:border-slate-800/80 text-center text-xs text-slate-500 dark:text-slate-400">
