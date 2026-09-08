@@ -145,11 +145,8 @@ export default function App() {
                   <div>
                     <h2 className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
                       <span className="material-symbols-outlined text-white">analytics</span>
-                      <span>INCIDENT ANALYTICS DEEP-DIVE</span>
+                      <span>INCIDENT ANALYTICS</span>
                     </h2>
-                    <p className="text-xs text-white">
-                      Comprehensive Incident Records & Historical Trends
-                    </p>
                   </div>
                 </div>
               </div>

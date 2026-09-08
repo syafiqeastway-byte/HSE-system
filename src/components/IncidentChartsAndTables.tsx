@@ -120,9 +120,42 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
   onOpenAllIncidentsModal,
 }) => {
   const [activeTab, setActiveTab] = useState<TabHeaderKey>('YEAR');
-  const [incidents, setIncidents] = useState<IncidentRecord[]>(MOCK_INCIDENT_RECORDS);
-  const [summaryTables, setSummaryTables] = useState<SummaryTablesMap | null>(FALLBACK_SUMMARY_TABLES);
-  const [loading, setLoading] = useState<boolean>(false);
+  const [incidents, setIncidents] = useState<IncidentRecord[]>(() => {
+    try {
+      const cached = localStorage.getItem('HSE_CACHED_INCIDENTS');
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+    } catch {
+      // ignore
+    }
+    return [];
+  });
+  const [summaryTables, setSummaryTables] = useState<SummaryTablesMap | null>(() => {
+    try {
+      const cached = localStorage.getItem('HSE_CACHED_SUMMARY_TABLES');
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (parsed && typeof parsed === 'object') return parsed;
+      }
+    } catch {
+      // ignore
+    }
+    return null;
+  });
+  const [loading, setLoading] = useState<boolean>(() => {
+    try {
+      const cached = localStorage.getItem('HSE_CACHED_INCIDENTS');
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (Array.isArray(parsed) && parsed.length > 0) return false;
+      }
+    } catch {
+      // ignore
+    }
+    return true;
+  });
   const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
@@ -136,6 +169,8 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
   const chartInstance1 = useRef<any>(null);
   const chartInstance2 = useRef<any>(null);
   const occupationalChartInstance = useRef<any>(null);
+  const lastActiveTabRef = useRef<string>('');
+  const lastThemeRef = useRef<boolean>(isDarkMode);
 
   // Fetch Live Incident Records & Summary Tables from Google Sheets
   const loadData = async () => {
@@ -145,14 +180,47 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
         fetchLiveIncidentRecords(),
         fetchSummaryTablesFromGoogleSheet(),
       ]);
-      if (Array.isArray(data) && data.length > 0) {
-        setIncidents(data as IncidentRecord[]);
+
+      const validLiveIncidents = Array.isArray(data) && data.length > 0 ? (data as IncidentRecord[]) : null;
+      const validLiveTables = tablesMap && Object.keys(tablesMap).length > 0 ? tablesMap : null;
+
+      if (validLiveIncidents) {
+        const cachedRaw = localStorage.getItem('HSE_CACHED_INCIDENTS');
+        const newRaw = JSON.stringify(validLiveIncidents);
+        if (cachedRaw !== newRaw || incidents.length === 0) {
+          setIncidents(validLiveIncidents);
+          try {
+            localStorage.setItem('HSE_CACHED_INCIDENTS', newRaw);
+          } catch {
+            // ignore
+          }
+        }
+      } else if (incidents.length === 0) {
+        setIncidents(MOCK_INCIDENT_RECORDS);
       }
-      if (tablesMap && Object.keys(tablesMap).length > 0) {
-        setSummaryTables(tablesMap);
+
+      if (validLiveTables) {
+        const cachedTableRaw = localStorage.getItem('HSE_CACHED_SUMMARY_TABLES');
+        const newTableRaw = JSON.stringify(validLiveTables);
+        if (cachedTableRaw !== newTableRaw || !summaryTables) {
+          setSummaryTables(validLiveTables);
+          try {
+            localStorage.setItem('HSE_CACHED_SUMMARY_TABLES', newTableRaw);
+          } catch {
+            // ignore
+          }
+        }
+      } else if (!summaryTables) {
+        setSummaryTables(FALLBACK_SUMMARY_TABLES);
       }
     } catch (err) {
       console.error('Error loading incident records or summary tables:', err);
+      if (incidents.length === 0) {
+        setIncidents(MOCK_INCIDENT_RECORDS);
+      }
+      if (!summaryTables) {
+        setSummaryTables(FALLBACK_SUMMARY_TABLES);
+      }
     } finally {
       setIsRefreshing(false);
       setLoading(false);
@@ -267,37 +335,17 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
   useEffect(() => {
     if (loading || incidents.length === 0) return;
 
+    const tabChanged = lastActiveTabRef.current !== activeTab;
+    const themeChanged = lastThemeRef.current !== isDarkMode;
+
+    lastActiveTabRef.current = activeTab;
+    lastThemeRef.current = isDarkMode;
+
     // Register plugin
     try {
       Chart.register(centerDataLabelsPlugin);
     } catch (e) {
       // ignore duplicate registration
-    }
-
-    // Destroy previous chart instances safely
-    try {
-      if (chartInstance1.current) {
-        chartInstance1.current.destroy();
-        chartInstance1.current = null;
-      }
-      if (chartInstance2.current) {
-        chartInstance2.current.destroy();
-        chartInstance2.current = null;
-      }
-      if (occupationalChartInstance.current) {
-        occupationalChartInstance.current.destroy();
-        occupationalChartInstance.current = null;
-      }
-      if (chartRef1.current) {
-        const existing1 = Chart.getChart(chartRef1.current);
-        if (existing1) existing1.destroy();
-      }
-      if (occupationalChartRef.current) {
-        const existingOcc = Chart.getChart(occupationalChartRef.current);
-        if (existingOcc) existingOcc.destroy();
-      }
-    } catch (e) {
-      console.warn('Error destroying chart instances:', e);
     }
 
     const textColor = isDarkMode ? '#F8FAFC' : '#0F172A';
@@ -310,13 +358,13 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
         responsive: true,
         maintainAspectRatio: false,
         animation: {
-          duration: 1000,
+          duration: 750,
           easing: 'easeOutQuart' as const,
         },
         transitions: {
           active: {
             animation: {
-              duration: 250,
+              duration: 200,
               easing: 'easeOutQuart' as const,
             },
           },
@@ -336,52 +384,64 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
     };
 
     // Render Occupational Incidents (YES only) Sharp Line Chart
-    if (occupationalChartRef.current) {
-      const occCtx = occupationalChartRef.current.getContext('2d');
-      if (occCtx) {
-        // Group by Year for OCCUPATIONAL INCIDENT? === 'YES'
-        const occCountsByYear: Record<string, number> = {};
-        incidents.forEach((r) => {
-          const isOcc = r.occupationalIncident?.trim().toUpperCase() === 'YES';
-          if (isOcc) {
-            let yr = r.year?.trim() || '';
-            if (!yr || yr === '-') {
-              if (r.date && r.date.includes('/')) {
-                const parts = r.date.split('/');
-                if (parts.length === 3) {
-                  const possibleYear = parts[2].trim();
-                  if (possibleYear.length === 4) {
-                    yr = possibleYear;
-                  }
-                }
-              } else if (r.date && r.date.includes('-')) {
-                const parts = r.date.split('-');
-                if (parts.length === 3) {
-                  const possibleYear = parts[0].trim();
-                  if (possibleYear.length === 4) {
-                    yr = possibleYear;
-                  }
-                }
+    const occCountsByYear: Record<string, number> = {};
+    incidents.forEach((r) => {
+      const isOcc = r.occupationalIncident?.trim().toUpperCase() === 'YES';
+      if (isOcc) {
+        let yr = r.year?.trim() || '';
+        if (!yr || yr === '-') {
+          if (r.date && r.date.includes('/')) {
+            const parts = r.date.split('/');
+            if (parts.length === 3) {
+              const possibleYear = parts[2].trim();
+              if (possibleYear.length === 4) {
+                yr = possibleYear;
               }
             }
-            if (yr && yr !== '-') {
-              occCountsByYear[yr] = (occCountsByYear[yr] || 0) + 1;
+          } else if (r.date && r.date.includes('-')) {
+            const parts = r.date.split('-');
+            if (parts.length === 3) {
+              const possibleYear = parts[0].trim();
+              if (possibleYear.length === 4) {
+                yr = possibleYear;
+              }
             }
           }
-        });
+        }
+        if (yr && yr !== '-') {
+          occCountsByYear[yr] = (occCountsByYear[yr] || 0) + 1;
+        }
+      }
+    });
 
-        const occYears = Object.keys(occCountsByYear).sort();
-        const occData = occYears.map((y) => occCountsByYear[y]);
+    const occYears = Object.keys(occCountsByYear).sort();
+    const occData = occYears.map((y) => occCountsByYear[y]);
+    const finalOccYears = occYears.length > 0 ? occYears : ['2022', '2023', '2024', '2025', '2026'];
+    const finalOccData = occYears.length > 0 ? occData : [0, 0, 0, 0, 0];
+
+    if (!themeChanged && occupationalChartInstance.current && occupationalChartInstance.current.config.type === 'line') {
+      occupationalChartInstance.current.data.labels = finalOccYears;
+      occupationalChartInstance.current.data.datasets[0].data = finalOccData;
+      occupationalChartInstance.current.update('none');
+    } else if (occupationalChartRef.current) {
+      if (occupationalChartInstance.current) {
+        occupationalChartInstance.current.destroy();
+        occupationalChartInstance.current = null;
+      }
+      const existingOcc = Chart.getChart(occupationalChartRef.current);
+      if (existingOcc) existingOcc.destroy();
+
+      const occCtx = occupationalChartRef.current.getContext('2d');
+      if (occCtx) {
         const baseLineOpts = getMovementOptions('line');
-
         occupationalChartInstance.current = new Chart(occCtx, {
           type: 'line',
           data: {
-            labels: occYears.length > 0 ? occYears : ['2022', '2023', '2024', '2025', '2026'],
+            labels: finalOccYears,
             datasets: [
               {
                 label: 'Occupational Incidents',
-                data: occYears.length > 0 ? occData : [0, 0, 0, 0, 0],
+                data: finalOccData,
                 borderColor: '#F59E0B',
                 backgroundColor: 'rgba(245, 158, 11, 0.08)',
                 borderWidth: 3.5,
@@ -432,6 +492,30 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
     }
 
     if (!chartRef1.current) return;
+
+    // Helper to update chart 1 in-place if type, tab, and theme match
+    const updateChart1InPlaceIfPossible = (expectedType: string, labels: string[], dataValues: number[] | any[]): boolean => {
+      if (!tabChanged && !themeChanged && chartInstance1.current && chartInstance1.current.config.type === expectedType) {
+        chartInstance1.current.data.labels = labels;
+        if (chartInstance1.current.data.datasets && chartInstance1.current.data.datasets[0]) {
+          chartInstance1.current.data.datasets[0].data = dataValues;
+        }
+        chartInstance1.current.update('none');
+        return true;
+      }
+      return false;
+    };
+
+    // If recreating Chart 1, destroy previous instance safely
+    if (tabChanged || themeChanged || !chartInstance1.current) {
+      if (chartInstance1.current) {
+        chartInstance1.current.destroy();
+        chartInstance1.current = null;
+      }
+      const existing1 = Chart.getChart(chartRef1.current);
+      if (existing1) existing1.destroy();
+    }
+
     const ctx1 = chartRef1.current.getContext('2d');
     if (!ctx1) return;
 
@@ -456,6 +540,9 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
           }
         });
 
+        const dataValues = months.map((m) => monthCounts[m]);
+        if (updateChart1InPlaceIfPossible('bar', months, dataValues)) break;
+
         const baseBarOpts = getMovementOptions('bar');
         chartInstance1.current = new Chart(ctx1, {
           type: 'bar',
@@ -464,7 +551,7 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
             datasets: [
               {
                 label: 'Incidents Count',
-                data: months.map((m) => monthCounts[m]),
+                data: dataValues,
                 backgroundColor: '#10B981',
                 hoverBackgroundColor: '#059669',
                 hoverBorderColor: textColor,
@@ -503,8 +590,10 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
         const counts = getFrequencyMap((r) => r.year || 'N/A');
         const labels = Object.keys(counts).sort();
         const data = labels.map((l) => counts[l]);
-        const baseBarOpts = getMovementOptions('bar');
 
+        if (updateChart1InPlaceIfPossible('bar', labels, data)) break;
+
+        const baseBarOpts = getMovementOptions('bar');
         chartInstance1.current = new Chart(ctx1, {
           type: 'bar',
           data: {
@@ -550,8 +639,10 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
         const counts = getFrequencyMap((r) => r.location);
         const labels = Object.keys(counts);
         const data = Object.values(counts);
-        const baseBarOpts = getMovementOptions('bar', true);
 
+        if (updateChart1InPlaceIfPossible('bar', labels, data)) break;
+
+        const baseBarOpts = getMovementOptions('bar', true);
         chartInstance1.current = new Chart(ctx1, {
           type: 'bar',
           data: {
@@ -596,7 +687,6 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
       }
 
       case 'DESCRIPTION': {
-        // Extract common keywords/incident types from description
         const kwCounts: Record<string, number> = {
           'Motorcycle Accident': 0,
           'Vehicle Incident (Car/Lorry)': 0,
@@ -620,8 +710,10 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
 
         const labels = Object.keys(kwCounts);
         const data = Object.values(kwCounts);
-        const baseBarOpts = getMovementOptions('bar');
 
+        if (updateChart1InPlaceIfPossible('bar', labels, data)) break;
+
+        const baseBarOpts = getMovementOptions('bar');
         chartInstance1.current = new Chart(ctx1, {
           type: 'bar',
           data: {
@@ -667,8 +759,10 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
         const counts = getFrequencyMap((r) => r.occupationalIncident || 'NO');
         const labels = Object.keys(counts);
         const data = Object.values(counts);
-        const basePieOpts = getMovementOptions('pie');
 
+        if (updateChart1InPlaceIfPossible('pie', labels, data)) break;
+
+        const basePieOpts = getMovementOptions('pie');
         chartInstance1.current = new Chart(ctx1, {
           type: 'pie',
           data: {
@@ -711,8 +805,10 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
         const counts = getFrequencyMap((r) => r.category);
         const labels = Object.keys(counts);
         const data = Object.values(counts);
-        const baseDoughnutOpts = getMovementOptions('doughnut');
 
+        if (updateChart1InPlaceIfPossible('doughnut', labels, data)) break;
+
+        const baseDoughnutOpts = getMovementOptions('doughnut');
         chartInstance1.current = new Chart(ctx1, {
           type: 'doughnut',
           data: {
@@ -755,8 +851,10 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
         const counts = getFrequencyMap((r) => r.propertyDamage || 'N/A');
         const labels = Object.keys(counts);
         const data = Object.values(counts);
-        const basePieOpts = getMovementOptions('pie');
 
+        if (updateChart1InPlaceIfPossible('pie', labels, data)) break;
+
+        const basePieOpts = getMovementOptions('pie');
         chartInstance1.current = new Chart(ctx1, {
           type: 'pie',
           data: {
@@ -799,8 +897,10 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
         const counts = getFrequencyMap((r) => r.damageLevel || 'N/A');
         const labels = Object.keys(counts);
         const data = Object.values(counts);
-        const baseBarOpts = getMovementOptions('bar');
 
+        if (updateChart1InPlaceIfPossible('bar', labels, data)) break;
+
+        const baseBarOpts = getMovementOptions('bar');
         chartInstance1.current = new Chart(ctx1, {
           type: 'bar',
           data: {
@@ -846,8 +946,10 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
         const counts = getFrequencyMap((r) => r.classification);
         const labels = Object.keys(counts);
         const data = Object.values(counts);
-        const baseBarOpts = getMovementOptions('bar');
 
+        if (updateChart1InPlaceIfPossible('bar', labels, data)) break;
+
+        const baseBarOpts = getMovementOptions('bar');
         chartInstance1.current = new Chart(ctx1, {
           type: 'bar',
           data: {
@@ -894,8 +996,10 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
         const counts = getFrequencyMap((r) => r.injuryType || 'N/A');
         const labels = Object.keys(counts);
         const data = Object.values(counts);
-        const baseDoughnutOpts = getMovementOptions('doughnut');
 
+        if (updateChart1InPlaceIfPossible('doughnut', labels, data)) break;
+
+        const baseDoughnutOpts = getMovementOptions('doughnut');
         chartInstance1.current = new Chart(ctx1, {
           type: 'doughnut',
           data: {
@@ -938,8 +1042,10 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
         const counts = getFrequencyMap((r) => r.personInvolved || (r as any).person_involved || 'N/A');
         const labels = Object.keys(counts);
         const data = Object.values(counts);
-        const baseBarOpts = getMovementOptions('bar');
 
+        if (updateChart1InPlaceIfPossible('bar', labels, data)) break;
+
+        const baseBarOpts = getMovementOptions('bar');
         chartInstance1.current = new Chart(ctx1, {
           type: 'bar',
           data: {
@@ -986,8 +1092,10 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
         const counts = getFrequencyMap((r) => r.experienceLevel || 'N/A');
         const labels = Object.keys(counts);
         const data = Object.values(counts);
-        const basePolarOpts = getMovementOptions('polarArea');
 
+        if (updateChart1InPlaceIfPossible('polarArea', labels, data)) break;
+
+        const basePolarOpts = getMovementOptions('polarArea');
         chartInstance1.current = new Chart(ctx1, {
           type: 'polarArea',
           data: {

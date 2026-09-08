@@ -12,8 +12,30 @@ interface AllIncidentsPageProps {
 }
 
 export const AllIncidentsPage: React.FC<AllIncidentsPageProps> = ({ onBackToHome, isDarkMode }) => {
-  const [incidents, setIncidents] = useState<IncidentRecord[]>(MOCK_INCIDENT_RECORDS);
-  const [loading, setLoading] = useState(false);
+  const [incidents, setIncidents] = useState<IncidentRecord[]>(() => {
+    try {
+      const cached = localStorage.getItem('HSE_CACHED_INCIDENTS');
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+    } catch {
+      // ignore
+    }
+    return [];
+  });
+  const [loading, setLoading] = useState(() => {
+    try {
+      const cached = localStorage.getItem('HSE_CACHED_INCIDENTS');
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (Array.isArray(parsed) && parsed.length > 0) return false;
+      }
+    } catch {
+      // ignore
+    }
+    return true;
+  });
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -27,14 +49,21 @@ export const AllIncidentsPage: React.FC<AllIncidentsPageProps> = ({ onBackToHome
       if (data && data.length > 0) {
         setIncidents(data as IncidentRecord[]);
         setSource('Google Sheets Live');
-      } else {
+        try {
+          localStorage.setItem('HSE_CACHED_INCIDENTS', JSON.stringify(data));
+        } catch {
+          // ignore
+        }
+      } else if (incidents.length === 0) {
         setIncidents(MOCK_INCIDENT_RECORDS);
         setSource('Local Cache Fallback');
       }
     } catch (err) {
       console.warn('Error fetching live incidents:', err);
-      setIncidents(MOCK_INCIDENT_RECORDS);
-      setSource('Local Cache Fallback');
+      if (incidents.length === 0) {
+        setIncidents(MOCK_INCIDENT_RECORDS);
+        setSource('Local Cache Fallback');
+      }
     } finally {
       setIsRefreshing(false);
       setLoading(false);
