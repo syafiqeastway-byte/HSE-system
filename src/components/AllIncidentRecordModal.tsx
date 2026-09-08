@@ -16,8 +16,8 @@ export const AllIncidentRecordModal: React.FC<AllIncidentRecordModalProps> = ({ 
   const [loading, setLoading] = useState(false);
   const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [source, setSource] = useState<'Google Sheets Live' | 'Local Cache Fallback'>('Google Sheets Live');
   const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
+  const [source, setSource] = useState<'Google Sheets Live' | 'Local Cache Fallback'>('Google Sheets Live');
 
   const fetchIncidents = async () => {
     setLoading(true);
@@ -244,16 +244,18 @@ useEffect(() => {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-cyan-500/10 text-white text-xs sm:text-sm">
-                  {filteredIncidents.map((inc) => {
+                  {filteredIncidents.map((inc, idx) => {
                     const isSelected = selectedRowId === inc.id;
                     return (
                       <tr 
                         key={inc.id} 
                         onClick={() => setSelectedRowId(isSelected ? null : inc.id)}
-                        className={`h-9 transition-colors cursor-pointer ${
-                          isSelected 
-                            ? 'bg-slate-700/80 text-white font-semibold' 
-                            : 'hover:bg-cyan-950/40 active:bg-slate-700/50'
+                        className={`h-9 transition-colors cursor-pointer select-none ${
+                          isSelected
+                            ? '!bg-cyan-600 !text-white font-bold [&>td]:!bg-cyan-600 [&>td]:!text-white [&>td]:!border-cyan-400/40 [&_*]:!text-white shadow-md'
+                            : idx % 2 === 0
+                            ? 'bg-slate-900/40 hover:bg-cyan-950/30'
+                            : 'bg-slate-900/80 hover:bg-cyan-950/40'
                         }`}
                       >
                       <td className="py-1 px-3 font-mono font-medium text-white whitespace-nowrap border border-cyan-500/20 text-center leading-none">
@@ -323,7 +325,7 @@ useEffect(() => {
                     </tr>
                   );
                 })}
-                </tbody>
+              </tbody>
               </table>
             </div>
           )}

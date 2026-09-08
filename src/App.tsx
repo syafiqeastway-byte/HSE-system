@@ -16,6 +16,8 @@ import { SupabaseModal } from './components/SupabaseModal';
 import { AllIncidentsPage } from './components/AllIncidentsPage';
 import { SafetyViolationPage } from './components/SafetyViolationPage';
 import { PWAInstallModal } from './components/PWAInstallModal';
+import { FirstAidKitPage } from './components/FirstAidKitPage';
+import { InspectionPage } from './components/InspectionPage';
 
 import { formatToPreviewUrl } from './utils/formatDriveUrl';
 
@@ -119,6 +121,8 @@ export default function App() {
               onOpenDocument={handleOpenDocument}
               onOpenCompetentPersonModal={() => setCompetentPersonModalOpen(true)}
               onOpenInspectionModal={handleOpenInspectionModal}
+              onNavigateInspection={() => setActivePage('inspectionPage')}
+              onNavigateFirstAidKit={() => setActivePage('firstAidKitPage')}
               onNavigateEmergencyPlan={() => setActivePage('emergencyPlanPage')}
               onNavigateMinuteMeetings={() => setActivePage('minuteMeetingPage')}
               onNavigateHIRARC={() => setActivePage('hirarcPage')}
@@ -172,6 +176,18 @@ export default function App() {
 
           {activePage === 'sopPage' && (
             <SOPPage
+              onBackToHome={() => setActivePage('homePage')}
+            />
+          )}
+
+          {activePage === 'firstAidKitPage' && (
+            <FirstAidKitPage
+              onBackToHome={() => setActivePage('homePage')}
+            />
+          )}
+
+          {activePage === 'inspectionPage' && (
+            <InspectionPage
               onBackToHome={() => setActivePage('homePage')}
             />
           )}

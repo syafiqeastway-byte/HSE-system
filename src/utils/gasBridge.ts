@@ -10,7 +10,7 @@ import {
   INITIAL_DAYS_WITHOUT_INCIDENT
 } from '../data/mockData';
 import Papa from 'papaparse';
-import { FirstAidCert, InspectionRecord, FireExtinguisherRecord } from '../types';
+import { FirstAidCert, InspectionRecord, FireExtinguisherRecord, FirstAidKitTableData } from '../types';
 
 declare global {
   interface Window {
@@ -361,6 +361,118 @@ export async function fetchFirstAidCertData(requireAuth: boolean = false): Promi
     return callGasFunction<FirstAidCert[]>('getFirstAidCertData', MOCK_FIRST_AID_CERTS);
   }
 }
+
+// 10b. First Aid Kit Table Data (Spreadsheet ID: 17RUlbsvnS8c2keut4n1ZqW5LZJIFGTfZBFuVV_sjnDA, Sheet: FIRST AID KIT, Range: A1:Y20)
+export function getMockFirstAidKitData(): FirstAidKitTableData {
+  const headers = [
+    'NO', 'ITEM / CONTENT', 'SPECIFICATION / SIZE', 'MIN QTY', 'LOCATION',
+    'JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN',
+    'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC',
+    'EXPIRY DATE', 'CONDITION', 'REMARK', 'INSPECTED BY', 'VERIFIED BY', 'STATUS', 'REPLENISHMENT REQUIRED', 'ACTION PLAN'
+  ];
+  
+  const sampleItems = [
+    ['1', 'Triangular Bandage', '90cm x 90cm x 130cm', '4 pcs', 'Main First Aid Box A', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', '2028-12-31', 'Good', 'Adequate Stock', 'Safety Officer', 'HSE Committee', 'COMPLIANT', 'NO', 'Routine monitoring'],
+    ['2', 'Roller Bandage 5cm', '5cm x 5m', '6 rolls', 'Main First Aid Box A', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', '2028-06-30', 'Good', 'Stock Verified', 'Safety Officer', 'HSE Committee', 'COMPLIANT', 'NO', 'Routine monitoring'],
+    ['3', 'Roller Bandage 7.5cm', '7.5cm x 5m', '6 rolls', 'Main First Aid Box A', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', '2028-06-30', 'Good', 'Stock Verified', 'Safety Officer', 'HSE Committee', 'COMPLIANT', 'NO', 'Routine monitoring'],
+    ['4', 'Sterile Gauze Pad', '7.5cm x 7.5cm (Pack of 5)', '5 pkts', 'Main First Aid Box A', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', '2027-10-15', 'Sealed', 'Sufficient', 'Safety Officer', 'HSE Committee', 'COMPLIANT', 'NO', 'None'],
+    ['5', 'Adhesive Plaster (Assorted)', 'Assorted Waterproof', '40 pcs', 'Main First Aid Box A', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', '2027-08-20', 'Good', 'Replenished', 'Safety Officer', 'HSE Committee', 'COMPLIANT', 'NO', 'Regular check'],
+    ['6', 'Microporous Surgical Tape', '2.5cm x 5m', '2 rolls', 'Main First Aid Box A', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', '2028-04-10', 'Good', 'Original box', 'Safety Officer', 'HSE Committee', 'COMPLIANT', 'NO', 'None'],
+    ['7', 'Burn Dressing / Hydrogel', '10cm x 10cm', '2 pkts', 'Main First Aid Box A', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', '2027-05-30', 'Good', 'Sterile packaging', 'Safety Officer', 'HSE Committee', 'COMPLIANT', 'NO', 'None'],
+    ['8', 'Antiseptic Solution / Povidone', '60 ml', '1 bottle', 'Main First Aid Box A', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', '2027-12-31', 'Intact', 'Cap sealed', 'Safety Officer', 'HSE Committee', 'COMPLIANT', 'NO', 'Check seal'],
+    ['9', 'Normal Saline Solution (Eye / Wound wash)', '500 ml', '2 bottles', 'Main First Aid Box A', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', '2027-09-15', 'Intact', 'Sterile', 'Safety Officer', 'HSE Committee', 'COMPLIANT', 'NO', 'None'],
+    ['10', 'Stainless Steel Bandage Scissors', '15cm Surgical Grade', '1 pair', 'Main First Aid Box A', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'N/A', 'Sharp & Clean', 'Inspected', 'Safety Officer', 'HSE Committee', 'COMPLIANT', 'NO', 'None'],
+    ['11', 'Safety Pins', 'Assorted Sizes', '12 pcs', 'Main First Aid Box A', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'N/A', 'Rust-free', 'In pouch', 'Safety Officer', 'HSE Committee', 'COMPLIANT', 'NO', 'None'],
+    ['12', 'Disposable Nitrile Gloves (Pairs)', 'Size L Powder-free', '4 pairs', 'Main First Aid Box A', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', '2028-02-28', 'Good elasticity', 'Pouch sealed', 'Safety Officer', 'HSE Committee', 'COMPLIANT', 'NO', 'None'],
+    ['13', 'CPR Face Shield / Pocket Mask', 'With One-Way Valve', '2 pcs', 'Main First Aid Box A', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', '2028-11-30', 'Good', 'Hygienic case', 'Safety Officer', 'HSE Committee', 'COMPLIANT', 'NO', 'None'],
+    ['14', 'First Aid Booklet & Log Sheet', 'DOSH Standard Format', '1 set', 'Main First Aid Box A', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'N/A', 'Updated', 'Records active', 'Safety Officer', 'HSE Committee', 'COMPLIANT', 'NO', 'None'],
+    ['15', 'Sterile Eye Pad', 'Oval Shape', '2 pkts', 'Main First Aid Box A', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', '2027-11-15', 'Sealed', 'Intact', 'Safety Officer', 'HSE Committee', 'COMPLIANT', 'NO', 'None'],
+    ['16', 'Elastic Crepe Bandage', '10cm x 4.5m', '2 rolls', 'Main First Aid Box A', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', '2028-01-31', 'Good elasticity', 'Clean wrap', 'Safety Officer', 'HSE Committee', 'COMPLIANT', 'NO', 'None'],
+    ['17', 'Forehead Thermometer / Digital', 'Digital LCD', '1 unit', 'Main First Aid Box A', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'N/A', 'Functional', 'Battery full', 'Safety Officer', 'HSE Committee', 'COMPLIANT', 'NO', 'None'],
+    ['18', 'Absorbent Cotton Wool', '50g Pack', '1 pkt', 'Main First Aid Box A', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', '2028-08-31', 'Clean', 'Sealed bag', 'Safety Officer', 'HSE Committee', 'COMPLIANT', 'NO', 'None'],
+    ['19', 'Emergency Blanket / Foil', '140cm x 210cm', '1 pc', 'Main First Aid Box A', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', '2029-01-01', 'Folded neat', 'Unused', 'Safety Officer', 'HSE Committee', 'COMPLIANT', 'NO', 'None'],
+  ];
+
+  const rawRecords = sampleItems.map((row) => {
+    const rec: Record<string, string> = {};
+    headers.forEach((h, idx) => {
+      rec[h] = row[idx] || '';
+    });
+    return rec;
+  });
+
+  return {
+    headers,
+    rows: sampleItems,
+    rawRecords,
+  };
+}
+
+export async function fetchFirstAidKitTableData(): Promise<FirstAidKitTableData> {
+  const SPREADSHEET_ID = '17RUlbsvnS8c2keut4n1ZqW5LZJIFGTfZBFuVV_sjnDA';
+  const SHEET_NAME = 'FIRST AID KIT';
+  const RANGE = 'A1:Y20';
+  const url = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(SHEET_NAME)}&range=${RANGE}`;
+
+  try {
+    const res = await fetchWithTimeout(url, 8000);
+    if (!res.ok) throw new Error(`Google Sheets responded with status ${res.status}`);
+    const csvText = await res.text();
+
+    if (csvText.includes('<!DOCTYPE html>') || csvText.includes('google-signin-button')) {
+      throw new Error('Returned HTML instead of CSV data');
+    }
+
+    return new Promise((resolve) => {
+      Papa.parse(csvText, {
+        header: false,
+        skipEmptyLines: false,
+        complete: (results) => {
+          if (results.data && results.data.length > 0) {
+            const rawRows = results.data as string[][];
+            // Filter out trailing completely blank rows
+            const nonEmptyRows = rawRows.filter((r) => Array.isArray(r) && r.some((c) => c && String(c).trim() !== ''));
+            if (nonEmptyRows.length > 0) {
+              // Row 1 is header (index 0)
+              const firstRow = nonEmptyRows[0];
+              const headers = firstRow.map((h, i) => (h && String(h).trim() !== '' ? String(h).trim() : `Column ${i + 1}`));
+              const dataRows = nonEmptyRows.slice(1);
+
+              const cleanRows = dataRows.map((r) => {
+                const filledRow: string[] = [];
+                for (let i = 0; i < headers.length; i++) {
+                  filledRow.push(r[i] !== undefined && r[i] !== null ? String(r[i]).trim() : '');
+                }
+                return filledRow;
+              });
+
+              const rawRecords = cleanRows.map((r) => {
+                const record: Record<string, string> = {};
+                headers.forEach((h, idx) => {
+                  record[h] = r[idx] || '';
+                });
+                return record;
+              });
+
+              resolve({
+                headers,
+                rows: cleanRows,
+                rawRecords,
+              });
+              return;
+            }
+          }
+          resolve(getMockFirstAidKitData());
+        },
+        error: () => resolve(getMockFirstAidKitData()),
+      });
+    });
+  } catch (err) {
+    console.warn('Error fetching First Aid Kit table data from Google Sheets, using fallback:', err);
+    return getMockFirstAidKitData();
+  }
+}
+
 
 
 // 11. Live Incident Records

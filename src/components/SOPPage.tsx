@@ -145,16 +145,18 @@ export const SOPPage: React.FC<SOPPageProps> = ({
                     </td>
                   </tr>
                 ) : (
-                  filteredRecords.map((r) => {
-                    const isSelected = selectedRowId === String(r.id);
+                  filteredRecords.map((r, rIdx) => {
+                    const isSelected = selectedRowId === r.id;
                     return (
                       <tr 
                         key={r.id} 
-                        onClick={() => setSelectedRowId(isSelected ? null : String(r.id))}
+                        onClick={() => setSelectedRowId(isSelected ? null : r.id)}
                         className={`h-9 transition-colors cursor-pointer select-none ${
-                          isSelected 
-                            ? '!bg-cyan-600 !text-white font-bold [&>td]:!bg-cyan-600 [&>td]:!text-white [&>td]:!border-cyan-400/40 [&_*]:!text-white shadow-md' 
-                            : 'hover:bg-cyan-950/40 active:bg-slate-700/60'
+                          isSelected
+                            ? '!bg-cyan-600 !text-white font-bold [&>td]:!bg-cyan-600 [&>td]:!text-white [&>td]:!border-cyan-400/40 [&_*]:!text-white shadow-md'
+                            : rIdx % 2 === 0
+                            ? 'bg-slate-900/40 hover:bg-cyan-950/30'
+                            : 'bg-slate-900/80 hover:bg-cyan-950/40'
                         }`}
                       >
                         <td className="py-1 px-3 font-medium text-white border border-cyan-500/20 text-center leading-none">

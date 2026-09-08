@@ -13,8 +13,8 @@ export const SafetyViolationPage: React.FC<SafetyViolationPageProps> = ({
   const [loading, setLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedRowIndex, setSelectedRowIndex] = useState<number | null>(null);
-  const [selectedSummaryRowIndex, setSelectedSummaryRowIndex] = useState<number | null>(null);
+  const [selectedRowIdx, setSelectedRowIdx] = useState<number | null>(null);
+  const [selectedSummaryRowIdx, setSelectedSummaryRowIdx] = useState<number | null>(null);
 
   const loadData = (isBackground: boolean = false) => {
     let isMounted = true;
@@ -167,18 +167,20 @@ export const SafetyViolationPage: React.FC<SafetyViolationPageProps> = ({
                     </tr>
                   ) : (
                     filteredRows.map((row, rIdx) => {
-                      const isSelected = selectedRowIndex === rIdx;
+                      const isSelected = selectedRowIdx === rIdx;
                       return (
                         <tr
                           key={rIdx}
-                          onClick={() => setSelectedRowIndex(isSelected ? null : rIdx)}
+                          onClick={() => setSelectedRowIdx(isSelected ? null : rIdx)}
                           className={`h-9 transition-colors cursor-pointer select-none ${
                             isSelected
                               ? '!bg-cyan-600 !text-white font-bold [&>td]:!bg-cyan-600 [&>td]:!text-white [&>td]:!border-cyan-400/40 [&_*]:!text-white shadow-md'
-                              : 'hover:bg-cyan-950/40 text-white'
+                              : rIdx % 2 === 0
+                              ? 'bg-slate-900/40 hover:bg-cyan-950/30'
+                              : 'bg-slate-900/80 hover:bg-cyan-950/40'
                           }`}
                         >
-                          {row.map((cell, cIdx) => {
+                        {row.map((cell, cIdx) => {
                             // Find column indexes dynamically from headers
                             const headerText = (headers[cIdx] || '').toUpperCase();
                             const isPointCol = headerText.includes('POINT') || headerText.includes('DEMERIT');
@@ -253,16 +255,10 @@ export const SafetyViolationPage: React.FC<SafetyViolationPageProps> = ({
                       );
                     })
                   )}
-                </tbody>
-              </table>
+                  </tbody>
+                </table>
+              </div>
             </div>
-            <div className="p-3 bg-slate-900/60 border-t border-cyan-500/20 text-[9px] sm:text-[10px] text-white flex justify-end">
-              <span className="flex items-center gap-1">
-                <span className="inline-block w-2.5 h-2.5 bg-red-500/20 rounded border border-red-500"></span>
-                Click a row to highlight
-              </span>
-            </div>
-          </div>
 
           {/* Secondary Table Section (DEMERIT K3:O37) */}
           {summaryTableData.length > 0 && (
@@ -299,18 +295,20 @@ export const SafetyViolationPage: React.FC<SafetyViolationPageProps> = ({
                       </tr>
                     ) : (
                       filteredSummaryRows.map((row, rIdx) => {
-                        const isSelected = selectedSummaryRowIndex === rIdx;
+                        const isSelected = selectedSummaryRowIdx === rIdx;
                         return (
                           <tr
                             key={rIdx}
-                            onClick={() => setSelectedSummaryRowIndex(isSelected ? null : rIdx)}
+                            onClick={() => setSelectedSummaryRowIdx(isSelected ? null : rIdx)}
                             className={`h-9 transition-colors cursor-pointer select-none ${
                               isSelected
                                 ? '!bg-cyan-600 !text-white font-bold [&>td]:!bg-cyan-600 [&>td]:!text-white [&>td]:!border-cyan-400/40 [&_*]:!text-white shadow-md'
-                                : 'hover:bg-cyan-950/40 text-white'
+                                : rIdx % 2 === 0
+                                ? 'bg-slate-900/40 hover:bg-cyan-950/30'
+                                : 'bg-slate-900/80 hover:bg-cyan-950/40'
                             }`}
                           >
-                            {row.map((cell, cIdx) => {
+                        {row.map((cell, cIdx) => {
                               const headerTitle = (summaryHeaders[cIdx] || '').toUpperCase();
                               const isCodeCol = headerTitle.includes('KOD') || headerTitle.includes('CODE');
                               const isCategoryCol = headerTitle.includes('KATEGORI') || headerTitle.includes('CATEGORY');

@@ -1283,7 +1283,7 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
                     <td className={`py-1 px-3 text-center leading-none ${isTotal ? 'font-bold text-white' : 'text-white'}`}>
                       {row.c2026}
                     </td>
-                    <td className={`py-1 px-3 text-center font-bold text-white leading-none ${isSelected ? 'bg-cyan-600' : 'bg-slate-800/60'}`}>
+                    <td className={`py-1 px-3 text-center font-bold text-white leading-none bg-slate-800/60`}>
                       {row.total}
                     </td>
                   </tr>
@@ -1484,16 +1484,18 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
                     </td>
                   </tr>
                 ) : (
-                  displayIncidents.map((inc) => {
+                  displayIncidents.map((inc, idx) => {
                     const isSelected = selectedRowId === inc.id;
                     return (
                       <tr 
                         key={inc.id} 
                         onClick={() => setSelectedRowId(isSelected ? null : inc.id)}
                         className={`h-9 transition-colors cursor-pointer select-none ${
-                          isSelected 
-                            ? '!bg-cyan-600 !text-white font-bold [&>td]:!bg-cyan-600 [&>td]:!text-white [&>td]:!border-cyan-400/40 [&_*]:!text-white shadow-md' 
-                            : 'hover:bg-cyan-950/40 active:bg-cyan-900/40'
+                          isSelected
+                            ? '!bg-cyan-600 !text-white font-bold [&>td]:!bg-cyan-600 [&>td]:!text-white [&>td]:!border-cyan-400/40 [&_*]:!text-white shadow-md'
+                            : idx % 2 === 0
+                            ? 'bg-slate-900/40 hover:bg-cyan-950/30'
+                            : 'bg-slate-800/30 hover:bg-cyan-950/40'
                         }`}
                       >
                       {/* 1. NO */}

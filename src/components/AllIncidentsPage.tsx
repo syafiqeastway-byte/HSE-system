@@ -39,8 +39,8 @@ export const AllIncidentsPage: React.FC<AllIncidentsPageProps> = ({ onBackToHome
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [isGeneratingPdf, setIsGeneratingPdf] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [source, setSource] = useState<'Google Sheets Live' | 'Local Cache Fallback'>('Google Sheets Live');
   const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
+  const [source, setSource] = useState<'Google Sheets Live' | 'Local Cache Fallback'>('Google Sheets Live');
 
   const fetchIncidents = async () => {
     setIsRefreshing(true);
@@ -254,16 +254,18 @@ export const AllIncidentsPage: React.FC<AllIncidentsPageProps> = ({ onBackToHome
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-cyan-500/10 text-white text-xs sm:text-sm">
-                  {filteredIncidents.map((inc) => {
+                  {filteredIncidents.map((inc, idx) => {
                     const isSelected = selectedRowId === inc.id;
                     return (
                       <tr 
                         key={inc.id} 
                         onClick={() => setSelectedRowId(isSelected ? null : inc.id)}
                         className={`h-9 transition-colors cursor-pointer select-none ${
-                          isSelected 
-                            ? '!bg-cyan-600 !text-white font-bold [&>td]:!bg-cyan-600 [&>td]:!text-white [&>td]:!border-cyan-400/40 [&_*]:!text-white shadow-md' 
-                            : 'hover:bg-cyan-950/40 active:bg-slate-700/60'
+                          isSelected
+                            ? '!bg-cyan-600 !text-white font-bold [&>td]:!bg-cyan-600 [&>td]:!text-white [&>td]:!border-cyan-400/40 [&_*]:!text-white shadow-md'
+                            : idx % 2 === 0
+                            ? 'bg-slate-900/40 hover:bg-cyan-950/30'
+                            : 'bg-slate-900/80 hover:bg-cyan-950/40'
                         }`}
                       >
                       {/* 1. NO */}
@@ -348,7 +350,7 @@ export const AllIncidentsPage: React.FC<AllIncidentsPageProps> = ({ onBackToHome
                     </tr>
                   );
                 })}
-                </tbody>
+              </tbody>
               </table>
             </div>
           )}

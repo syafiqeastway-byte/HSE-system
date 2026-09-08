@@ -6,6 +6,8 @@ export type PageType =
   | 'emergencyPlanPage' 
   | 'hirarcPage' 
   | 'sopPage' 
+  | 'firstAidKitPage'
+  | 'inspectionPage'
   | 'allIncidentsPage' 
   | 'safetyViolationPage';
 
@@ -169,4 +171,10 @@ export interface SOPRecord {
   date: string;
   revDate: string;
   documentUrl: string;
+}
+
+export interface FirstAidKitTableData {
+  headers: string[];
+  rows: string[][];
+  rawRecords: Record<string, string>[];
 }

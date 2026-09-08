@@ -6,7 +6,9 @@ import { IncidentChartsAndTables } from './IncidentChartsAndTables';
 interface HomePageProps {
   onOpenDocument: (doc: DocumentViewContext) => void;
   onOpenCompetentPersonModal: () => void;
-  onOpenInspectionModal: (type: 'Workplace' | 'First Aid Box' | 'Fire Extinguisher' | 'All') => void;
+  onOpenInspectionModal?: (type: 'Workplace' | 'First Aid Box' | 'Fire Extinguisher' | 'All') => void;
+  onNavigateInspection: () => void;
+  onNavigateFirstAidKit: () => void;
   onNavigateEmergencyPlan: () => void;
   onNavigateMinuteMeetings: () => void;
   onNavigateHIRARC: () => void;
@@ -23,6 +25,8 @@ export const HomePage: React.FC<HomePageProps> = ({
   onOpenDocument,
   onOpenCompetentPersonModal,
   onOpenInspectionModal,
+  onNavigateInspection,
+  onNavigateFirstAidKit,
   onNavigateEmergencyPlan,
   onNavigateMinuteMeetings,
   onNavigateHIRARC,
@@ -236,7 +240,7 @@ export const HomePage: React.FC<HomePageProps> = ({
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-center">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-3.5 items-center">
           
           {/* SOP Dropdown */}
           <button
@@ -266,9 +270,23 @@ export const HomePage: React.FC<HomePageProps> = ({
             </span>
           </button>
 
+          {/* First Aid Kit Button */}
+          <button
+            onClick={onNavigateFirstAidKit}
+            className="w-full px-4 py-3.5 rounded-xl border border-cyan-500/20 bg-slate-900/60 text-slate-100 font-semibold text-xs sm:text-sm flex items-center justify-between hover:border-slate-400 hover:bg-cyan-950/40 transition-all shadow-sm group min-h-[44px]"
+          >
+            <div className="flex items-center gap-2 truncate">
+              <span className="material-symbols-outlined text-rose-400 text-xl">medical_services</span>
+              <span className="truncate font-bold">FIRST AID KIT</span>
+            </div>
+            <span className="material-symbols-outlined text-slate-400 group-hover:text-white group-hover:translate-x-1 transition-transform">
+              arrow_forward
+            </span>
+          </button>
+
           {/* Inspection Records Button */}
           <button
-            onClick={() => onOpenInspectionModal('All')}
+            onClick={onNavigateInspection}
             className="w-full px-4 py-3.5 rounded-xl border border-cyan-500/20 bg-slate-900/60 text-slate-100 font-semibold text-xs sm:text-sm flex items-center justify-between hover:border-slate-400 hover:bg-cyan-950/40 transition-all shadow-sm group min-h-[44px]"
           >
             <div className="flex items-center gap-2 truncate">

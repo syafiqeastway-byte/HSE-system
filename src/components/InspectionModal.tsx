@@ -306,9 +306,11 @@ export const InspectionModal: React.FC<InspectionModalProps> = ({ isOpen, filter
                               key={item.id} 
                               onClick={() => setSelectedWorkplaceId(isSelected ? null : String(item.id))}
                               className={`h-9 transition-colors cursor-pointer select-none ${
-                                isSelected 
-                                  ? '!bg-cyan-600 !text-white font-bold [&>td]:!bg-cyan-600 [&>td]:!text-white [&>td]:!border-cyan-400/40 [&_*]:!text-white shadow-md' 
-                                  : 'hover:bg-slate-800/60 text-white'
+                                isSelected
+                                  ? '!bg-cyan-600 !text-white font-bold [&>td]:!bg-cyan-600 [&>td]:!text-white [&>td]:!border-cyan-400/40 [&_*]:!text-white shadow-md'
+                                  : index % 2 === 0
+                                  ? 'bg-slate-900/40 hover:bg-cyan-950/30'
+                                  : 'bg-slate-900/80 hover:bg-cyan-950/40'
                               }`}
                             >
                               <td className="py-1 px-3 text-center font-mono font-medium text-white border border-slate-700 leading-none">{index + 1}</td>
@@ -439,8 +441,8 @@ export const InspectionModal: React.FC<InspectionModalProps> = ({ isOpen, filter
                             );
                           }
 
-                          const isSelected = selectedFEId === item.id;
                           const hasRemarks = Boolean(item.remarks && item.remarks.trim() !== '');
+                          const isSelected = selectedFEId === item.id;
 
                           return (
                             <tr
@@ -449,7 +451,9 @@ export const InspectionModal: React.FC<InspectionModalProps> = ({ isOpen, filter
                               className={`h-9 transition-colors cursor-pointer select-none ${
                                 isSelected
                                   ? '!bg-cyan-600 !text-white font-bold [&>td]:!bg-cyan-600 [&>td]:!text-white [&>td]:!border-cyan-400/40 [&_*]:!text-white shadow-md'
-                                  : 'hover:bg-slate-800/60 text-white'
+                                  : index % 2 === 0
+                                  ? 'bg-slate-900/40 hover:bg-cyan-950/30'
+                                  : 'bg-slate-900/80 hover:bg-cyan-950/40'
                               }`}
                             >
                               {/* NO */}

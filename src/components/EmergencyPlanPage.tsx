@@ -16,7 +16,7 @@ export const EmergencyPlanPage: React.FC<EmergencyPlanPageProps> = ({
   const [loading, setLoading] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
+  const [selectedCertId, setSelectedCertId] = useState<string | null>(null);
 
   useEffect(() => {
     let isMounted = true;
@@ -216,16 +216,18 @@ export const EmergencyPlanPage: React.FC<EmergencyPlanPageProps> = ({
                     </td>
                   </tr>
                 ) : (
-                  filteredCerts.map((cert) => {
-                    const isSelected = selectedRowId === String(cert.id);
+                  filteredCerts.map((cert, idx) => {
+                    const isSelected = selectedCertId === cert.id;
                     return (
                       <tr 
                         key={cert.id} 
-                        onClick={() => setSelectedRowId(isSelected ? null : String(cert.id))}
+                        onClick={() => setSelectedCertId(isSelected ? null : cert.id)}
                         className={`h-9 transition-colors cursor-pointer select-none ${
-                          isSelected 
-                            ? '!bg-cyan-600 !text-white font-bold [&>td]:!bg-cyan-600 [&>td]:!text-white [&>td]:!border-cyan-400/40 [&_*]:!text-white shadow-md' 
-                            : 'hover:bg-cyan-950/40 active:bg-slate-700/60'
+                          isSelected
+                            ? '!bg-cyan-600 !text-white font-bold [&>td]:!bg-cyan-600 [&>td]:!text-white [&>td]:!border-cyan-400/40 [&_*]:!text-white shadow-md'
+                            : idx % 2 === 0
+                            ? 'bg-slate-900/40 hover:bg-cyan-950/30'
+                            : 'bg-slate-900/80 hover:bg-cyan-950/40'
                         }`}
                       >
                         <td className="py-1 px-3 font-mono font-medium text-white border border-cyan-500/20 leading-none">
@@ -239,7 +241,7 @@ export const EmergencyPlanPage: React.FC<EmergencyPlanPageProps> = ({
                             {cert.certLink ? (
                               <button
                                 onClick={(e) => {
-                                  e.stopPropagation(); // Avoid triggering row selection when clicking the view button
+                                  e.stopPropagation();
                                   onOpenDocument({
                                     title: `First Aid & CPR Certificate - ${cert.name}`,
                                     subtitle: `Department: ${cert.department}`,

@@ -16,7 +16,7 @@ export const MinuteMeetingPage: React.FC<MinuteMeetingPageProps> = ({
   const [loading, setLoading] = useState(false);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
+  const [selectedMeetingId, setSelectedMeetingId] = useState<string | null>(null);
 
   const loadMeetings = () => {
     let isMounted = true;
@@ -141,16 +141,18 @@ export const MinuteMeetingPage: React.FC<MinuteMeetingPageProps> = ({
                     </td>
                   </tr>
                 ) : (
-                  filteredMeetings.map((m) => {
-                    const isSelected = selectedRowId === String(m.id);
+                  filteredMeetings.map((m, mIdx) => {
+                    const isSelected = selectedMeetingId === m.id;
                     return (
                       <tr 
                         key={m.id} 
-                        onClick={() => setSelectedRowId(isSelected ? null : String(m.id))}
+                        onClick={() => setSelectedMeetingId(isSelected ? null : m.id)}
                         className={`h-9 transition-colors cursor-pointer select-none ${
-                          isSelected 
-                            ? '!bg-cyan-600 !text-white font-bold [&>td]:!bg-cyan-600 [&>td]:!text-white [&>td]:!border-cyan-400/40 [&_*]:!text-white shadow-md' 
-                            : 'hover:bg-cyan-950/40 active:bg-slate-700/60'
+                          isSelected
+                            ? '!bg-cyan-600 !text-white font-bold [&>td]:!bg-cyan-600 [&>td]:!text-white [&>td]:!border-cyan-400/40 [&_*]:!text-white shadow-md'
+                            : mIdx % 2 === 0
+                            ? 'bg-slate-900/40 hover:bg-cyan-950/30'
+                            : 'bg-slate-900/80 hover:bg-cyan-950/40'
                         }`}
                       >
                         <td className="py-1 px-3 font-medium text-white border border-cyan-500/20 text-center leading-none">
