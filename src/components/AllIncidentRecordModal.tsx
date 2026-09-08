@@ -113,18 +113,18 @@ useEffect(() => {
       <div className="glass-card max-w-6xl w-full h-[90vh] overflow-hidden flex flex-col shadow-2xl border border-blue-500/30 rounded-2xl">
         
         {/* Header */}
-        <div className="p-4 sm:p-5 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between bg-blue-600/10 dark:bg-slate-900/90">
+        <div className="p-4 sm:p-5 border-b border-cyan-500/20 flex items-center justify-between bg-slate-900/90">
           <div className="flex items-center gap-3">
             <div className="p-2.5 rounded-xl bg-blue-600 text-white shadow-lg shadow-blue-600/30">
               <span className="material-symbols-outlined text-2xl">database</span>
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h2 className="text-sm sm:text-base font-bold text-slate-900 dark:text-white tracking-wide uppercase">
+                <h2 className="text-sm sm:text-base font-bold text-white tracking-wide uppercase">
                   ALL INCIDENT RECORD
                 </h2>
               </div>
-              <p className="text-xs text-slate-500 dark:text-slate-400">
+              <p className="text-xs text-slate-300">
                 Connected Data Source: <code className="font-mono text-emerald-400">Google Sheets (NEW IR)</code>
               </p>
             </div>
@@ -133,7 +133,7 @@ useEffect(() => {
             <button
               onClick={() => fetchIncidents()}
               disabled={loading}
-              className="p-2 rounded-xl bg-slate-800 text-slate-300 hover:text-white hover:bg-slate-700 transition-colors border border-slate-700"
+              className="p-2 rounded-xl bg-slate-800 text-white hover:text-white hover:bg-slate-700 transition-colors border border-slate-700"
               title="Refresh from Google Sheets"
             >
               <span className={`material-symbols-outlined text-xl ${loading ? 'animate-spin' : ''}`}>
@@ -142,7 +142,7 @@ useEffect(() => {
             </button>
             <button
               onClick={onClose}
-              className="p-2 rounded-xl text-slate-400 hover:text-slate-200 hover:bg-slate-800 transition-colors"
+              className="p-2 rounded-xl text-slate-300 hover:text-white hover:bg-slate-800 transition-colors"
             >
               <span className="material-symbols-outlined text-2xl">close</span>
             </button>
@@ -150,7 +150,7 @@ useEffect(() => {
         </div>
 
         {/* Toolbar & Filter Bar */}
-        <div className="p-4 bg-slate-900/60 border-b border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3">
+        <div className="p-4 bg-slate-900/60 border-b border-cyan-500/20 flex flex-col sm:flex-row items-center justify-between gap-3">
           <div className="relative w-full sm:w-80">
             <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-lg">
               search
@@ -160,13 +160,13 @@ useEffect(() => {
               placeholder="Search ID, Location, Category, Cause..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-9 py-2 rounded-xl bg-slate-950 border border-slate-700 text-slate-200 placeholder-slate-500 text-xs focus:outline-none focus:border-blue-500 transition-all"
+              className="w-full pl-9 pr-9 py-2 rounded-xl bg-slate-950 border border-slate-700 text-white placeholder-slate-400 text-xs focus:outline-none focus:border-blue-500 transition-all"
             />
             {searchQuery && (
               <button
                 type="button"
                 onClick={() => setSearchQuery('')}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-200 p-0.5 rounded-full"
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white p-0.5 rounded-full"
                 title="Clear search"
               >
                 <span className="material-symbols-outlined text-base">close</span>
@@ -197,7 +197,7 @@ useEffect(() => {
             <button
               onClick={handleLoadLiveData}
               disabled={loading}
-              className="px-3 py-2 rounded-xl bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/40 text-emerald-400 font-bold text-xs flex items-center gap-1.5 transition-all"
+              className="px-3 py-2 rounded-xl bg-emerald-600/20 hover:bg-emerald-600/30 border border-emerald-500/40 text-white font-bold text-xs flex items-center gap-1.5 transition-all"
               title="Fetch live records from Google Sheets"
             >
               <span className={`material-symbols-outlined text-base ${loading ? 'animate-spin' : ''}`}>
@@ -209,41 +209,41 @@ useEffect(() => {
         </div>
 
         {/* Table Content */}
-        <div className="flex-1 overflow-auto p-4">
+        <div className="flex-1 overflow-auto p-4 bg-transparent">
           {loading ? (
-            <div className="flex flex-col items-center justify-center h-64 text-slate-400">
-              <span className="material-symbols-outlined text-4xl text-blue-500 animate-spin">
+            <div className="flex flex-col items-center justify-center h-64 text-slate-300">
+              <span className="material-symbols-outlined text-4xl text-white animate-spin">
                 sync
               </span>
             </div>
           ) : filteredIncidents.length === 0 ? (
-            <div className="flex flex-col items-center justify-center h-64 text-slate-500 space-y-2">
+            <div className="flex flex-col items-center justify-center h-64 text-slate-400 space-y-2">
               <span className="material-symbols-outlined text-4xl">folder_off</span>
-              <p className="text-sm font-bold">No incident records found.</p>
+              <p className="text-sm font-bold text-white">No incident records found.</p>
             </div>
           ) : (
-            <div className="overflow-x-auto rounded-xl border border-slate-700">
-              <table className="w-full text-left border-collapse text-xs sm:text-sm border border-slate-700 whitespace-nowrap">
+            <div className="overflow-x-auto rounded-xl border border-cyan-500/20">
+              <table className="w-full text-left border-collapse text-xs sm:text-sm border border-cyan-500/20 whitespace-nowrap bg-transparent">
                 <thead>
-                  <tr className="h-8 bg-slate-900/90 text-slate-100 font-bold uppercase text-xs tracking-wider border-b border-slate-700">
-                    <th className="w-14 py-1 px-3 border border-slate-700 whitespace-nowrap text-center">NO</th>
-                    <th className="w-28 py-1 px-3 border border-slate-700 whitespace-nowrap text-center">DATE</th>
-                    <th className="w-20 py-1 px-3 border border-slate-700 whitespace-nowrap text-center">YEAR</th>
-                    <th className="min-w-[130px] py-1 px-3 border border-slate-700">LOCATION</th>
-                    <th className="min-w-[220px] py-1 px-3 border border-slate-700">DESCRIPTION</th>
-                    <th className="w-36 py-1 px-3 border border-slate-700 text-center whitespace-nowrap">OCCUPATIONAL INCIDENT?</th>
-                    <th className="min-w-[140px] py-1 px-3 border border-slate-700">INCIDENT CATEGORY</th>
-                    <th className="w-32 py-1 px-3 border border-slate-700 text-center whitespace-nowrap">PROPERTY DAMAGE</th>
-                    <th className="w-28 py-1 px-3 border border-slate-700 whitespace-nowrap">DAMAGE LEVEL</th>
-                    <th className="min-w-[140px] py-1 px-3 border border-slate-700">CLASSIFICATION</th>
-                    <th className="min-w-[120px] py-1 px-3 border border-slate-700">INJURY TYPE</th>
-                    <th className="min-w-[120px] py-1 px-3 border border-slate-700">PERSON INVOLVE</th>
-                    <th className="w-32 py-1 px-3 border border-slate-700 whitespace-nowrap">WORK EXPERIENCE</th>
-                    <th className="min-w-[110px] py-1 px-3 border border-slate-700">REPORTED BY</th>
-                    <th className="w-28 py-1 px-3 border border-slate-700 text-center whitespace-nowrap">PDF</th>
+                  <tr className="h-8 bg-slate-900/90 text-white font-bold uppercase text-xs tracking-wider border-b border-cyan-500/30">
+                    <th className="w-14 py-1 px-3 border border-cyan-500/20 whitespace-nowrap text-center">NO</th>
+                    <th className="w-28 py-1 px-3 border border-cyan-500/20 whitespace-nowrap text-center">DATE</th>
+                    <th className="w-20 py-1 px-3 border border-cyan-500/20 whitespace-nowrap text-center">YEAR</th>
+                    <th className="min-w-[130px] py-1 px-3 border border-cyan-500/20">LOCATION</th>
+                    <th className="min-w-[220px] py-1 px-3 border border-cyan-500/20">DESCRIPTION</th>
+                    <th className="w-36 py-1 px-3 border border-cyan-500/20 text-center whitespace-nowrap">OCCUPATIONAL INCIDENT?</th>
+                    <th className="min-w-[140px] py-1 px-3 border border-cyan-500/20">INCIDENT CATEGORY</th>
+                    <th className="w-32 py-1 px-3 border border-cyan-500/20 text-center whitespace-nowrap">PROPERTY DAMAGE</th>
+                    <th className="w-28 py-1 px-3 border border-cyan-500/20 whitespace-nowrap">DAMAGE LEVEL</th>
+                    <th className="min-w-[140px] py-1 px-3 border border-cyan-500/20">CLASSIFICATION</th>
+                    <th className="min-w-[120px] py-1 px-3 border border-cyan-500/20">INJURY TYPE</th>
+                    <th className="min-w-[120px] py-1 px-3 border border-cyan-500/20">PERSON INVOLVE</th>
+                    <th className="w-32 py-1 px-3 border border-cyan-500/20 whitespace-nowrap">WORK EXPERIENCE</th>
+                    <th className="min-w-[110px] py-1 px-3 border border-cyan-500/20">REPORTED BY</th>
+                    <th className="w-28 py-1 px-3 border border-cyan-500/20 text-center whitespace-nowrap">PDF</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-800/60 bg-slate-950/40 text-slate-300 text-xs sm:text-sm">
+                <tbody className="divide-y divide-cyan-500/10 text-white text-xs sm:text-sm">
                   {filteredIncidents.map((inc) => {
                     const isSelected = selectedRowId === inc.id;
                     return (
@@ -253,71 +253,71 @@ useEffect(() => {
                         className={`h-9 transition-colors cursor-pointer ${
                           isSelected 
                             ? 'bg-slate-700/80 text-white font-semibold' 
-                            : 'hover:bg-slate-800/40 active:bg-slate-700/50'
+                            : 'hover:bg-cyan-950/40 active:bg-slate-700/50'
                         }`}
                       >
-                      <td className="py-1 px-3 font-mono font-medium text-blue-400 whitespace-nowrap border border-slate-700 text-center leading-none">
+                      <td className="py-1 px-3 font-mono font-medium text-white whitespace-nowrap border border-cyan-500/20 text-center leading-none">
                         {inc.id}
                       </td>
-                      <td className="py-1 px-3 whitespace-nowrap text-slate-300 border border-slate-700 text-center leading-none">
+                      <td className="py-1 px-3 whitespace-nowrap text-white border border-cyan-500/20 text-center leading-none">
                         {inc.date}
                       </td>
-                      <td className="py-1 px-3 whitespace-nowrap text-slate-300 border border-slate-700 text-center leading-none">
+                      <td className="py-1 px-3 whitespace-nowrap text-white border border-cyan-500/20 text-center leading-none">
                         {inc.year || '-'}
                       </td>
-                      <td className="py-1 px-3 font-medium text-slate-200 whitespace-nowrap border border-slate-700 leading-none">
+                      <td className="py-1 px-3 font-medium text-white whitespace-nowrap border border-cyan-500/20 leading-none">
                         {inc.location}
                       </td>
-                      <td className="py-1 px-3 text-slate-300 max-w-[240px] truncate border border-slate-700 leading-none" title={(inc as any).rootCause || inc.description || (inc as any).root_cause || ''}>
+                      <td className="py-1 px-3 text-white max-w-[240px] truncate border border-cyan-500/20 leading-none" title={(inc as any).rootCause || inc.description || (inc as any).root_cause || ''}>
                         {(inc as any).rootCause || inc.description || (inc as any).root_cause || '-'}
                       </td>
-                      <td className="py-1 px-3 text-center whitespace-nowrap border border-slate-700 leading-none">
+                      <td className="py-1 px-3 text-center whitespace-nowrap border border-cyan-500/20 leading-none">
                         <span className={`inline-flex items-center justify-center px-2 py-0.5 rounded text-[11px] font-semibold uppercase leading-tight ${
                           inc.occupationalIncident?.toUpperCase() === 'YES'
-                            ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
-                            : 'bg-slate-800 text-slate-400 border border-slate-700'
+                            ? 'bg-emerald-500/20 text-white border border-emerald-500/30'
+                            : 'bg-slate-800 text-white border border-cyan-500/20'
                         }`}>
                           {inc.occupationalIncident || '-'}
                         </span>
                       </td>
-                      <td className="py-1 px-3 whitespace-nowrap border border-slate-700 leading-none">
-                        <span className="inline-flex items-center justify-center px-2 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700 text-[11px] font-medium leading-tight">
+                      <td className="py-1 px-3 whitespace-nowrap border border-cyan-500/20 leading-none">
+                        <span className="inline-flex items-center justify-center px-2 py-0.5 rounded bg-slate-800 text-white border border-slate-700 text-[11px] font-medium leading-tight">
                           {inc.category || '-'}
                         </span>
                       </td>
-                      <td className="py-1 px-3 text-center whitespace-nowrap font-medium text-slate-300 border border-slate-700 leading-none">
+                      <td className="py-1 px-3 text-center whitespace-nowrap font-medium text-white border border-cyan-500/20 leading-none">
                         {inc.propertyDamage || '-'}
                       </td>
-                      <td className="py-1 px-3 whitespace-nowrap text-slate-300 border border-slate-700 leading-none">
+                      <td className="py-1 px-3 whitespace-nowrap text-white border border-cyan-500/20 leading-none">
                         {inc.damageLevel || '-'}
                       </td>
-                      <td className="py-1 px-3 font-medium text-slate-200 whitespace-nowrap border border-slate-700 leading-none">
+                      <td className="py-1 px-3 font-medium text-white whitespace-nowrap border border-cyan-500/20 leading-none">
                         {inc.classification || '-'}
                       </td>
-                      <td className="py-1 px-3 text-slate-300 whitespace-nowrap border border-slate-700 leading-none">
+                      <td className="py-1 px-3 text-white whitespace-nowrap border border-cyan-500/20 leading-none">
                         {inc.injuryType || '-'}
                       </td>
-                      <td className="py-1 px-3 text-slate-200 font-medium whitespace-nowrap border border-slate-700 leading-none">
+                      <td className="py-1 px-3 text-white font-medium whitespace-nowrap border border-cyan-500/20 leading-none">
                         {inc.personInvolved || (inc as any).person_involved || '-'}
                       </td>
-                      <td className="py-1 px-3 text-slate-300 whitespace-nowrap border border-slate-700 leading-none">
+                      <td className="py-1 px-3 text-white whitespace-nowrap border border-cyan-500/20 leading-none">
                         {inc.experienceLevel || '-'}
                       </td>
-                      <td className="py-1 px-3 text-slate-300 whitespace-nowrap border border-slate-700 leading-none">
+                      <td className="py-1 px-3 text-white whitespace-nowrap border border-cyan-500/20 leading-none">
                         {inc.reportedBy || (inc as any).investigator || '-'}
                       </td>
-                      <td className="py-1 px-3 text-center whitespace-nowrap border border-slate-700 leading-none">
+                      <td className="py-1 px-3 text-center whitespace-nowrap border border-cyan-500/20 leading-none">
                         {(inc as any).documentUrl && (inc as any).documentUrl !== '-' && (inc as any).documentUrl !== '' ? (
                           <a 
                             href={formatToPreviewUrl((inc as any).documentUrl)} 
                             target="_blank" 
                             rel="noopener noreferrer" 
                             onClick={(e) => e.stopPropagation()}
-                            className="inline-flex items-center justify-center px-2.5 py-0.5 text-[11px] font-semibold rounded bg-blue-500/10 text-blue-400 hover:bg-blue-500/20 transition-colors leading-tight"
+                            className="inline-flex items-center justify-center px-2.5 py-0.5 text-[11px] font-semibold rounded bg-slate-800 text-white border border-slate-700 hover:bg-slate-700 transition-colors leading-tight"
                           >
                             Open Doc</a>
                         ) : (
-                          <span className="text-slate-600">-</span>
+                          <span className="text-slate-400">-</span>
                         )}
                       </td>
                     </tr>
@@ -330,13 +330,13 @@ useEffect(() => {
         </div>
 
         {/* Footer */}
-        <div className="p-4 border-t border-slate-800 bg-slate-950/80 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-400">
+        <div className="p-4 border-t border-cyan-500/20 bg-slate-900/90 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-white">
           <div>
             Showing <strong className="text-white">{filteredIncidents.length}</strong> of <strong className="text-white">{incidents.length}</strong> incident records from Google Sheets
           </div>
           <button
             onClick={onClose}
-            className="px-5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs transition-colors"
+            className="px-5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs transition-colors border border-slate-700"
           >
             Close
           </button>

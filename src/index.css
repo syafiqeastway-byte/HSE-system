@@ -3,69 +3,83 @@
 @layer base {
   body {
     font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    color: #ffffff;
+  }
+  
+  h1, h2, h3, h4, h5, h6, p, span, div, label, th, td, button, input, select, textarea {
+    color: #ffffff;
   }
   
   h1, h2, h3, h4, h5, h6 {
     font-family: 'Inter', system-ui, sans-serif;
     letter-spacing: -0.01em;
   }
+
+  /* Table styling to blend with the background */
+  table {
+    background-color: transparent !important;
+  }
+
+  table thead tr {
+    background-color: rgba(6, 19, 37, 0.85) !important;
+  }
+
+  table tbody tr {
+    background-color: rgba(6, 19, 37, 0.45) !important;
+  }
+
+  table tbody tr:hover {
+    background-color: rgba(14, 116, 144, 0.3) !important;
+  }
 }
 
-/* Modern Ambient Backgrounds - Futuristic Safety Theme */
-.modern-bg-light {
-  background-color: #eef2ff;
+/* Modern Ambient Backgrounds - Sea Blue / Ocean Gradient (Gradient Biru Laut) */
+.modern-bg-light,
+.modern-bg-dark,
+body {
+  background-color: #061325;
   background-image: 
-    linear-gradient(rgba(79, 70, 229, 0.12) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(79, 70, 229, 0.12) 1px, transparent 1px),
-    radial-gradient(at 10% 10%, rgba(124, 58, 237, 0.28) 0px, transparent 45%),
-    radial-gradient(at 90% 15%, rgba(29, 78, 216, 0.28) 0px, transparent 45%),
-    radial-gradient(at 50% 90%, rgba(139, 92, 246, 0.22) 0px, transparent 55%);
-  background-size: 40px 40px, 40px 40px, 100% 100%, 100% 100%, 100% 100%;
-  background-attachment: fixed;
-}
-
-.dark .modern-bg-dark {
-  background-color: #0f172a;
-  background-image: 
-    linear-gradient(rgba(59, 130, 246, 0.05) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(59, 130, 246, 0.05) 1px, transparent 1px),
-    radial-gradient(at 10% 10%, rgba(30, 58, 138, 0.5) 0px, transparent 40%),
-    radial-gradient(at 90% 15%, rgba(88, 28, 135, 0.4) 0px, transparent 40%),
-    radial-gradient(at 50% 85%, rgba(76, 29, 149, 0.3) 0px, transparent 60%);
-  background-size: 40px 40px, 40px 40px, 100% 100%, 100% 100%, 100% 100%;
+    linear-gradient(rgba(56, 189, 248, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(56, 189, 248, 0.04) 1px, transparent 1px),
+    radial-gradient(at 10% 10%, rgba(6, 182, 212, 0.45) 0px, transparent 40%),
+    radial-gradient(at 90% 15%, rgba(14, 116, 144, 0.45) 0px, transparent 45%),
+    radial-gradient(at 50% 85%, rgba(2, 132, 199, 0.35) 0px, transparent 60%),
+    radial-gradient(at 50% 30%, rgba(3, 105, 161, 0.35) 0px, transparent 50%),
+    linear-gradient(180deg, #051429 0%, #08203e 50%, #031226 100%);
+  background-size: 40px 40px, 40px 40px, 100% 100%, 100% 100%, 100% 100%, 100% 100%, 100% 100%;
   background-attachment: fixed;
 }
 
 /* Immersive UI Glassmorphism & Custom Styling */
 .glass-card {
-  background: rgba(255, 255, 255, 0.88);
+  background: rgba(8, 25, 48, 0.78);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(226, 232, 240, 0.9);
+  border: 1px solid rgba(56, 189, 248, 0.22);
   border-radius: 1rem;
-  box-shadow: 0 10px 30px -5px rgba(15, 23, 42, 0.05);
+  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.6), 0 0 15px -3px rgba(6, 182, 212, 0.1);
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .dark .glass-card {
-  background: rgba(18, 18, 22, 0.85);
+  background: rgba(8, 25, 48, 0.78);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(56, 189, 248, 0.22);
   border-radius: 1rem;
-  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.8);
+  box-shadow: 0 10px 30px -5px rgba(0, 0, 0, 0.7), 0 0 15px -3px rgba(6, 182, 212, 0.1);
 }
 
 .glass-nav {
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(8, 25, 48, 0.88);
   backdrop-filter: blur(20px);
-  border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+  border-bottom: 1px solid rgba(56, 189, 248, 0.25);
 }
 
 .dark .glass-nav {
-  background: rgba(10, 10, 12, 0.9);
+  background: rgba(8, 25, 48, 0.88);
   backdrop-filter: blur(20px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  border-bottom: 1px solid rgba(56, 189, 248, 0.25);
 }
 
 /* Immersive Card Glow Themes */

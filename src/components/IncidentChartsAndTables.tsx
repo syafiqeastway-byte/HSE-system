@@ -1088,12 +1088,12 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
     if (!tableData) return null;
 
     return (
-      <div className={`p-4 sm:p-6 rounded-2xl bg-white dark:bg-slate-900/90 border border-slate-200 dark:border-slate-800 shadow-md ${extraClass}`}>
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4 pb-3 border-b border-slate-200 dark:border-slate-800">
+      <div className={`p-4 sm:p-6 rounded-2xl bg-slate-900/60 border border-cyan-500/20 shadow-md ${extraClass}`}>
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 mb-4 pb-3 border-b border-cyan-500/20">
           <div className="flex items-center gap-2.5">
-            <span className="material-symbols-outlined text-blue-600 dark:text-blue-400 text-2xl">table_chart</span>
+            <span className="material-symbols-outlined text-slate-300 text-2xl">table_chart</span>
             <div>
-              <h3 className="text-sm sm:text-base font-extrabold text-slate-900 dark:text-white uppercase tracking-wider">
+              <h3 className="text-sm sm:text-base font-extrabold text-white uppercase tracking-wider">
                 {tableData.title}
               </h3>
             </div>
@@ -1112,14 +1112,14 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
         </div>
 
         {/* Table Container - Fixed formatting with bold header row as requested */}
-        <div className="overflow-x-auto rounded-xl border border-slate-200 dark:border-slate-700/80 shadow-sm">
+        <div className="overflow-x-auto rounded-xl border border-cyan-500/20 shadow-sm">
           <table className="w-full text-left text-xs border-collapse whitespace-nowrap">
             <thead>
-              <tr className="h-8 bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white border-b-2 border-slate-300 dark:border-slate-600">
+              <tr className="h-8 bg-slate-950/95 text-cyan-400 border-b-2 border-cyan-500/40">
                 {tableData.headers.map((h, i) => (
                   <th
                     key={i}
-                    className={`py-1 px-3 font-bold uppercase tracking-wider text-xs ${
+                    className={`py-1 px-3 font-bold uppercase tracking-wider text-xs text-cyan-400 ${
                       i === 0
                         ? 'w-12 text-center'
                         : i === 1
@@ -1132,7 +1132,7 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
                 ))}
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-200 dark:divide-slate-800 text-slate-800 dark:text-slate-200 text-xs">
+            <tbody className="divide-y divide-cyan-500/10 text-white text-xs">
               {tableData.rows.map((row, idx) => {
                 const isTotal = row.isTotal || row.label.toUpperCase() === 'TOTAL';
                 const isSelected = selectedSummaryRowIdx === idx;
@@ -1144,38 +1144,38 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
                         setSelectedSummaryRowIdx(selectedSummaryRowIdx === idx ? null : idx);
                       }
                     }}
-                    className={`h-9 transition-colors cursor-pointer ${
+                    className={`h-9 transition-colors cursor-pointer select-none ${
                       isSelected
-                        ? 'bg-slate-200/80 dark:bg-slate-800 text-slate-900 dark:text-white font-semibold'
+                        ? '!bg-cyan-600 !text-white font-bold [&>td]:!bg-cyan-600 [&>td]:!text-white [&>td]:!border-cyan-400/40 [&_*]:!text-white shadow-md'
                         : isTotal
-                        ? 'bg-blue-50/90 dark:bg-blue-950/60 font-bold text-slate-900 dark:text-white border-t-2 border-slate-300 dark:border-slate-600'
+                        ? 'bg-sky-950/80 font-bold text-white border-t-2 border-cyan-500/30'
                         : idx % 2 === 0
-                        ? 'bg-white dark:bg-slate-900/60 hover:bg-slate-50 dark:hover:bg-slate-800/50'
-                        : 'bg-slate-50/50 dark:bg-slate-800/30 hover:bg-slate-100/60 dark:hover:bg-slate-800/70'
+                        ? 'bg-slate-900/40 hover:bg-cyan-950/30'
+                        : 'bg-slate-800/30 hover:bg-cyan-950/40'
                     }`}
                   >
-                    <td className={`py-1 px-3 text-center font-medium leading-none ${isTotal ? 'text-blue-600 dark:text-blue-400 font-bold' : 'text-slate-500'}`}>
+                    <td className={`py-1 px-3 text-center font-medium leading-none ${isTotal ? 'text-white font-bold' : 'text-slate-300'}`}>
                       {row.no || (isTotal ? '—' : idx + 1)}
                     </td>
-                    <td className={`py-1 px-3 leading-none ${isTotal ? 'font-bold text-blue-700 dark:text-blue-300' : 'font-medium'}`}>
+                    <td className={`py-1 px-3 leading-none ${isTotal ? 'font-bold text-white' : 'text-white'}`}>
                       {row.label}
                     </td>
-                    <td className={`py-1 px-3 text-center leading-none ${isTotal ? 'font-bold text-blue-700 dark:text-blue-300' : 'font-medium'}`}>
+                    <td className={`py-1 px-3 text-center leading-none ${isTotal ? 'font-bold text-white' : 'text-white'}`}>
                       {row.c2022}
                     </td>
-                    <td className={`py-1 px-3 text-center leading-none ${isTotal ? 'font-bold text-blue-700 dark:text-blue-300' : 'font-medium'}`}>
+                    <td className={`py-1 px-3 text-center leading-none ${isTotal ? 'font-bold text-white' : 'text-white'}`}>
                       {row.c2023}
                     </td>
-                    <td className={`py-1 px-3 text-center leading-none ${isTotal ? 'font-bold text-blue-700 dark:text-blue-300' : 'font-medium'}`}>
+                    <td className={`py-1 px-3 text-center leading-none ${isTotal ? 'font-bold text-white' : 'text-white'}`}>
                       {row.c2024}
                     </td>
-                    <td className={`py-1 px-3 text-center leading-none ${isTotal ? 'font-bold text-blue-700 dark:text-blue-300' : 'font-medium'}`}>
+                    <td className={`py-1 px-3 text-center leading-none ${isTotal ? 'font-bold text-white' : 'text-white'}`}>
                       {row.c2025}
                     </td>
-                    <td className={`py-1 px-3 text-center leading-none ${isTotal ? 'font-bold text-blue-700 dark:text-blue-300' : 'font-medium'}`}>
+                    <td className={`py-1 px-3 text-center leading-none ${isTotal ? 'font-bold text-white' : 'text-white'}`}>
                       {row.c2026}
                     </td>
-                    <td className="py-1 px-3 text-center font-bold text-amber-600 dark:text-amber-400 bg-amber-500/5 dark:bg-amber-400/5 leading-none">
+                    <td className={`py-1 px-3 text-center font-bold text-white leading-none ${isSelected ? 'bg-cyan-600' : 'bg-slate-800/60'}`}>
                       {row.total}
                     </td>
                   </tr>
@@ -1189,12 +1189,12 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
   };
 
   return (
-    <div className="glass-card p-4 sm:p-6 mb-8">
+    <div className="glass-card p-4 sm:p-5 mb-6">
       {/* Title & Refresh Bar */}
-      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-4 pb-3 border-b border-slate-200 dark:border-slate-800">
+      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-3 mb-4 pb-3 border-b border-slate-700/60">
         <div>
-          <h2 className="text-base sm:text-lg font-bold flex items-center gap-2 text-slate-900 dark:text-white">
-            <span className="material-symbols-outlined text-blue-600 dark:text-blue-400 text-2xl">analytics</span>
+          <h2 className="text-base sm:text-lg font-bold flex items-center gap-2 text-white">
+            <span className="material-symbols-outlined text-cyan-400 text-2xl">analytics</span>
             <span>SAFETY PERFORMANCE & LIVE INCIDENT ANALYTICS</span>
           </h2>
         </div>
@@ -1203,9 +1203,9 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
           <button
             onClick={loadData}
             disabled={isRefreshing}
-            className="px-3.5 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold text-xs flex items-center gap-2 transition-all border border-slate-200 dark:border-slate-700"
+            className="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-cyan-400 font-bold text-xs flex items-center gap-2 transition-all border border-cyan-500/30"
           >
-            <span className={`material-symbols-outlined text-base ${isRefreshing ? 'animate-spin text-blue-500' : ''}`}>
+            <span className={`material-symbols-outlined text-base ${isRefreshing ? 'animate-spin text-cyan-400' : ''}`}>
               sync
             </span>
             <span>REFRESH</span>
@@ -1214,9 +1214,9 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
           {onOpenAllIncidentsModal && (
             <button
               onClick={onOpenAllIncidentsModal}
-              className="px-3.5 py-2 rounded-xl bg-gradient-to-r from-blue-600 to-emerald-600 hover:from-blue-700 hover:to-emerald-700 text-white font-extrabold text-xs uppercase tracking-wider flex items-center gap-1.5 shadow-md shadow-blue-600/20 transition-all hover:scale-105"
+              className="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-extrabold text-xs uppercase tracking-wider flex items-center gap-1.5 shadow-md border border-slate-600/50 transition-all hover:scale-105"
             >
-              <span className="material-symbols-outlined text-base">database</span>
+              <span className="material-symbols-outlined text-base text-cyan-400">database</span>
               <span>ALL INCIDENT RECORD TABLE</span>
             </button>
           )}
@@ -1224,9 +1224,9 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
       </div>
 
       {/* Header Dropdown Filter matching All Incident Record Table Columns */}
-      <div className="mb-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 bg-slate-50 dark:bg-slate-900/60 p-3.5 rounded-2xl border border-slate-200 dark:border-slate-800">
-        <label htmlFor="header-select" className="text-xs font-extrabold text-slate-700 dark:text-slate-300 flex items-center gap-2 uppercase tracking-wider">
-          <span className="material-symbols-outlined text-blue-600 dark:text-blue-400 text-xl">filter_alt</span>
+      <div className="mb-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 bg-slate-900/60 p-3 rounded-2xl border border-cyan-500/20">
+        <label htmlFor="header-select" className="text-xs font-extrabold text-cyan-400 flex items-center gap-2 uppercase tracking-wider">
+          <span className="material-symbols-outlined text-cyan-400 text-xl">filter_alt</span>
           <span>INTERACTIVE CHART</span>
         </label>
         <div className="relative w-full sm:w-80">
@@ -1234,7 +1234,7 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
             id="header-select"
             value={activeTab}
             onChange={(e) => setActiveTab(e.target.value as TabHeaderKey)}
-            className="w-full px-4 py-2.5 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-900 dark:text-white font-extrabold text-xs focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm cursor-pointer appearance-none pr-10"
+            className="w-full px-4 py-2 rounded-xl bg-slate-800 border border-cyan-500/20 text-white font-extrabold text-xs focus:outline-none focus:ring-2 focus:ring-blue-500 shadow-sm cursor-pointer appearance-none pr-10"
           >
             {TAB_HEADERS.map((tab) => (
               <option key={tab.key} value={tab.key}>
@@ -1251,15 +1251,15 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
       {/* Loading State */}
       {loading && incidents.length === 0 ? (
         <div className="p-12 text-center flex flex-col items-center justify-center">
-          <span className="material-symbols-outlined text-4xl text-blue-500 animate-spin">sync</span>
-          <p className="mt-2 text-xs text-slate-500">Memuatkan data keselamatan...</p>
+          <span className="material-symbols-outlined text-4xl text-cyan-400 animate-spin">sync</span>
+          <p className="mt-2 text-xs text-white">Loading safety data...</p>
         </div>
       ) : (
         <div>
-          {/* Interactive Chart Container */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
-            <div className="flex flex-col gap-6">
-              <div className="relative p-4 rounded-2xl bg-white dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800 h-80 shadow-sm w-full">
+          {/* Interactive Chart Container - Fixed Compact Height */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-5">
+            <div className="flex flex-col gap-4">
+              <div className="relative p-3.5 rounded-2xl bg-slate-900/60 border border-cyan-500/20 h-[260px] shadow-sm w-full">
                 <canvas ref={chartRef1} className="w-full h-full cursor-pointer" style={{ touchAction: 'pan-y' }}></canvas>
               </div>
 
@@ -1267,28 +1267,28 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
               {renderSummaryTable("block lg:hidden")}
             </div>
 
-            <div className="p-5 rounded-2xl bg-slate-50 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 flex flex-col justify-between space-y-4">
-              {/* Annual Occupational Incidents Sharp Line Chart */}
-              <div className="relative p-3 bg-white dark:bg-slate-900/80 border border-slate-200 dark:border-slate-800/80 rounded-xl shadow-sm h-40 w-full">
+            <div className="p-4 rounded-2xl bg-slate-900/60 border border-cyan-500/20 flex flex-col justify-between space-y-3">
+              {/* Annual Occupational Incidents Sharp Line Chart - Fixed Compact Height */}
+              <div className="relative p-2.5 bg-slate-900/80 border border-cyan-500/20 rounded-xl shadow-sm h-[135px] w-full">
                 <canvas ref={occupationalChartRef} className="w-full h-full cursor-pointer" style={{ touchAction: 'pan-y' }}></canvas>
               </div>
 
-              <div className="flex flex-col space-y-3">
-                <div className="flex items-center gap-2 border-b border-slate-200 dark:border-slate-800 pb-2">
-                  <span className="material-symbols-outlined text-blue-500 text-xl">insights</span>
-                  <h3 className="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-wider">
+              <div className="flex flex-col space-y-2.5">
+                <div className="flex items-center gap-2 border-b border-cyan-500/20 pb-1.5">
+                  <span className="material-symbols-outlined text-cyan-400 text-lg">insights</span>
+                  <h3 className="text-xs font-bold text-white uppercase tracking-wider">
                     HEADER KPI SUMMARY: {activeTab}
                   </h3>
                 </div>
 
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="p-3 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
-                    <p className="text-xs sm:text-sm font-bold text-slate-400 uppercase">Total Records</p>
-                    <p className="text-base font-extrabold text-blue-600 dark:text-blue-400">{incidents.length}</p>
+                <div className="grid grid-cols-2 gap-2.5">
+                  <div className="p-2.5 rounded-xl bg-slate-800/80 border border-cyan-500/20">
+                    <p className="text-xs font-bold text-slate-300 uppercase">Total Records</p>
+                    <p className="text-sm sm:text-base font-extrabold text-white">{incidents.length}</p>
                   </div>
-                  <div className="p-3 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
-                    <p className="text-xs sm:text-sm font-bold text-slate-400 uppercase">Occupational</p>
-                    <p className="text-base font-extrabold text-amber-600 dark:text-amber-400">
+                  <div className="p-2.5 rounded-xl bg-slate-800/80 border border-cyan-500/20">
+                    <p className="text-xs font-bold text-slate-300 uppercase">Occupational</p>
+                    <p className="text-sm sm:text-base font-extrabold text-white">
                       {incidents.filter((i) => i.occupationalIncident?.toUpperCase() === 'YES').length}
                     </p>
                   </div>
@@ -1298,10 +1298,10 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
           </div>
 
           {/* On desktop (large screens), the summary table is displayed full-width below both boxes */}
-          {renderSummaryTable("hidden lg:block mb-8")}
+          {renderSummaryTable("hidden lg:block mb-6")}
 
           {/* Search Toolbar */}
-          <div className="mb-4 flex flex-col sm:flex-row items-center justify-between gap-3 bg-slate-50 dark:bg-slate-900/40 p-3 rounded-xl border border-slate-200 dark:border-slate-800">
+          <div className="mb-4 flex flex-col sm:flex-row items-center justify-between gap-3 bg-slate-900/60 p-3 rounded-xl border border-cyan-500/20">
             <div className="relative w-full sm:w-96">
               <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-lg">
                 search
@@ -1311,13 +1311,13 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search ID, Location, Category, Description, Person..."
-                className="w-full pl-9 pr-9 py-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full pl-9 pr-9 py-2 rounded-xl bg-slate-800 border border-cyan-500/20 text-xs text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
               {searchQuery && (
                 <button
                   type="button"
                   onClick={() => setSearchQuery('')}
-                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-0.5 rounded-full"
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white p-0.5 rounded-full"
                   title="Clear search"
                 >
                   <span className="material-symbols-outlined text-base">close</span>
@@ -1325,11 +1325,11 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
               )}
             </div>
             <div className="flex flex-wrap items-center gap-3">
-              <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">
+              <span className="text-xs font-semibold text-slate-400">
                 {searchQuery.trim() ? (
-                  <>Found <strong className="text-blue-600 dark:text-blue-400">{filteredIncidents.length}</strong> matching cases (Total <strong className="text-slate-900 dark:text-white">{incidents.length}</strong> records)</>
+                  <>Found <strong className="text-cyan-400">{filteredIncidents.length}</strong> matching cases (Total <strong className="text-white">{incidents.length}</strong> records)</>
                 ) : (
-                  <>Showing <strong className="text-slate-900 dark:text-white">{displayIncidents.length}</strong> latest cases (Total <strong className="text-slate-900 dark:text-white">{incidents.length}</strong> records)</>
+                  <>Showing <strong className="text-cyan-400">{displayIncidents.length}</strong> latest cases (Total <strong className="text-white">{incidents.length}</strong> records)</>
                 )}
               </span>
               <div className="flex items-center gap-2">
@@ -1347,31 +1347,31 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
           </div>
 
           {/* All Incident Records Live Table */}
-          <div className="overflow-x-auto rounded-2xl border border-slate-300 dark:border-zinc-700 shadow-sm">
-            <table className="w-full border-collapse border border-slate-300 dark:border-zinc-700 text-left text-xs sm:text-sm whitespace-nowrap">
+          <div className="overflow-x-auto rounded-2xl border border-cyan-500/20 shadow-sm">
+            <table className="w-full border-collapse border border-cyan-500/20 text-left text-xs sm:text-sm whitespace-nowrap">
               <thead>
-                <tr className="h-8 bg-slate-100 dark:bg-zinc-800/80 text-slate-800 dark:text-zinc-100 border-b border-slate-300 dark:border-zinc-700">
-                  <th className="w-14 py-1 px-3 border border-slate-300 dark:border-zinc-700 font-bold uppercase text-xs tracking-wider whitespace-nowrap text-center">NO</th>
-                  <th className="w-28 py-1 px-3 border border-slate-300 dark:border-zinc-700 font-bold uppercase text-xs tracking-wider whitespace-nowrap text-center">DATE</th>
-                  <th className="w-20 py-1 px-3 border border-slate-300 dark:border-zinc-700 font-bold uppercase text-xs tracking-wider whitespace-nowrap text-center">YEAR</th>
-                  <th className="min-w-[130px] py-1 px-3 border border-slate-300 dark:border-zinc-700 font-bold uppercase text-xs tracking-wider">LOCATION</th>
-                  <th className="min-w-[220px] py-1 px-3 border border-slate-300 dark:border-zinc-700 font-bold uppercase text-xs tracking-wider">DESCRIPTION</th>
-                  <th className="w-36 py-1 px-3 border border-slate-300 dark:border-zinc-700 font-bold uppercase text-xs tracking-wider text-center whitespace-nowrap">OCCUPATIONAL INCIDENT?</th>
-                  <th className="min-w-[140px] py-1 px-3 border border-slate-300 dark:border-zinc-700 font-bold uppercase text-xs tracking-wider">INCIDENT CATEGORY</th>
-                  <th className="w-32 py-1 px-3 border border-slate-300 dark:border-zinc-700 font-bold uppercase text-xs tracking-wider text-center whitespace-nowrap">PROPERTY DAMAGE</th>
-                  <th className="w-28 py-1 px-3 border border-slate-300 dark:border-zinc-700 font-bold uppercase text-xs tracking-wider whitespace-nowrap">DAMAGE LEVEL</th>
-                  <th className="min-w-[140px] py-1 px-3 border border-slate-300 dark:border-zinc-700 font-bold uppercase text-xs tracking-wider">CLASSIFICATION</th>
-                  <th className="min-w-[120px] py-1 px-3 border border-slate-300 dark:border-zinc-700 font-bold uppercase text-xs tracking-wider">INJURY TYPE</th>
-                  <th className="min-w-[120px] py-1 px-3 border border-slate-300 dark:border-zinc-700 font-bold uppercase text-xs tracking-wider">PERSON INVOLVE</th>
-                  <th className="w-32 py-1 px-3 border border-slate-300 dark:border-zinc-700 font-bold uppercase text-xs tracking-wider whitespace-nowrap">WORK EXPERIENCE</th>
-                  <th className="min-w-[110px] py-1 px-3 border border-slate-300 dark:border-zinc-700 font-bold uppercase text-xs tracking-wider">REPORTED BY</th>
-                  <th className="w-28 py-1 px-3 border border-slate-300 dark:border-zinc-700 font-bold uppercase text-xs tracking-wider text-center whitespace-nowrap">PDF</th>
+                <tr className="h-8 bg-slate-950/95 text-cyan-400 border-b-2 border-cyan-500/40">
+                  <th className="w-14 py-1 px-3 border border-cyan-500/20 font-bold uppercase text-xs tracking-wider whitespace-nowrap text-center text-cyan-400">NO</th>
+                  <th className="w-28 py-1 px-3 border border-cyan-500/20 font-bold uppercase text-xs tracking-wider whitespace-nowrap text-center text-cyan-400">DATE</th>
+                  <th className="w-20 py-1 px-3 border border-cyan-500/20 font-bold uppercase text-xs tracking-wider whitespace-nowrap text-center text-cyan-400">YEAR</th>
+                  <th className="min-w-[130px] py-1 px-3 border border-cyan-500/20 font-bold uppercase text-xs tracking-wider text-cyan-400">LOCATION</th>
+                  <th className="min-w-[220px] py-1 px-3 border border-cyan-500/20 font-bold uppercase text-xs tracking-wider text-cyan-400">DESCRIPTION</th>
+                  <th className="w-36 py-1 px-3 border border-cyan-500/20 font-bold uppercase text-xs tracking-wider text-center whitespace-nowrap text-cyan-400">OCCUPATIONAL INCIDENT?</th>
+                  <th className="min-w-[140px] py-1 px-3 border border-cyan-500/20 font-bold uppercase text-xs tracking-wider text-cyan-400">INCIDENT CATEGORY</th>
+                  <th className="w-32 py-1 px-3 border border-cyan-500/20 font-bold uppercase text-xs tracking-wider text-center whitespace-nowrap text-cyan-400">PROPERTY DAMAGE</th>
+                  <th className="w-28 py-1 px-3 border border-cyan-500/20 font-bold uppercase text-xs tracking-wider whitespace-nowrap text-cyan-400">DAMAGE LEVEL</th>
+                  <th className="min-w-[140px] py-1 px-3 border border-cyan-500/20 font-bold uppercase text-xs tracking-wider text-cyan-400">CLASSIFICATION</th>
+                  <th className="min-w-[120px] py-1 px-3 border border-cyan-500/20 font-bold uppercase text-xs tracking-wider text-cyan-400">INJURY TYPE</th>
+                  <th className="min-w-[120px] py-1 px-3 border border-cyan-500/20 font-bold uppercase text-xs tracking-wider text-cyan-400">PERSON INVOLVE</th>
+                  <th className="w-32 py-1 px-3 border border-cyan-500/20 font-bold uppercase text-xs tracking-wider whitespace-nowrap text-cyan-400">WORK EXPERIENCE</th>
+                  <th className="min-w-[110px] py-1 px-3 border border-cyan-500/20 font-bold uppercase text-xs tracking-wider text-cyan-400">REPORTED BY</th>
+                  <th className="w-28 py-1 px-3 border border-cyan-500/20 font-bold uppercase text-xs tracking-wider text-center whitespace-nowrap text-cyan-400">PDF</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-200 dark:divide-slate-800/60 bg-white dark:bg-slate-900/40 text-slate-700 dark:text-slate-300 text-xs sm:text-sm">
+              <tbody className="divide-y divide-cyan-500/10 bg-slate-900/40 text-white text-xs sm:text-sm">
                 {displayIncidents.length === 0 ? (
                   <tr className="h-9">
-                    <td colSpan={15} className="py-4 text-center text-xs text-slate-400 border border-slate-300 dark:border-zinc-700">
+                    <td colSpan={15} className="py-4 text-center text-xs text-slate-400 border border-cyan-500/20">
                       No incident records found matching "{searchQuery}"
                     </td>
                   </tr>
@@ -1382,91 +1382,91 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
                       <tr 
                         key={inc.id} 
                         onClick={() => setSelectedRowId(isSelected ? null : inc.id)}
-                        className={`h-9 transition-colors cursor-pointer ${
+                        className={`h-9 transition-colors cursor-pointer select-none ${
                           isSelected 
-                            ? 'bg-slate-200/80 dark:bg-slate-800 text-slate-900 dark:text-white font-semibold shadow-inner' 
-                            : 'hover:bg-slate-100 dark:hover:bg-slate-800/80 active:bg-slate-200 dark:active:bg-slate-700/60'
+                            ? '!bg-cyan-600 !text-white font-bold [&>td]:!bg-cyan-600 [&>td]:!text-white [&>td]:!border-cyan-400/40 [&_*]:!text-white shadow-md' 
+                            : 'hover:bg-cyan-950/40 active:bg-cyan-900/40'
                         }`}
                       >
                       {/* 1. NO */}
-                      <td className="py-1 px-3 font-mono font-medium text-blue-600 dark:text-blue-400 whitespace-nowrap border border-slate-300 dark:border-zinc-700 text-center leading-none">
+                      <td className="py-1 px-3 font-mono font-medium text-slate-300 whitespace-nowrap border border-cyan-500/20 text-center leading-none">
                         {inc.id}
                       </td>
                       {/* 2. DATE */}
-                      <td className="py-1 px-3 whitespace-nowrap text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-zinc-700 text-center leading-none">
+                      <td className="py-1 px-3 whitespace-nowrap text-slate-300 border border-cyan-500/20 text-center leading-none">
                         {inc.date}
                       </td>
                       {/* 3. YEAR */}
-                      <td className="py-1 px-3 whitespace-nowrap text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-zinc-700 text-center leading-none">
+                      <td className="py-1 px-3 whitespace-nowrap text-slate-300 border border-cyan-500/20 text-center leading-none">
                         {inc.year || '-'}
                       </td>
                       {/* 4. LOCATION */}
-                      <td className="py-1 px-3 font-medium text-slate-900 dark:text-slate-200 whitespace-nowrap border border-slate-300 dark:border-zinc-700 leading-none">
+                      <td className="py-1 px-3 font-medium text-white whitespace-nowrap border border-cyan-500/20 leading-none">
                         {inc.location}
                       </td>
                       {/* 5. DESCRIPTION */}
-                      <td className="py-1 px-3 text-slate-700 dark:text-slate-300 max-w-[240px] truncate border border-slate-300 dark:border-zinc-700 leading-none" title={inc.description}>
+                      <td className="py-1 px-3 text-slate-300 max-w-[240px] truncate border border-cyan-500/20 leading-none" title={inc.description}>
                         {inc.description || '-'}
                       </td>
                       {/* 6. OCCUPATIONAL INCIDENT? */}
-                      <td className="py-1 px-3 text-center whitespace-nowrap border border-slate-300 dark:border-zinc-700 leading-none">
+                      <td className="py-1 px-3 text-center whitespace-nowrap border border-cyan-500/20 leading-none">
                         <span
                           className={`inline-flex items-center justify-center px-2 py-0.5 rounded text-[11px] font-semibold uppercase leading-tight ${
                             inc.occupationalIncident?.toUpperCase() === 'YES'
-                              ? 'bg-emerald-100 dark:bg-emerald-500/20 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/30'
-                              : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700'
+                              ? 'bg-slate-700 text-white border border-slate-600'
+                              : 'bg-slate-800 text-slate-400 border border-cyan-500/20'
                           }`}
                         >
                           {inc.occupationalIncident || '-'}
                         </span>
                       </td>
                       {/* 7. INCIDENT CATEGORY */}
-                      <td className="py-1 px-3 whitespace-nowrap border border-slate-300 dark:border-zinc-700 leading-none">
-                        <span className="inline-flex items-center justify-center px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 text-[11px] font-medium leading-tight">
+                      <td className="py-1 px-3 whitespace-nowrap border border-cyan-500/20 leading-none">
+                        <span className="inline-flex items-center justify-center px-2 py-0.5 rounded bg-slate-800 text-slate-300 border border-slate-700 text-[11px] font-medium leading-tight">
                           {inc.category || '-'}
                         </span>
                       </td>
                       {/* 8. PROPERTY DAMAGE */}
-                      <td className="py-1 px-3 text-center whitespace-nowrap font-medium border border-slate-300 dark:border-zinc-700 leading-none">
+                      <td className="py-1 px-3 text-center whitespace-nowrap font-medium text-slate-300 border border-cyan-500/20 leading-none">
                         {inc.propertyDamage || '-'}
                       </td>
                       {/* 9. DAMAGE LEVEL */}
-                      <td className="py-1 px-3 whitespace-nowrap text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-zinc-700 leading-none">
+                      <td className="py-1 px-3 whitespace-nowrap text-slate-300 border border-cyan-500/20 leading-none">
                         {inc.damageLevel || '-'}
                       </td>
                       {/* 10. CLASSIFICATION */}
-                      <td className="py-1 px-3 font-medium text-slate-800 dark:text-slate-200 whitespace-nowrap border border-slate-300 dark:border-zinc-700 leading-none">
+                      <td className="py-1 px-3 font-medium text-slate-200 whitespace-nowrap border border-cyan-500/20 leading-none">
                         {inc.classification || '-'}
                       </td>
                       {/* 11. INJURY TYPE */}
-                      <td className="py-1 px-3 text-slate-700 dark:text-slate-300 whitespace-nowrap border border-slate-300 dark:border-zinc-700 leading-none">
+                      <td className="py-1 px-3 text-slate-300 whitespace-nowrap border border-cyan-500/20 leading-none">
                         {inc.injuryType || '-'}
                       </td>
                       {/* 12. PERSON INVOLVE */}
-                      <td className="py-1 px-3 font-medium text-slate-800 dark:text-slate-200 whitespace-nowrap border border-slate-300 dark:border-zinc-700 leading-none">
+                      <td className="py-1 px-3 font-medium text-slate-200 whitespace-nowrap border border-cyan-500/20 leading-none">
                         {inc.personInvolved || (inc as any).person_involved || '-'}
                       </td>
                       {/* 13. WORK EXPERIENCE */}
-                      <td className="py-1 px-3 text-slate-700 dark:text-slate-300 whitespace-nowrap border border-slate-300 dark:border-zinc-700 leading-none">
+                      <td className="py-1 px-3 text-slate-300 whitespace-nowrap border border-cyan-500/20 leading-none">
                         {inc.experienceLevel || '-'}
                       </td>
                       {/* 14. REPORTED BY */}
-                      <td className="py-1 px-3 text-slate-700 dark:text-slate-300 whitespace-nowrap border border-slate-300 dark:border-zinc-700 leading-none">
+                      <td className="py-1 px-3 text-slate-300 whitespace-nowrap border border-cyan-500/20 leading-none">
                         {inc.reportedBy || (inc as any).investigator || '-'}
                       </td>
                       {/* 15. PDF / DOCUMENT */}
-                      <td className="py-1 px-3 text-center whitespace-nowrap border border-slate-300 dark:border-zinc-700 leading-none">
+                      <td className="py-1 px-3 text-center whitespace-nowrap border border-cyan-500/20 leading-none">
                         {inc.documentUrl && inc.documentUrl !== '-' && inc.documentUrl !== '' ? (
                           <a
                             href={formatToPreviewUrl(inc.documentUrl)}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center justify-center px-2.5 py-0.5 text-[11px] font-semibold rounded bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-500/20 transition-colors leading-tight"
+                            className="inline-flex items-center justify-center px-2.5 py-0.5 text-[11px] font-semibold rounded bg-slate-800 text-white border border-slate-700 hover:bg-slate-700 transition-colors leading-tight"
                             onClick={(e) => e.stopPropagation()}
                           >
                             Open Doc</a>
                         ) : (
-                          <span className="text-slate-400 dark:text-slate-600">-</span>
+                          <span className="text-slate-500">-</span>
                         )}
                       </td>
                     </tr>

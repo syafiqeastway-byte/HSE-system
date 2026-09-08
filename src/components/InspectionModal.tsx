@@ -264,7 +264,7 @@ export const InspectionModal: React.FC<InspectionModalProps> = ({ isOpen, filter
                 {/* Download Excel Button */}
                 <button
                   onClick={handleExportWorkplaceExcel}
-                  className="px-3.5 py-2.5 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 text-emerald-700 dark:text-emerald-300 hover:bg-emerald-100 dark:hover:bg-emerald-900/60 font-bold text-xs flex items-center justify-center gap-1.5 transition-colors shadow-sm flex-shrink-0"
+                  className="px-3.5 py-2.5 rounded-xl bg-[#107C41] hover:bg-[#0e6b37] text-white border border-[#107C41] font-bold text-xs flex items-center justify-center gap-1.5 transition-colors shadow-sm flex-shrink-0"
                   title="Download Workplace Inspection Records to Excel (.xlsx)"
                 >
                   <span className="material-symbols-outlined text-base">download</span>
@@ -275,26 +275,26 @@ export const InspectionModal: React.FC<InspectionModalProps> = ({ isOpen, filter
               {loadingWorkplace ? (
                 <div className="p-12 text-center flex flex-col items-center justify-center gap-3">
                   <span className="material-symbols-outlined text-3xl text-emerald-500 animate-spin">sync</span>
-                  <span className="text-xs text-slate-500 font-semibold uppercase">Loading Workplace Inspection Records...</span>
+                  <span className="text-xs text-white font-semibold uppercase">Loading Workplace Inspection Records...</span>
                 </div>
               ) : (
-                <div className="overflow-x-auto rounded-2xl border border-slate-300 dark:border-zinc-700 shadow-sm">
-                  <table className="w-full border-collapse border border-slate-300 dark:border-zinc-700 text-left text-xs sm:text-sm text-slate-800 dark:text-slate-200 whitespace-nowrap">
-                    <thead className="bg-slate-100 dark:bg-zinc-800/90 text-slate-800 dark:text-zinc-100 uppercase border-b border-slate-300 dark:border-zinc-700 font-bold">
+                <div className="overflow-x-auto rounded-2xl border border-slate-700 shadow-sm">
+                  <table className="w-full border-collapse border border-slate-700 text-left text-xs sm:text-sm text-white whitespace-nowrap">
+                    <thead className="bg-slate-950 text-cyan-400 uppercase border-b-2 border-cyan-500/40 font-bold">
                       <tr className="h-8">
-                        <th className="py-1 px-3 border border-slate-300 dark:border-zinc-700 font-bold uppercase tracking-wider text-center w-12 text-xs">NO</th>
-                        <th className="py-1 px-3 border border-slate-300 dark:border-zinc-700 font-bold uppercase tracking-wider text-center w-28 text-xs">DATE</th>
-                        <th className="py-1 px-3 border border-slate-300 dark:border-zinc-700 font-bold uppercase tracking-wider min-w-[150px] text-xs">LOCATION</th>
-                        <th className="py-1 px-3 border border-slate-300 dark:border-zinc-700 font-bold uppercase tracking-wider min-w-[160px] text-xs">TYPE OF INSPECTION</th>
-                        <th className="py-1 px-3 border border-slate-300 dark:border-zinc-700 font-bold uppercase tracking-wider min-w-[140px] text-xs">INSPECTOR</th>
-                        <th className="py-1 px-3 border border-slate-300 dark:border-zinc-700 font-bold uppercase tracking-wider min-w-[180px] text-xs">REMARK</th>
-                        <th className="py-1 px-3 border border-slate-300 dark:border-zinc-700 font-bold uppercase tracking-wider text-center w-28 text-xs">PDF</th>
+                        <th className="py-1 px-3 border border-slate-700 font-bold uppercase tracking-wider text-center w-12 text-xs text-cyan-400">NO</th>
+                        <th className="py-1 px-3 border border-slate-700 font-bold uppercase tracking-wider text-center w-28 text-xs text-cyan-400">DATE</th>
+                        <th className="py-1 px-3 border border-slate-700 font-bold uppercase tracking-wider min-w-[150px] text-xs text-cyan-400">LOCATION</th>
+                        <th className="py-1 px-3 border border-slate-700 font-bold uppercase tracking-wider min-w-[160px] text-xs text-cyan-400">TYPE OF INSPECTION</th>
+                        <th className="py-1 px-3 border border-slate-700 font-bold uppercase tracking-wider min-w-[140px] text-xs text-cyan-400">INSPECTOR</th>
+                        <th className="py-1 px-3 border border-slate-700 font-bold uppercase tracking-wider min-w-[180px] text-xs text-cyan-400">REMARK</th>
+                        <th className="py-1 px-3 border border-slate-700 font-bold uppercase tracking-wider text-center w-28 text-xs text-cyan-400">PDF</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-slate-300 dark:divide-zinc-700 bg-white dark:bg-zinc-900/60 text-xs sm:text-sm">
+                    <tbody className="divide-y divide-slate-700 bg-slate-900/60 text-xs sm:text-sm text-white">
                       {filteredWorkplaceData.length === 0 ? (
                         <tr className="h-9">
-                          <td colSpan={7} className="py-4 text-center text-xs text-slate-400 border border-slate-300 dark:border-zinc-700">
+                          <td colSpan={7} className="py-4 text-center text-xs text-slate-300 border border-slate-700">
                             No workplace inspection records found matching "{searchQueryWorkplace}"
                           </td>
                         </tr>
@@ -305,32 +305,32 @@ export const InspectionModal: React.FC<InspectionModalProps> = ({ isOpen, filter
                             <tr 
                               key={item.id} 
                               onClick={() => setSelectedWorkplaceId(isSelected ? null : String(item.id))}
-                              className={`h-9 transition-colors cursor-pointer ${
+                              className={`h-9 transition-colors cursor-pointer select-none ${
                                 isSelected 
-                                  ? 'bg-slate-200/80 dark:bg-slate-800 text-slate-900 dark:text-white font-semibold' 
-                                  : 'hover:bg-slate-50 dark:hover:bg-zinc-800/60'
+                                  ? '!bg-cyan-600 !text-white font-bold [&>td]:!bg-cyan-600 [&>td]:!text-white [&>td]:!border-cyan-400/40 [&_*]:!text-white shadow-md' 
+                                  : 'hover:bg-slate-800/60 text-white'
                               }`}
                             >
-                              <td className="py-1 px-3 text-center font-mono font-medium text-slate-500 border border-slate-300 dark:border-zinc-700 leading-none">{index + 1}</td>
-                              <td className="py-1 px-3 whitespace-nowrap font-mono text-center border border-slate-300 dark:border-zinc-700 leading-none">{item.date}</td>
-                              <td className="py-1 px-3 font-medium text-slate-900 dark:text-white border border-slate-300 dark:border-zinc-700 leading-none">{item.location || '-'}</td>
-                              <td className="py-1 px-3 font-medium text-emerald-600 dark:text-emerald-400 border border-slate-300 dark:border-zinc-700 leading-none">{item.typeOfInspection || '-'}</td>
-                              <td className="py-1 px-3 text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-zinc-700 leading-none">{item.inspector || '-'}</td>
-                              <td className="py-1 px-3 text-slate-600 dark:text-slate-400 max-w-xs truncate border border-slate-300 dark:border-zinc-700 leading-none" title={item.remark}>{item.remark || '-'}</td>
-                              <td className="py-1 px-3 text-center border border-slate-300 dark:border-zinc-700 leading-none">
+                              <td className="py-1 px-3 text-center font-mono font-medium text-white border border-slate-700 leading-none">{index + 1}</td>
+                              <td className="py-1 px-3 whitespace-nowrap font-mono text-center text-white border border-slate-700 leading-none">{item.date}</td>
+                              <td className="py-1 px-3 font-medium text-white border border-slate-700 leading-none">{item.location || '-'}</td>
+                              <td className="py-1 px-3 font-medium text-white border border-slate-700 leading-none">{item.typeOfInspection || '-'}</td>
+                              <td className="py-1 px-3 text-white border border-slate-700 leading-none">{item.inspector || '-'}</td>
+                              <td className="py-1 px-3 text-white max-w-xs truncate border border-slate-700 leading-none" title={item.remark}>{item.remark || '-'}</td>
+                              <td className="py-1 px-3 text-center border border-slate-700 leading-none">
                                 {item.documentUrl ? (
                                   <a
                                     href={formatToPreviewUrl(item.documentUrl)}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     onClick={(e) => e.stopPropagation()}
-                                    className="inline-flex items-center justify-center gap-1 px-2.5 py-0.5 bg-blue-600 hover:bg-blue-700 text-white rounded text-[11px] font-semibold transition-colors leading-tight"
+                                    className="inline-flex items-center justify-center gap-1 px-2.5 py-0.5 bg-red-600 hover:bg-red-700 text-white rounded text-[11px] font-semibold transition-colors leading-tight"
                                   >
                                     <span className="material-symbols-outlined text-[13px]">open_in_new</span>
                                     View PDF
                                   </a>
                                 ) : (
-                                  <span className="text-[11px] text-slate-400 italic leading-tight">No PDF</span>
+                                  <span className="text-[11px] text-slate-300 italic leading-tight">No PDF</span>
                                 )}
                               </td>
                             </tr>
@@ -378,7 +378,7 @@ export const InspectionModal: React.FC<InspectionModalProps> = ({ isOpen, filter
                 {/* Download Excel Button */}
                 <button
                   onClick={handleExportFireExtinguisherExcel}
-                  className="px-3.5 py-2.5 rounded-xl bg-red-50 dark:bg-red-950/60 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 hover:bg-red-100 dark:hover:bg-red-900/60 font-bold text-xs flex items-center justify-center gap-1.5 transition-colors shadow-sm flex-shrink-0"
+                  className="px-3.5 py-2.5 rounded-xl bg-[#107C41] hover:bg-[#0e6b37] text-white border border-[#107C41] font-bold text-xs flex items-center justify-center gap-1.5 transition-colors shadow-sm flex-shrink-0"
                   title="Download Fire Extinguisher Records to Excel (.xlsx)"
                 >
                   <span className="material-symbols-outlined text-base">download</span>
@@ -388,31 +388,31 @@ export const InspectionModal: React.FC<InspectionModalProps> = ({ isOpen, filter
 
               {loadingFireExtinguisher ? (
                 <div className="p-12 text-center flex flex-col items-center justify-center gap-3">
-                  <span className="material-symbols-outlined text-3xl text-red-500 animate-spin">sync</span>
-                  <span className="text-xs text-slate-500 font-semibold uppercase">Loading Fire Extinguisher Data from Sheet...</span>
+                  <span className="material-symbols-outlined text-3xl text-emerald-500 animate-spin">sync</span>
+                  <span className="text-xs text-white font-semibold uppercase">Loading Fire Extinguisher Data from Sheet...</span>
                 </div>
               ) : (
-                <div className="overflow-x-auto rounded-2xl border border-slate-300 dark:border-zinc-700 shadow-sm">
-                  <table className="w-full border-collapse border border-slate-300 dark:border-zinc-700 text-left text-xs sm:text-sm text-slate-800 dark:text-slate-200 whitespace-nowrap">
+                <div className="overflow-x-auto rounded-2xl border border-slate-700 shadow-sm">
+                  <table className="w-full border-collapse border border-slate-700 text-left text-xs sm:text-sm text-white whitespace-nowrap">
                     {/* Primary Table Head (Row 2 in Google Sheet) */}
-                    <thead className="bg-slate-200 dark:bg-zinc-800 text-slate-900 dark:text-white uppercase border-b-2 border-slate-400 dark:border-zinc-700">
+                    <thead className="bg-slate-950 text-cyan-400 uppercase border-b-2 border-cyan-500/40 font-bold">
                       <tr className="h-8">
-                        <th className="py-1 px-3 border border-slate-300 dark:border-zinc-700 font-bold uppercase tracking-wider text-center w-12 text-xs">NO</th>
-                        <th className="py-1 px-3 border border-slate-300 dark:border-zinc-700 font-bold uppercase tracking-wider min-w-[140px] text-xs">LOCATION</th>
-                        <th className="py-1 px-3 border border-slate-300 dark:border-zinc-700 font-bold uppercase tracking-wider text-center w-24 text-xs">TYPE ABC</th>
-                        <th className="py-1 px-3 border border-slate-300 dark:border-zinc-700 font-bold uppercase tracking-wider text-center w-24 text-xs">TYPE CO2</th>
-                        <th className="py-1 px-3 border border-slate-300 dark:border-zinc-700 font-bold uppercase tracking-wider min-w-[120px] text-xs">BRAND</th>
-                        <th className="py-1 px-3 border border-slate-300 dark:border-zinc-700 font-bold uppercase tracking-wider min-w-[140px] text-xs">SERIAL NUMBER</th>
-                        <th className="py-1 px-3 border border-slate-300 dark:border-zinc-700 font-bold uppercase tracking-wider text-center w-20 text-xs">MONTH</th>
-                        <th className="py-1 px-3 border border-slate-300 dark:border-zinc-700 font-bold uppercase tracking-wider text-center w-20 text-xs">YEAR</th>
-                        <th className="py-1 px-3 border border-slate-300 dark:border-zinc-700 font-bold uppercase tracking-wider min-w-[150px] text-xs text-center">CERT EXPIRY DATE</th>
-                        <th className="py-1 px-3 border border-slate-300 dark:border-zinc-700 font-bold uppercase tracking-wider min-w-[160px] text-xs">REMARKS 2026</th>
+                        <th className="py-1 px-3 border border-slate-700 font-bold uppercase tracking-wider text-center w-12 text-xs text-cyan-400">NO</th>
+                        <th className="py-1 px-3 border border-slate-700 font-bold uppercase tracking-wider min-w-[140px] text-xs text-cyan-400">LOCATION</th>
+                        <th className="py-1 px-3 border border-slate-700 font-bold uppercase tracking-wider text-center w-24 text-xs text-cyan-400">TYPE ABC</th>
+                        <th className="py-1 px-3 border border-slate-700 font-bold uppercase tracking-wider text-center w-24 text-xs text-cyan-400">TYPE CO2</th>
+                        <th className="py-1 px-3 border border-slate-700 font-bold uppercase tracking-wider min-w-[120px] text-xs text-cyan-400">BRAND</th>
+                        <th className="py-1 px-3 border border-slate-700 font-bold uppercase tracking-wider min-w-[140px] text-xs text-cyan-400">SERIAL NUMBER</th>
+                        <th className="py-1 px-3 border border-slate-700 font-bold uppercase tracking-wider text-center w-20 text-xs text-cyan-400">MONTH</th>
+                        <th className="py-1 px-3 border border-slate-700 font-bold uppercase tracking-wider text-center w-20 text-xs text-cyan-400">YEAR</th>
+                        <th className="py-1 px-3 border border-slate-700 font-bold uppercase tracking-wider min-w-[150px] text-xs text-center text-cyan-400">CERT EXPIRY DATE</th>
+                        <th className="py-1 px-3 border border-slate-700 font-bold uppercase tracking-wider min-w-[160px] text-xs text-cyan-400">REMARKS 2026</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-slate-300 dark:divide-zinc-700 bg-white dark:bg-zinc-900/60 text-xs sm:text-sm">
+                    <tbody className="divide-y divide-slate-700 bg-slate-900/60 text-xs sm:text-sm text-white">
                       {filteredFEData.length === 0 ? (
                         <tr className="h-9">
-                          <td colSpan={10} className="py-4 text-center text-xs text-slate-400 border border-slate-300 dark:border-zinc-700">
+                          <td colSpan={10} className="py-4 text-center text-xs text-slate-300 border border-slate-700">
                             No fire extinguisher records found matching "{searchQueryFE}"
                           </td>
                         </tr>
@@ -422,19 +422,19 @@ export const InspectionModal: React.FC<InspectionModalProps> = ({ isOpen, filter
                           if (item.isHeader) {
                             return (
                               <tr 
-                                key={item.id}
-                                className="h-8 bg-slate-200 dark:bg-zinc-800 text-slate-900 dark:text-white font-bold uppercase tracking-wider text-xs border-y-2 border-slate-400 dark:border-zinc-600 shadow-sm"
+                                key={item.id} 
+                                className="h-8 bg-slate-950 text-cyan-400 font-bold uppercase tracking-wider text-xs border-y-2 border-cyan-500/40 shadow-sm"
                               >
-                                <td className="py-1 px-3 text-center font-bold border border-slate-300 dark:border-zinc-600 leading-none">{item.no || '—'}</td>
-                                <td className="py-1 px-3 font-bold border border-slate-300 dark:border-zinc-600 leading-none">{item.location || 'LOCATION'}</td>
-                                <td className="py-1 px-3 text-center font-bold border border-slate-300 dark:border-zinc-600 leading-none">{item.typeABC || 'TYPE ABC'}</td>
-                                <td className="py-1 px-3 text-center font-bold border border-slate-300 dark:border-zinc-600 leading-none">{item.typeCO2 || 'TYPE CO2'}</td>
-                                <td className="py-1 px-3 font-bold border border-slate-300 dark:border-zinc-600 leading-none">{item.brand || 'BRAND'}</td>
-                                <td className="py-1 px-3 font-bold border border-slate-300 dark:border-zinc-600 leading-none">{item.serialNumber || 'SERIAL NUMBER'}</td>
-                                <td className="py-1 px-3 text-center font-bold border border-slate-300 dark:border-zinc-600 leading-none">{item.month || 'MONTH'}</td>
-                                <td className="py-1 px-3 text-center font-bold border border-slate-300 dark:border-zinc-600 leading-none">{item.year || 'YEAR'}</td>
-                                <td className="py-1 px-3 font-bold border border-slate-300 dark:border-zinc-600 text-center leading-none">{item.certExpiryDate || 'CERT EXPIRY DATE'}</td>
-                                <td className="py-1 px-3 font-bold border border-slate-300 dark:border-zinc-600 leading-none">{item.remarks || 'REMARKS 2026'}</td>
+                                <td className="py-1 px-3 text-center font-bold border border-slate-700 text-cyan-400 leading-none">{item.no || '—'}</td>
+                                <td className="py-1 px-3 font-bold border border-slate-700 text-cyan-400 leading-none">{item.location || 'LOCATION'}</td>
+                                <td className="py-1 px-3 text-center font-bold border border-slate-700 text-cyan-400 leading-none">{item.typeABC || 'TYPE ABC'}</td>
+                                <td className="py-1 px-3 text-center font-bold border border-slate-700 text-cyan-400 leading-none">{item.typeCO2 || 'TYPE CO2'}</td>
+                                <td className="py-1 px-3 font-bold border border-slate-700 text-cyan-400 leading-none">{item.brand || 'BRAND'}</td>
+                                <td className="py-1 px-3 font-bold border border-slate-700 text-cyan-400 leading-none">{item.serialNumber || 'SERIAL NUMBER'}</td>
+                                <td className="py-1 px-3 text-center font-bold border border-slate-700 text-cyan-400 leading-none">{item.month || 'MONTH'}</td>
+                                <td className="py-1 px-3 text-center font-bold border border-slate-700 text-cyan-400 leading-none">{item.year || 'YEAR'}</td>
+                                <td className="py-1 px-3 font-bold border border-slate-700 text-center text-cyan-400 leading-none">{item.certExpiryDate || 'CERT EXPIRY DATE'}</td>
+                                <td className="py-1 px-3 font-bold border border-slate-700 text-cyan-400 leading-none">{item.remarks || 'REMARKS 2026'}</td>
                               </tr>
                             );
                           }
@@ -446,86 +446,72 @@ export const InspectionModal: React.FC<InspectionModalProps> = ({ isOpen, filter
                             <tr
                               key={item.id}
                               onClick={() => setSelectedFEId(isSelected ? null : item.id)}
-                              className={`h-9 transition-colors cursor-pointer ${
+                              className={`h-9 transition-colors cursor-pointer select-none ${
                                 isSelected
-                                  ? 'bg-slate-200/80 dark:bg-slate-800 text-slate-900 dark:text-white font-semibold'
-                                  : 'hover:bg-slate-50 dark:hover:bg-zinc-800/60'
+                                  ? '!bg-cyan-600 !text-white font-bold [&>td]:!bg-cyan-600 [&>td]:!text-white [&>td]:!border-cyan-400/40 [&_*]:!text-white shadow-md'
+                                  : 'hover:bg-slate-800/60 text-white'
                               }`}
                             >
                               {/* NO */}
-                              <td className="py-1 px-3 text-center font-mono font-medium text-slate-600 dark:text-slate-400 border border-slate-300 dark:border-zinc-700 leading-none">
+                              <td className="py-1 px-3 text-center font-mono font-medium text-white border border-slate-700 leading-none">
                                 {item.no || '-'}
                               </td>
 
                               {/* LOCATION */}
-                              <td className="py-1 px-3 font-medium text-slate-900 dark:text-white border border-slate-300 dark:border-zinc-700 leading-none">
-                                <span className="inline-flex items-center px-2 py-0.5 rounded bg-slate-100 dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 font-medium text-xs leading-tight">
-                                  {item.location || '-'}
-                                </span>
+                              <td className="py-1 px-3 font-medium text-white border border-slate-700 leading-none">
+                                {item.location || '-'}
                               </td>
 
                               {/* TYPE ABC */}
-                              <td className="py-1 px-3 text-center border border-slate-300 dark:border-zinc-700 leading-none">
+                              <td className="py-1 px-3 text-center border border-slate-700 text-white leading-none">
                                 {item.typeABC && item.typeABC.trim() !== '' ? (
-                                  <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400 font-bold text-[10px]">
+                                  <span className="inline-flex items-center justify-center font-bold text-xs text-white">
                                     ✓
                                   </span>
                                 ) : (
-                                  <span className="text-slate-300 dark:text-zinc-700 font-mono">-</span>
+                                  <span className="text-slate-400 font-mono">-</span>
                                 )}
                               </td>
 
                               {/* TYPE CO2 */}
-                              <td className="py-1 px-3 text-center border border-slate-300 dark:border-zinc-700 leading-none">
+                              <td className="py-1 px-3 text-center border border-slate-700 text-white leading-none">
                                 {item.typeCO2 && item.typeCO2.trim() !== '' ? (
-                                  <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-blue-100 dark:bg-blue-950 text-blue-600 dark:text-blue-400 font-bold text-[10px]">
+                                  <span className="inline-flex items-center justify-center font-bold text-xs text-white">
                                     ✓
                                   </span>
                                 ) : (
-                                  <span className="text-slate-300 dark:text-zinc-700 font-mono">-</span>
+                                  <span className="text-slate-400 font-mono">-</span>
                                 )}
                               </td>
 
                               {/* BRAND */}
-                              <td className="py-1 px-3 font-medium text-slate-800 dark:text-slate-200 border border-slate-300 dark:border-zinc-700 leading-none">
-                                {item.brand ? (
-                                  <span className="font-medium text-slate-800 dark:text-zinc-200">
-                                    {item.brand}
-                                  </span>
-                                ) : (
-                                  <span className="text-slate-400">-</span>
-                                )}
+                              <td className="py-1 px-3 font-medium text-white border border-slate-700 leading-none">
+                                {item.brand || '-'}
                               </td>
 
                               {/* SERIAL NUMBER */}
-                              <td className="py-1 px-3 font-mono text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-zinc-700 leading-none">
+                              <td className="py-1 px-3 font-mono text-white border border-slate-700 leading-none">
                                 {item.serialNumber || '-'}
                               </td>
 
                               {/* MONTH */}
-                              <td className="py-1 px-3 text-center font-mono text-slate-600 dark:text-slate-400 border border-slate-300 dark:border-zinc-700 leading-none">
+                              <td className="py-1 px-3 text-center font-mono text-white border border-slate-700 leading-none">
                                 {item.month || '-'}
                               </td>
 
                               {/* YEAR */}
-                              <td className="py-1 px-3 text-center font-mono font-medium text-slate-700 dark:text-slate-300 border border-slate-300 dark:border-zinc-700 leading-none">
+                              <td className="py-1 px-3 text-center font-mono font-medium text-white border border-slate-700 leading-none">
                                 {item.year || '-'}
                               </td>
 
                               {/* CERT EXPIRY DATE */}
-                              <td className="py-1 px-3 whitespace-nowrap font-mono font-bold text-red-600 dark:text-red-400 border border-slate-300 dark:border-zinc-700 text-center leading-none">
+                              <td className="py-1 px-3 whitespace-nowrap font-mono font-bold text-white border border-slate-700 text-center leading-none">
                                 {item.certExpiryDate || '-'}
                               </td>
 
                               {/* REMARKS */}
-                              <td className="py-1 px-3 border border-slate-300 dark:border-zinc-700 leading-none">
-                                {hasRemarks ? (
-                                  <span className="inline-block px-2 py-0.5 rounded bg-amber-50 dark:bg-amber-950/60 border border-amber-200 dark:border-amber-800 text-amber-800 dark:text-amber-300 font-medium text-[11px] leading-tight">
-                                    {item.remarks}
-                                  </span>
-                                ) : (
-                                  <span className="text-slate-400 italic text-[11px]">-</span>
-                                )}
+                              <td className="py-1 px-3 text-white border border-slate-700 leading-none">
+                                {item.remarks || '-'}
                               </td>
                             </tr>
                           );

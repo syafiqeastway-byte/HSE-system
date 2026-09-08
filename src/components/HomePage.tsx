@@ -13,7 +13,6 @@ interface HomePageProps {
   onNavigateSOP: () => void;
   onOpenAllIncidentsModal?: () => void;
   onNavigateSafetyViolation: () => void;
-  onNavigateFirstAidKit?: () => void;
   isDarkMode: boolean;
   onOpenPWAInstall?: () => void;
   isPwaInstalled?: boolean;
@@ -30,7 +29,6 @@ export const HomePage: React.FC<HomePageProps> = ({
   onNavigateSOP,
   onOpenAllIncidentsModal,
   onNavigateSafetyViolation,
-  onNavigateFirstAidKit,
   isDarkMode,
   onOpenPWAInstall,
   isPwaInstalled,
@@ -40,7 +38,7 @@ export const HomePage: React.FC<HomePageProps> = ({
     <div className="space-y-8">
       
       {/* SECTION 1: INCIDENT RECORDS & SAFETY PERFORMANCE */}
-      <ErrorBoundary fallbackTitle="Paparan Graf & Analitik Keselamatan">
+      <ErrorBoundary fallbackTitle="Incident Analytics & Safety Performance">
         <IncidentChartsAndTables
           isDarkMode={isDarkMode}
           onOpenAllIncidentsModal={onOpenAllIncidentsModal}
@@ -52,10 +50,10 @@ export const HomePage: React.FC<HomePageProps> = ({
         
         {/* SECTION 1: SAFETY DOCUMENTATION */}
         <div className="glass-card p-5 border-t-4 border-blue-600">
-          <div className="flex items-center gap-2.5 mb-4 pb-3 border-b border-slate-200 dark:border-slate-700">
-            <span className="material-symbols-outlined text-blue-600 dark:text-blue-400 text-2xl">menu_book</span>
+          <div className="flex items-center gap-2.5 mb-4 pb-3 border-b border-slate-700/60">
+            <span className="material-symbols-outlined text-white text-2xl">menu_book</span>
             <div>
-              <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white">
+              <h2 className="text-base sm:text-lg font-bold text-white">
                 SAFETY DOCUMENTATION
               </h2>
             </div>
@@ -63,7 +61,7 @@ export const HomePage: React.FC<HomePageProps> = ({
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
             
-            {/* 📜 Safety Policy */}
+            {/* 🛡️ Safety Policy */}
             <button
               onClick={() =>
                 onOpenDocument({
@@ -73,16 +71,16 @@ export const HomePage: React.FC<HomePageProps> = ({
                   type: 'doc'
                 })
               }
-              className="p-4 rounded-2xl bg-white dark:bg-zinc-900/90 border border-slate-200 dark:border-zinc-800 hover:border-blue-500 dark:hover:border-blue-400 transition-all text-left flex items-start gap-3 shadow-sm group hover:-translate-y-0.5"
+              className="p-4 rounded-2xl bg-slate-900/60 border border-cyan-500/20 hover:border-slate-400 hover:bg-cyan-950/40 transition-all text-left flex items-start gap-3 shadow-sm group hover:-translate-y-0.5"
             >
-              <div className="p-2.5 rounded-xl bg-blue-100 dark:bg-blue-950/80 text-blue-600 dark:text-blue-300 group-hover:scale-105 transition-transform">
+              <div className="p-2.5 rounded-xl bg-slate-800 text-white group-hover:scale-105 transition-transform border border-slate-700/50">
                 <span className="material-symbols-outlined text-2xl">policy</span>
               </div>
               <div>
-                <h3 className="text-xs sm:text-sm font-bold text-slate-800 dark:text-zinc-100 group-hover:text-blue-600 dark:group-hover:text-blue-400">
+                <h3 className="text-xs sm:text-sm font-bold text-white group-hover:text-slate-100">
                   SAFETY POLICY
                 </h3>
-                <p className="text-[11px] text-slate-500 dark:text-zinc-400 mt-0.5">
+                <p className="text-[11px] text-white mt-0.5">
                   Corporate HSE Policy
                 </p>
               </div>
@@ -98,16 +96,16 @@ export const HomePage: React.FC<HomePageProps> = ({
                   type: 'doc'
                 })
               }
-              className="p-4 rounded-2xl bg-white dark:bg-zinc-900/90 border border-slate-200 dark:border-zinc-800 hover:border-blue-500 dark:hover:border-blue-400 transition-all text-left flex items-start gap-3 shadow-sm group hover:-translate-y-0.5"
+              className="p-4 rounded-2xl bg-slate-900/60 border border-cyan-500/20 hover:border-slate-400 hover:bg-cyan-950/40 transition-all text-left flex items-start gap-3 shadow-sm group hover:-translate-y-0.5"
             >
-              <div className="p-2.5 rounded-xl bg-indigo-100 dark:bg-indigo-950/80 text-indigo-600 dark:text-indigo-300 group-hover:scale-105 transition-transform">
+              <div className="p-2.5 rounded-xl bg-slate-800 text-white group-hover:scale-105 transition-transform border border-slate-700/50">
                 <span className="material-symbols-outlined text-2xl">badge</span>
               </div>
               <div>
-                <h3 className="text-xs sm:text-sm font-bold text-slate-800 dark:text-zinc-100 group-hover:text-blue-600 dark:group-hover:text-blue-400">
+                <h3 className="text-xs sm:text-sm font-bold text-white group-hover:text-slate-100">
                   COMPETENT PERSON
                 </h3>
-                <p className="text-[11px] text-slate-500 dark:text-zinc-400 mt-0.5">
+                <p className="text-[11px] text-white mt-0.5">
                   Official Credentials
                 </p>
               </div>
@@ -123,16 +121,16 @@ export const HomePage: React.FC<HomePageProps> = ({
                   type: 'doc'
                 })
               }
-              className="p-4 rounded-2xl bg-white dark:bg-zinc-900/90 border border-slate-200 dark:border-zinc-800 hover:border-red-500 dark:hover:border-red-400 transition-all text-left flex items-start gap-3 shadow-sm group hover:-translate-y-0.5"
+              className="p-4 rounded-2xl bg-slate-900/60 border border-cyan-500/20 hover:border-slate-400 hover:bg-cyan-950/40 transition-all text-left flex items-start gap-3 shadow-sm group hover:-translate-y-0.5"
             >
-              <div className="p-2.5 rounded-xl bg-red-100 dark:bg-red-950/80 text-red-600 dark:text-red-300 group-hover:scale-105 transition-transform">
+              <div className="p-2.5 rounded-xl bg-slate-800 text-white group-hover:scale-105 transition-transform border border-slate-700/50">
                 <span className="material-symbols-outlined text-2xl">e911_emergency</span>
               </div>
               <div>
-                <h3 className="text-xs sm:text-sm font-bold text-slate-800 dark:text-zinc-100 group-hover:text-red-600 dark:group-hover:text-red-400">
+                <h3 className="text-xs sm:text-sm font-bold text-white group-hover:text-slate-100">
                   EMERGENCY PLAN
                 </h3>
-                <p className="text-[11px] text-slate-500 dark:text-zinc-400 mt-0.5">
+                <p className="text-[11px] text-white mt-0.5">
                   Emergency response & evacuation
                 </p>
               </div>
@@ -148,16 +146,16 @@ export const HomePage: React.FC<HomePageProps> = ({
                   type: 'doc'
                 })
               }
-              className="p-4 rounded-2xl bg-white dark:bg-zinc-900/90 border border-slate-200 dark:border-zinc-800 hover:border-amber-500 dark:hover:border-amber-400 transition-all text-left flex items-start gap-3 shadow-sm group hover:-translate-y-0.5"
+              className="p-4 rounded-2xl bg-slate-900/60 border border-cyan-500/20 hover:border-slate-400 hover:bg-cyan-950/40 transition-all text-left flex items-start gap-3 shadow-sm group hover:-translate-y-0.5"
             >
-              <div className="p-2.5 rounded-xl bg-amber-100 dark:bg-amber-950/80 text-amber-600 dark:text-amber-300 group-hover:scale-105 transition-transform">
+              <div className="p-2.5 rounded-xl bg-slate-800 text-white group-hover:scale-105 transition-transform border border-slate-700/50">
                 <span className="material-symbols-outlined text-2xl">gavel</span>
               </div>
               <div>
-                <h3 className="text-xs sm:text-sm font-bold text-slate-800 dark:text-zinc-100 group-hover:text-amber-600 dark:group-hover:text-amber-400">
+                <h3 className="text-xs sm:text-sm font-bold text-white group-hover:text-slate-100">
                   LEGAL COMPLIANCE
                 </h3>
-                <p className="text-[11px] text-slate-500 dark:text-zinc-400 mt-0.5">
+                <p className="text-[11px] text-white mt-0.5">
                   OSHA 1994 & FMA statutory register logs
                 </p>
               </div>
@@ -168,13 +166,12 @@ export const HomePage: React.FC<HomePageProps> = ({
 
         {/* SECTION 2: COMMITTEE & OVERSIGHT MANAGEMENT */}
         <div className="glass-card p-5 border-t-4 border-indigo-600">
-          <div className="flex items-center gap-2.5 mb-4 pb-3 border-b border-slate-200 dark:border-slate-700">
-            <span className="material-symbols-outlined text-indigo-600 dark:text-indigo-400 text-2xl">groups</span>
+          <div className="flex items-center gap-2.5 mb-4 pb-3 border-b border-slate-700/60">
+            <span className="material-symbols-outlined text-white text-2xl">groups</span>
             <div>
-              <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white">
+              <h2 className="text-base sm:text-lg font-bold text-white">
                 COMMITTEE & OVERSIGHT MANAGEMENT
               </h2>
-              
             </div>
           </div>
 
@@ -190,16 +187,16 @@ export const HomePage: React.FC<HomePageProps> = ({
                   type: 'doc'
                 })
               }
-              className="p-4 rounded-2xl bg-white dark:bg-zinc-900/90 border border-slate-200 dark:border-zinc-800 hover:border-indigo-500 dark:hover:border-indigo-400 transition-all text-left flex items-start gap-3 shadow-sm group hover:-translate-y-0.5"
+              className="p-4 rounded-2xl bg-slate-900/60 border border-cyan-500/20 hover:border-slate-400 hover:bg-cyan-950/40 transition-all text-left flex items-start gap-3 shadow-sm group hover:-translate-y-0.5"
             >
-              <div className="p-2.5 rounded-xl bg-indigo-100 dark:bg-indigo-950/80 text-indigo-600 dark:text-indigo-300 group-hover:scale-105 transition-transform">
+              <div className="p-2.5 rounded-xl bg-slate-800 text-white group-hover:scale-105 transition-transform border border-slate-700/50">
                 <span className="material-symbols-outlined text-2xl">account_tree</span>
               </div>
               <div>
-                <h3 className="text-xs sm:text-sm font-bold text-slate-800 dark:text-zinc-100 group-hover:text-indigo-600 dark:group-hover:text-indigo-400">
+                <h3 className="text-xs sm:text-sm font-bold text-white group-hover:text-slate-100">
                   SAFETY COMMITTEE ORG CHART
                 </h3>
-                <p className="text-[11px] text-slate-500 dark:text-zinc-400 mt-0.5">
+                <p className="text-[11px] text-white mt-0.5">
                   Organizational structure & committee reps
                 </p>
               </div>
@@ -208,16 +205,16 @@ export const HomePage: React.FC<HomePageProps> = ({
             {/* 📝 Meeting Minutes */}
             <button
               onClick={onNavigateMinuteMeetings}
-              className="p-4 rounded-2xl bg-white dark:bg-zinc-900/90 border border-slate-200 dark:border-zinc-800 hover:border-indigo-500 dark:hover:border-indigo-400 transition-all text-left flex items-start gap-3 shadow-sm group hover:-translate-y-0.5"
+              className="p-4 rounded-2xl bg-slate-900/60 border border-cyan-500/20 hover:border-slate-400 hover:bg-cyan-950/40 transition-all text-left flex items-start gap-3 shadow-sm group hover:-translate-y-0.5"
             >
-              <div className="p-2.5 rounded-xl bg-blue-100 dark:bg-blue-950/80 text-blue-600 dark:text-blue-300 group-hover:scale-105 transition-transform">
+              <div className="p-2.5 rounded-xl bg-slate-800 text-white group-hover:scale-105 transition-transform border border-slate-700/50">
                 <span className="material-symbols-outlined text-2xl">assignment</span>
               </div>
               <div>
-                <h3 className="text-xs sm:text-sm font-bold text-slate-800 dark:text-zinc-100 group-hover:text-blue-600 dark:group-hover:text-blue-400">
+                <h3 className="text-xs sm:text-sm font-bold text-white group-hover:text-slate-100">
                   MEETING MINUTES
                 </h3>
-                <p className="text-[11px] text-slate-500 dark:text-zinc-400 mt-0.5">
+                <p className="text-[11px] text-white mt-0.5">
                   Quarterly committee meeting records
                 </p>
               </div>
@@ -230,28 +227,27 @@ export const HomePage: React.FC<HomePageProps> = ({
 
       {/* SECTION 3: PROCEDURES, RISK ASSESSMENT & INSPECTIONS */}
       <div className="glass-card p-5 border-t-4 border-amber-500">
-        <div className="flex items-center gap-2.5 mb-4 pb-3 border-b border-slate-200 dark:border-slate-700">
-          <span className="material-symbols-outlined text-amber-500 text-2xl">assignment_turned_in</span>
+        <div className="flex items-center gap-2.5 mb-4 pb-3 border-b border-slate-700/60">
+          <span className="material-symbols-outlined text-slate-200 text-2xl">assignment_turned_in</span>
           <div>
-            <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white">
+            <h2 className="text-base sm:text-lg font-bold text-white">
               SAFETY PROCEDURES, RISK ASSESSMENT & INSPECTIONS
             </h2>
-            
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 items-center">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-center">
           
           {/* SOP Dropdown */}
           <button
             onClick={onNavigateSOP}
-            className="w-full px-4 py-3.5 rounded-xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-slate-800 dark:text-zinc-100 font-semibold text-xs sm:text-sm flex items-center justify-between hover:border-blue-500 dark:hover:border-blue-400 transition-all shadow-sm group min-h-[44px]"
+            className="w-full px-4 py-3.5 rounded-xl border border-cyan-500/20 bg-slate-900/60 text-slate-100 font-semibold text-xs sm:text-sm flex items-center justify-between hover:border-slate-400 hover:bg-cyan-950/40 transition-all shadow-sm group min-h-[44px]"
           >
             <div className="flex items-center gap-2 truncate">
-              <span className="material-symbols-outlined text-blue-600 dark:text-blue-400 text-xl">description</span>
+              <span className="material-symbols-outlined text-slate-300 text-xl">description</span>
               <span className="truncate">SOP</span>
             </div>
-            <span className="material-symbols-outlined text-slate-400 group-hover:text-blue-500 group-hover:translate-x-1 transition-transform">
+            <span className="material-symbols-outlined text-slate-400 group-hover:text-white group-hover:translate-x-1 transition-transform">
               arrow_forward
             </span>
           </button>
@@ -259,43 +255,27 @@ export const HomePage: React.FC<HomePageProps> = ({
           {/* HIRARC Dropdown */}
           <button
             onClick={onNavigateHIRARC}
-            className="w-full px-4 py-3.5 rounded-xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-slate-800 dark:text-zinc-100 font-semibold text-xs sm:text-sm flex items-center justify-between hover:border-amber-500 dark:hover:border-amber-400 transition-all shadow-sm group min-h-[44px]"
+            className="w-full px-4 py-3.5 rounded-xl border border-cyan-500/20 bg-slate-900/60 text-slate-100 font-semibold text-xs sm:text-sm flex items-center justify-between hover:border-slate-400 hover:bg-cyan-950/40 transition-all shadow-sm group min-h-[44px]"
           >
             <div className="flex items-center gap-2 truncate">
-              <span className="material-symbols-outlined text-amber-600 dark:text-amber-400 text-xl">assignment_turned_in</span>
+              <span className="material-symbols-outlined text-slate-300 text-xl">assignment_turned_in</span>
               <span className="truncate">HIRARC</span>
             </div>
-            <span className="material-symbols-outlined text-slate-400 group-hover:text-amber-500 group-hover:translate-x-1 transition-transform">
+            <span className="material-symbols-outlined text-slate-400 group-hover:text-white group-hover:translate-x-1 transition-transform">
               arrow_forward
             </span>
           </button>
 
-          {/* First Aid Kits Module Button */}
-          {onNavigateFirstAidKit && (
-            <button
-              onClick={onNavigateFirstAidKit}
-              className="w-full px-4 py-3.5 rounded-xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-slate-800 dark:text-zinc-100 font-semibold text-xs sm:text-sm flex items-center justify-between hover:border-emerald-500 dark:hover:border-emerald-400 transition-all shadow-sm group min-h-[44px]"
-            >
-              <div className="flex items-center gap-2 truncate">
-                <span className="material-symbols-outlined text-emerald-600 dark:text-emerald-400 text-xl">medical_services</span>
-                <span className="truncate font-bold">FIRST AID KITS</span>
-              </div>
-              <span className="material-symbols-outlined text-slate-400 group-hover:text-emerald-500 group-hover:translate-x-1 transition-transform">
-                arrow_forward
-              </span>
-            </button>
-          )}
-
           {/* Inspection Records Button */}
           <button
             onClick={() => onOpenInspectionModal('All')}
-            className="w-full px-4 py-3.5 rounded-xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-slate-800 dark:text-zinc-100 font-semibold text-xs sm:text-sm flex items-center justify-between hover:border-emerald-500 dark:hover:border-emerald-400 transition-all shadow-sm group min-h-[44px]"
+            className="w-full px-4 py-3.5 rounded-xl border border-cyan-500/20 bg-slate-900/60 text-slate-100 font-semibold text-xs sm:text-sm flex items-center justify-between hover:border-slate-400 hover:bg-cyan-950/40 transition-all shadow-sm group min-h-[44px]"
           >
             <div className="flex items-center gap-2 truncate">
-              <span className="material-symbols-outlined text-emerald-600 dark:text-emerald-400 text-xl">fact_check</span>
+              <span className="material-symbols-outlined text-slate-300 text-xl">fact_check</span>
               <span className="truncate">INSPECTION RECORDS</span>
             </div>
-            <span className="material-symbols-outlined text-slate-400 group-hover:text-emerald-500 group-hover:translate-x-1 transition-transform">
+            <span className="material-symbols-outlined text-slate-400 group-hover:text-white group-hover:translate-x-1 transition-transform">
               arrow_forward
             </span>
           </button>
@@ -305,13 +285,13 @@ export const HomePage: React.FC<HomePageProps> = ({
             href="https://script.google.com/macros/s/AKfycbxhrI7F4_Tbg2wPSky9i0cBK8xc2OQDMpUHlE2ZAxDLZxqvb5iBkO5a6P6UoJRo04CdaA/exec"
             target="_blank"
             rel="noopener noreferrer"
-            className="w-full px-4 py-3.5 rounded-xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-slate-800 dark:text-zinc-100 font-semibold text-xs sm:text-sm flex items-center justify-between hover:border-amber-500 dark:hover:border-amber-400 transition-all shadow-sm group min-h-[44px]"
+            className="w-full px-4 py-3.5 rounded-xl border border-cyan-500/20 bg-slate-900/60 text-slate-100 font-semibold text-xs sm:text-sm flex items-center justify-between hover:border-slate-400 hover:bg-cyan-950/40 transition-all shadow-sm group min-h-[44px]"
           >
             <div className="flex items-center gap-2 truncate">
-              <span className="material-symbols-outlined text-amber-600 dark:text-amber-400 text-xl">edit_note</span>
+              <span className="material-symbols-outlined text-slate-300 text-xl">edit_note</span>
               <span className="truncate">INSPECTION FORM</span>
             </div>
-            <span className="material-symbols-outlined text-slate-400 group-hover:text-amber-500 group-hover:translate-x-1 transition-transform">
+            <span className="material-symbols-outlined text-slate-400 group-hover:text-white group-hover:translate-x-1 transition-transform">
               open_in_new
             </span>
           </a>
@@ -321,10 +301,10 @@ export const HomePage: React.FC<HomePageProps> = ({
 
       {/* NEW SECTION: SAFETY VIOLATIONS & PERFORMANCE */}
       <div className="glass-card p-5 border-t-4 border-red-500">
-        <div className="flex items-center gap-2.5 mb-4 pb-3 border-b border-slate-200 dark:border-slate-700">
-          <span className="material-symbols-outlined text-red-500 text-2xl">gavel</span>
+        <div className="flex items-center gap-2.5 mb-4 pb-3 border-b border-slate-700/60">
+          <span className="material-symbols-outlined text-slate-200 text-2xl">gavel</span>
           <div>
-            <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white uppercase">
+            <h2 className="text-base sm:text-lg font-bold text-white uppercase">
               Safety Violations & Demerit Monitoring
             </h2>
           </div>
@@ -335,13 +315,13 @@ export const HomePage: React.FC<HomePageProps> = ({
           {/* Safety Violation Scoring System Button */}
           <button
             onClick={onNavigateSafetyViolation}
-            className="w-full px-4 py-3.5 rounded-xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-slate-800 dark:text-zinc-100 font-semibold text-xs sm:text-sm flex items-center justify-between hover:border-red-500 dark:hover:border-red-400 transition-all shadow-sm group min-h-[44px]"
+            className="w-full px-4 py-3.5 rounded-xl border border-cyan-500/20 bg-slate-900/60 text-slate-100 font-semibold text-xs sm:text-sm flex items-center justify-between hover:border-slate-400 hover:bg-cyan-950/40 transition-all shadow-sm group min-h-[44px]"
           >
             <div className="flex items-center gap-2 truncate">
-              <span className="material-symbols-outlined text-red-600 dark:text-red-400 text-xl">gavel</span>
+              <span className="material-symbols-outlined text-slate-300 text-xl">gavel</span>
               <span className="truncate uppercase font-bold text-xs sm:text-sm">SAFETY VIOLATION SCORING SYSTEM</span>
             </div>
-            <span className="material-symbols-outlined text-slate-400 group-hover:text-red-500 group-hover:translate-x-1 transition-transform">
+            <span className="material-symbols-outlined text-slate-400 group-hover:text-white group-hover:translate-x-1 transition-transform">
               arrow_forward
             </span>
           </button>

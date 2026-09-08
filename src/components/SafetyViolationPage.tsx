@@ -81,13 +81,13 @@ export const SafetyViolationPage: React.FC<SafetyViolationPageProps> = ({
         <div className="flex items-center gap-3">
           <button
             onClick={onBackToHome}
-            className="p-2 rounded-xl bg-slate-100 dark:bg-zinc-900 text-slate-600 dark:text-zinc-300 hover:bg-slate-200 dark:hover:bg-zinc-800 transition-colors border border-transparent dark:border-zinc-800"
+            className="p-2 rounded-xl bg-slate-800 text-white hover:bg-slate-700 transition-colors border border-cyan-500/20"
             title="Back to Dashboard"
           >
             <span className="material-symbols-outlined text-xl">arrow_back</span>
           </button>
           <div>
-            <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+            <h2 className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
               <span className="material-symbols-outlined text-red-500">gavel</span>
               <span>SAFETY VIOLATION SCORING SYSTEM</span>
             </h2>
@@ -105,13 +105,13 @@ export const SafetyViolationPage: React.FC<SafetyViolationPageProps> = ({
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search violations..."
-              className="w-full pl-9 pr-9 py-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-xs sm:text-sm text-slate-800 dark:text-slate-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full pl-9 pr-9 py-2 rounded-xl bg-slate-950 border border-slate-700 text-xs sm:text-sm text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             {searchQuery && (
               <button
                 type="button"
                 onClick={() => setSearchQuery('')}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-0.5 rounded-full"
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white p-0.5 rounded-full"
                 title="Clear search"
               >
                 <span className="material-symbols-outlined text-base">close</span>
@@ -121,10 +121,10 @@ export const SafetyViolationPage: React.FC<SafetyViolationPageProps> = ({
           <button
             onClick={() => loadData(true)}
             disabled={isRefreshing}
-            className="p-2 rounded-xl bg-slate-100 dark:bg-zinc-800 hover:bg-slate-200 dark:hover:bg-zinc-700 text-slate-700 dark:text-slate-300 transition-colors border border-slate-200 dark:border-zinc-700 flex items-center justify-center flex-shrink-0"
+            className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white transition-colors border border-cyan-500/20 flex items-center justify-center flex-shrink-0"
             title="Refresh from Google Sheets"
           >
-            <span className={`material-symbols-outlined text-xl ${isRefreshing ? 'animate-spin text-red-500' : ''}`}>
+            <span className={`material-symbols-outlined text-xl ${isRefreshing ? 'animate-spin text-white' : ''}`}>
               sync
             </span>
           </button>
@@ -134,33 +134,33 @@ export const SafetyViolationPage: React.FC<SafetyViolationPageProps> = ({
       {/* Primary Table Section (A3:N33) */}
       {loading ? (
         <div className="p-12 text-center flex flex-col items-center justify-center glass-card">
-          <span className="material-symbols-outlined text-4xl text-red-500 animate-spin mb-2">sync</span>
-          <p className="text-xs text-slate-500">Loading safety records from spreadsheet...</p>
+          <span className="material-symbols-outlined text-4xl text-white animate-spin mb-2">sync</span>
+          <p className="text-xs text-white">Loading safety records from spreadsheet...</p>
         </div>
       ) : (
         <>
           <div className="glass-card overflow-hidden">
-            <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-slate-300 dark:scrollbar-thumb-zinc-700">
+            <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-slate-700">
               {/* The table includes full column and row borders (grid lines) */}
-              <table className="w-full border-collapse border border-slate-300 dark:border-zinc-700 text-left text-xs sm:text-sm whitespace-nowrap">
-                <thead className="bg-slate-100 dark:bg-zinc-800/80 text-slate-800 dark:text-zinc-100 border-b border-slate-300 dark:border-zinc-700">
+              <table className="w-full border-collapse border border-cyan-500/20 text-left text-xs sm:text-sm whitespace-nowrap bg-transparent">
+                <thead className="bg-slate-950/95 text-cyan-400 border-b-2 border-cyan-500/40">
                   <tr className="h-8">
                     {headers.map((hdr, idx) => (
                       <th
                         key={idx}
-                        className="py-1 px-3 font-bold uppercase tracking-wider text-center border border-slate-300 dark:border-zinc-700 text-xs"
+                        className="py-1 px-3 font-bold uppercase tracking-wider text-center border border-cyan-500/20 text-xs text-cyan-400"
                       >
                         {hdr || `Col ${idx + 1}`}
                       </th>
                     ))}
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-300 dark:divide-zinc-700 text-xs sm:text-sm">
+                <tbody className="divide-y divide-cyan-500/10 text-xs sm:text-sm text-white">
                   {filteredRows.length === 0 ? (
                     <tr className="h-9">
                       <td
                         colSpan={Math.max(headers.length, 1)}
-                        className="py-4 text-center text-xs text-slate-400 italic border border-slate-300 dark:border-zinc-700"
+                        className="py-4 text-center text-xs text-white italic border border-cyan-500/20"
                       >
                         No safety violation records found matching "{searchQuery}"
                       </td>
@@ -172,10 +172,10 @@ export const SafetyViolationPage: React.FC<SafetyViolationPageProps> = ({
                         <tr
                           key={rIdx}
                           onClick={() => setSelectedRowIndex(isSelected ? null : rIdx)}
-                          className={`h-9 transition-colors cursor-pointer ${
+                          className={`h-9 transition-colors cursor-pointer select-none ${
                             isSelected
-                              ? 'bg-slate-200/80 dark:bg-slate-800 text-slate-900 dark:text-white font-semibold'
-                              : 'hover:bg-slate-50 dark:hover:bg-zinc-800/50 text-slate-700 dark:text-zinc-300'
+                              ? '!bg-cyan-600 !text-white font-bold [&>td]:!bg-cyan-600 [&>td]:!text-white [&>td]:!border-cyan-400/40 [&_*]:!text-white shadow-md'
+                              : 'hover:bg-cyan-950/40 text-white'
                           }`}
                         >
                           {row.map((cell, cIdx) => {
@@ -194,7 +194,7 @@ export const SafetyViolationPage: React.FC<SafetyViolationPageProps> = ({
                             return (
                               <td
                                 key={cIdx}
-                                className={`py-1.5 px-3 border border-slate-300 dark:border-zinc-700 leading-normal text-xs sm:text-sm ${
+                                className={`py-1.5 px-3 border border-cyan-500/20 leading-normal text-xs sm:text-sm text-white ${
                                   isCenterCol ? 'text-center' : 'text-left'
                                 }`}
                               >
@@ -206,13 +206,13 @@ export const SafetyViolationPage: React.FC<SafetyViolationPageProps> = ({
                                       const numVal = Number(cellStr);
                                       if (numVal > 0) {
                                         return (
-                                          <span className="inline-flex items-center px-2 py-0.5 rounded bg-red-100 text-red-800 dark:bg-red-950/60 dark:text-red-200 font-bold font-mono text-[11px] leading-tight">
+                                          <span className="inline-flex items-center px-2 py-0.5 rounded bg-slate-800 text-white border border-slate-700 font-bold font-mono text-[11px] leading-tight">
                                             {cellStr}
                                           </span>
                                         );
                                       } else {
                                         return (
-                                          <span className="font-mono font-medium text-slate-900 dark:text-zinc-100 text-xs">
+                                          <span className="font-mono font-medium text-white text-xs">
                                             {cellStr}
                                           </span>
                                         );
@@ -221,15 +221,15 @@ export const SafetyViolationPage: React.FC<SafetyViolationPageProps> = ({
                                     return (
                                       <span className={`inline-flex items-center px-2 py-0.5 rounded text-[11px] font-semibold leading-tight ${
                                         cellStr.toLowerCase() === 'closed'
-                                          ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/55 dark:text-emerald-400'
-                                          : 'bg-amber-100 text-amber-800 dark:bg-amber-950/55 dark:text-amber-400'
+                                          ? 'bg-slate-800 text-emerald-400 border border-emerald-500/30'
+                                          : 'bg-slate-800 text-amber-400 border border-amber-500/30'
                                       }`}>
                                         {cellStr || '-'}
                                       </span>
                                     );
                                   })()
                                 ) : isIdCol ? (
-                                  <span className="font-mono font-medium">
+                                  <span className="font-mono font-medium text-white">
                                     {(() => {
                                       const val = (cell || '').trim();
                                       if (!val || val === '-') return '-';
@@ -240,7 +240,7 @@ export const SafetyViolationPage: React.FC<SafetyViolationPageProps> = ({
                                     })()}
                                   </span>
                                 ) : isDemeritCol ? (
-                                  <span className="font-mono font-bold text-red-600 dark:text-red-400 text-xs bg-red-100/30 dark:bg-red-950/40 px-2 py-0.5 rounded border border-red-500/10">
+                                  <span className="font-mono font-bold text-red-400 text-xs bg-slate-800 px-2 py-0.5 rounded border border-red-500/30">
                                     {cell && cell.trim() !== '' && cell !== '-' ? cell : '-'}
                                   </span>
                                 ) : (
@@ -256,7 +256,7 @@ export const SafetyViolationPage: React.FC<SafetyViolationPageProps> = ({
                 </tbody>
               </table>
             </div>
-            <div className="p-3 bg-slate-50 dark:bg-zinc-900/60 border-t border-slate-200 dark:border-zinc-800 text-[9px] sm:text-[10px] text-slate-500 dark:text-slate-400 flex justify-end">
+            <div className="p-3 bg-slate-900/60 border-t border-cyan-500/20 text-[9px] sm:text-[10px] text-white flex justify-end">
               <span className="flex items-center gap-1">
                 <span className="inline-block w-2.5 h-2.5 bg-red-500/20 rounded border border-red-500"></span>
                 Click a row to highlight
@@ -267,32 +267,32 @@ export const SafetyViolationPage: React.FC<SafetyViolationPageProps> = ({
           {/* Secondary Table Section (DEMERIT K3:O37) */}
           {summaryTableData.length > 0 && (
             <div className="glass-card overflow-hidden mt-6">
-              <div className="p-4 bg-slate-50 dark:bg-zinc-900/80 border-b border-slate-200 dark:border-zinc-800 flex items-center justify-between">
-                <h3 className="text-sm font-extrabold text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-2">
-                  <span className="material-symbols-outlined text-amber-500 text-base">table_chart</span>
+              <div className="p-4 bg-slate-900/80 border-b border-cyan-500/20 flex items-center justify-between">
+                <h3 className="text-sm font-extrabold text-white uppercase tracking-wider flex items-center gap-2">
+                  <span className="material-symbols-outlined text-amber-400 text-base">table_chart</span>
                   <span>Safety Violation Summary & Demerit Matrix</span>
                 </h3>
               </div>
-              <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-slate-300 dark:scrollbar-thumb-zinc-700">
-                <table className="w-full border-collapse border border-slate-300 dark:border-zinc-700 text-left text-xs sm:text-sm whitespace-nowrap">
-                  <thead className="bg-slate-100 dark:bg-zinc-800/80 text-slate-800 dark:text-zinc-100 border-b border-slate-300 dark:border-zinc-700">
+              <div className="overflow-x-auto scrollbar-thin scrollbar-thumb-slate-700">
+                <table className="w-full border-collapse border border-cyan-500/20 text-left text-xs sm:text-sm whitespace-nowrap bg-transparent">
+                  <thead className="bg-slate-950/95 text-cyan-400 border-b-2 border-cyan-500/40">
                     <tr className="h-8">
                       {summaryHeaders.map((hdr, idx) => (
                         <th
                           key={idx}
-                          className="py-2 px-3 font-bold uppercase tracking-wider text-center border border-slate-300 dark:border-zinc-700 text-xs sm:text-sm"
+                          className="py-2 px-3 font-bold uppercase tracking-wider text-center border border-cyan-500/20 text-xs sm:text-sm text-cyan-400"
                         >
                           {hdr || `Col ${idx + 1}`}
                         </th>
                       ))}
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-300 dark:divide-zinc-700 text-xs sm:text-sm">
+                  <tbody className="divide-y divide-cyan-500/10 text-xs sm:text-sm text-white">
                     {filteredSummaryRows.length === 0 ? (
                       <tr className="h-9">
                         <td
                           colSpan={Math.max(summaryHeaders.length, 1)}
-                          className="py-4 text-center text-xs text-slate-400 italic border border-slate-300 dark:border-zinc-700"
+                          className="py-4 text-center text-xs text-white italic border border-cyan-500/20"
                         >
                           No summary records found matching "{searchQuery}"
                         </td>
@@ -304,10 +304,10 @@ export const SafetyViolationPage: React.FC<SafetyViolationPageProps> = ({
                           <tr
                             key={rIdx}
                             onClick={() => setSelectedSummaryRowIndex(isSelected ? null : rIdx)}
-                            className={`h-9 transition-colors cursor-pointer ${
+                            className={`h-9 transition-colors cursor-pointer select-none ${
                               isSelected
-                                ? 'bg-slate-200/80 dark:bg-slate-800 text-slate-900 dark:text-white font-semibold'
-                                : 'hover:bg-slate-50 dark:hover:bg-zinc-800/50 text-slate-700 dark:text-zinc-300'
+                                ? '!bg-cyan-600 !text-white font-bold [&>td]:!bg-cyan-600 [&>td]:!text-white [&>td]:!border-cyan-400/40 [&_*]:!text-white shadow-md'
+                                : 'hover:bg-cyan-950/40 text-white'
                             }`}
                           >
                             {row.map((cell, cIdx) => {
@@ -322,28 +322,28 @@ export const SafetyViolationPage: React.FC<SafetyViolationPageProps> = ({
                               return (
                                 <td
                                   key={cIdx}
-                                  className={`py-1.5 px-3 border border-slate-300 dark:border-zinc-700 leading-normal text-xs sm:text-sm ${
+                                  className={`py-1.5 px-3 border border-cyan-500/20 leading-normal text-xs sm:text-sm text-white ${
                                     isCenterCol ? 'text-center' : 'text-left'
                                   }`}
                                 >
                                   {isCodeCol ? (
-                                    <span className="font-mono font-bold text-slate-900 dark:text-slate-100 bg-slate-200/60 dark:bg-slate-800 px-2 py-0.5 rounded border border-slate-300 dark:border-slate-700">
+                                    <span className="font-mono font-bold text-white bg-slate-800 px-2 py-0.5 rounded border border-slate-700">
                                       {cellTrimmed || '-'}
                                     </span>
                                   ) : isCategoryCol ? (
                                     <span className={`inline-block px-2 py-0.5 rounded text-xs font-semibold uppercase ${
-                                      cellTrimmed.toLowerCase().includes('kritikal')
-                                        ? 'bg-rose-100 text-rose-800 dark:bg-rose-950/60 dark:text-rose-300 border border-rose-500/20'
-                                        : cellTrimmed.toLowerCase().includes('serius')
-                                        ? 'bg-orange-100 text-orange-800 dark:bg-orange-950/60 dark:text-orange-300 border border-orange-500/20'
-                                        : cellTrimmed.toLowerCase().includes('sederhana')
-                                        ? 'bg-amber-100 text-amber-800 dark:bg-amber-950/60 dark:text-amber-300 border border-amber-500/20'
-                                        : 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300 border border-emerald-500/20'
+                                      cellTrimmed.toLowerCase().includes('kritikal') || cellTrimmed.toLowerCase().includes('critical')
+                                        ? 'bg-rose-950/60 text-rose-300 border border-rose-500/30'
+                                        : cellTrimmed.toLowerCase().includes('serius') || cellTrimmed.toLowerCase().includes('serious')
+                                        ? 'bg-orange-950/60 text-orange-300 border border-orange-500/30'
+                                        : cellTrimmed.toLowerCase().includes('sederhana') || cellTrimmed.toLowerCase().includes('moderate')
+                                        ? 'bg-amber-950/60 text-amber-300 border border-amber-500/30'
+                                        : 'bg-emerald-950/60 text-emerald-300 border border-emerald-500/30'
                                     }`}>
                                       {cellTrimmed || '-'}
                                     </span>
                                   ) : isDemeritCol ? (
-                                    <span className="font-mono font-bold text-red-600 dark:text-red-400 text-xs bg-red-100/30 dark:bg-red-950/40 px-2 py-0.5 rounded border border-red-500/10">
+                                    <span className="font-mono font-bold text-red-400 text-xs bg-slate-800 px-2 py-0.5 rounded border border-red-500/30">
                                       {cellTrimmed || '-'}
                                     </span>
                                   ) : (

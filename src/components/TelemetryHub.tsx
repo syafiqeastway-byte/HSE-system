@@ -143,21 +143,60 @@ export const TelemetryHub: React.FC<TelemetryHubProps> = ({ onNavigateMinuteMeet
     return 'wb_cloudy';
   };
 
+  const getDaysRemaining = (dateStr: string): string => {
+    if (!dateStr || dateStr.includes('--')) return '';
+    try {
+      let meetingDate: Date | null = null;
+      const parts = dateStr.trim().split(/[/.-]/);
+      if (parts.length === 3) {
+        if (parts[0].length === 4) {
+          meetingDate = new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10));
+        } else {
+          meetingDate = new Date(parseInt(parts[2], 10), parseInt(parts[1], 10) - 1, parseInt(parts[0], 10));
+        }
+      } else {
+        meetingDate = new Date(dateStr);
+      }
+
+      if (!meetingDate || isNaN(meetingDate.getTime())) return '';
+
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      meetingDate.setHours(0, 0, 0, 0);
+
+      const diffTime = meetingDate.getTime() - today.getTime();
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+      if (diffDays > 1) {
+        return `(${diffDays} DAYS LEFT)`;
+      } else if (diffDays === 1) {
+        return `(TOMORROW)`;
+      } else if (diffDays === 0) {
+        return `(TODAY)`;
+      } else {
+        const pastDays = Math.abs(diffDays);
+        return `(${pastDays} DAYS AGO)`;
+      }
+    } catch {
+      return '';
+    }
+  };
+
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4 mb-6">
       
       {/* 1. Real-Time System Clock */}
       <div className="bg-blue-500/10 border border-blue-500/30 rounded-2xl px-3.5 py-2.5 sm:px-4 sm:py-3 min-h-20 flex items-center justify-between backdrop-blur-md">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-blue-500/20 text-blue-400 flex items-center justify-center flex-shrink-0 border border-blue-500/30">
+          <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-slate-800/80 text-slate-200 flex items-center justify-center flex-shrink-0 border border-slate-700/50">
             <span className="material-symbols-outlined text-xl sm:text-2xl">schedule</span>
           </div>
           <div>
-            <div className="flex items-center gap-1.5 text-xs font-bold text-blue-400 uppercase tracking-wider">
+            <div className="flex items-center gap-1.5 text-xs font-bold text-white uppercase tracking-wider">
               <span>DATE/TIME</span>
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
             </div>
-            <div className="text-xs sm:text-sm font-bold text-black dark:text-white mt-0.5 tracking-tight">
+            <div className="text-xs sm:text-sm font-bold text-white mt-0.5 tracking-tight">
               {timeStr}
             </div>
           </div>
@@ -167,33 +206,33 @@ export const TelemetryHub: React.FC<TelemetryHubProps> = ({ onNavigateMinuteMeet
       {/* 2. Live Weather Widget (Kuala Lumpur, Pulau Pinang) */}
       <div className="bg-cyan-500/10 border border-cyan-500/30 rounded-2xl px-3.5 py-2 sm:px-4 sm:py-2.5 min-h-20 flex items-center justify-between backdrop-blur-md">
         <div className="flex items-center gap-3 w-full">
-          <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-cyan-500/20 text-cyan-400 flex items-center justify-center flex-shrink-0 border border-cyan-500/30">
+          <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-slate-800/80 text-white flex items-center justify-center flex-shrink-0 border border-slate-700/50">
             <span className="material-symbols-outlined text-xl sm:text-2xl">thermostat</span>
           </div>
           <div className="flex-1 min-w-0">
-            <div className="text-xs font-bold text-cyan-400 uppercase tracking-wider flex items-center gap-1">
+            <div className="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-1">
               <span>LIVE SITE WEATHER</span>
               {loadingWeather && <span className="material-symbols-outlined text-[10px] animate-spin">sync</span>}
             </div>
             
             <div className="flex flex-col gap-0.5 mt-0.5">
               {/* KUALA LUMPUR Weather */}
-              <div className="flex items-center justify-between text-xs sm:text-sm font-bold text-black dark:text-white">
-                <span className="truncate">KUALA LUMPUR:</span>
+              <div className="flex items-center justify-between text-xs sm:text-sm font-bold text-white">
+                <span className="truncate text-white">KUALA LUMPUR:</span>
                 <span className="flex items-center gap-1 flex-shrink-0 ml-1">
                   <span>{weather.tempKL}°C</span>
-                  <span className="material-symbols-outlined text-black dark:text-white text-base" title={weather.weatherKL}>
+                  <span className="material-symbols-outlined text-white text-base" title={weather.weatherKL}>
                     {getWeatherIcon(weather.weatherKL)}
                   </span>
                 </span>
               </div>
               
               {/* PULAU PINANG Weather */}
-              <div className="flex items-center justify-between text-xs sm:text-sm font-bold text-black dark:text-white">
-                <span className="truncate">PULAU PINANG:</span>
+              <div className="flex items-center justify-between text-xs sm:text-sm font-bold text-white">
+                <span className="truncate text-white">PULAU PINANG:</span>
                 <span className="flex items-center gap-1 flex-shrink-0 ml-1">
                   <span>{weather.tempPenang}°C</span>
-                  <span className="material-symbols-outlined text-black dark:text-white text-base" title={weather.weatherPenang}>
+                  <span className="material-symbols-outlined text-white text-base" title={weather.weatherPenang}>
                     {getWeatherIcon(weather.weatherPenang)}
                   </span>
                 </span>
@@ -206,20 +245,20 @@ export const TelemetryHub: React.FC<TelemetryHubProps> = ({ onNavigateMinuteMeet
       {/* 3. Incident Counter Card */}
       <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-2xl px-3.5 py-2.5 sm:px-4 sm:py-3 min-h-20 flex items-center justify-between backdrop-blur-md animate-pulse-glow">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center flex-shrink-0 border border-emerald-500/30">
+          <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-slate-800/80 text-white flex items-center justify-center flex-shrink-0 border border-slate-700/50">
             <span className="material-symbols-outlined text-xl sm:text-2xl">verified_user</span>
           </div>
           <div>
-            <div className="text-xs font-bold text-emerald-400 uppercase tracking-wider">
+            <div className="text-xs font-bold text-white uppercase tracking-wider">
               DAYS WITHOUT INCIDENT
             </div>
-            <div className="text-xs sm:text-sm font-bold text-black dark:text-white flex items-baseline gap-1.5 mt-0.5">
+            <div className="text-xs sm:text-sm font-bold text-white flex items-baseline gap-1.5 mt-0.5">
               {loadingDays ? (
                 <span>--</span>
               ) : (
                 <span>{daysCount}</span>
               )}
-              <span className="uppercase tracking-wider">
+              <span className="uppercase tracking-wider text-white">
                 DAYS SAFE
               </span>
             </div>
@@ -230,33 +269,31 @@ export const TelemetryHub: React.FC<TelemetryHubProps> = ({ onNavigateMinuteMeet
       {/* 4. JKK Meeting Card (Placed beside DAYS WITHOUT INCIDENT) */}
       <div 
         onClick={onNavigateMinuteMeetings}
-        className={`bg-purple-500/10 border border-purple-500/30 rounded-2xl px-3.5 py-2.5 sm:px-4 sm:py-3 min-h-20 flex items-center justify-between backdrop-blur-md transition-all ${
-          onNavigateMinuteMeetings ? 'cursor-pointer hover:scale-[1.02] hover:border-purple-500/50 hover:bg-purple-500/15 active:scale-[0.98]' : ''
+        className={`bg-sky-500/10 border border-sky-500/30 rounded-2xl px-3.5 py-2.5 sm:px-4 sm:py-3 min-h-20 flex items-center justify-between backdrop-blur-md transition-all ${
+          onNavigateMinuteMeetings ? 'cursor-pointer hover:scale-[1.02] hover:border-sky-500/50 hover:bg-sky-500/15 active:scale-[0.98]' : ''
         }`}
         title={onNavigateMinuteMeetings ? "Click to view JKK Minute Meetings" : undefined}
       >
         <div className="flex items-center gap-3 w-full">
-          <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-purple-500/20 text-purple-400 flex items-center justify-center flex-shrink-0 border border-purple-500/30">
+          <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-slate-800/80 text-white flex items-center justify-center flex-shrink-0 border border-slate-700/50">
             <span className="material-symbols-outlined text-xl sm:text-2xl">groups</span>
           </div>
           <div className="flex-1 min-w-0">
-            <div className="text-xs font-bold text-purple-400 uppercase tracking-wider flex items-center justify-between">
+            <div className="text-xs font-bold text-white uppercase tracking-wider flex items-center justify-between">
               <span>NEXT JKK MEETING</span>
               {loadingJkk && <span className="material-symbols-outlined text-[10px] animate-spin">sync</span>}
             </div>
-            <div className="text-xs sm:text-sm font-bold text-black dark:text-white mt-0.5 tracking-tight flex items-center justify-between">
+            <div className="text-xs sm:text-sm font-bold text-white mt-0.5 tracking-tight flex items-center justify-between">
               {loadingJkk ? (
                 <span>--/--/----</span>
               ) : (
                 <span>{jkkMeeting.date}</span>
               )}
-              {jkkMeeting.location && (
-                <span className="text-xs sm:text-sm font-bold text-black dark:text-white ml-1">
-                  ({jkkMeeting.location})
-                </span>
-              )}
+              <span className="text-xs sm:text-sm font-bold text-white ml-1">
+                {getDaysRemaining(jkkMeeting.date)}
+              </span>
             </div>
-            <div className="text-xs sm:text-sm font-bold text-black dark:text-white truncate mt-0.5">
+            <div className="text-xs sm:text-sm font-bold text-white truncate mt-0.5">
               <span>{jkkMeeting.meetingTitle || 'LATEST SESSION'}</span>
             </div>
           </div>

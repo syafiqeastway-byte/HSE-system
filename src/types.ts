@@ -7,44 +7,7 @@ export type PageType =
   | 'hirarcPage' 
   | 'sopPage' 
   | 'allIncidentsPage' 
-  | 'safetyViolationPage'
-  | 'firstAidKitPage';
-
-export interface FirstAidKit {
-  id: string;
-  kit_code: string;
-  kit_name: string;
-  location: string;
-  is_active: boolean;
-  created_at?: string;
-  updated_at?: string;
-  items?: FirstAidItem[];
-}
-
-export interface FirstAidItem {
-  id: string;
-  kit_id: string;
-  item_name: string;
-  quantity: number;
-  min_quantity: number;
-  unit?: string;
-  created_at?: string;
-  updated_at?: string;
-}
-
-export interface FirstAidUsageLog {
-  id: string;
-  kit_id: string;
-  item_id: string;
-  kit_name?: string;
-  item_name?: string;
-  quantity_used: number;
-  remaining_quantity?: number;
-  taken_by: string;
-  purpose?: string;
-  created_at: string;
-}
-
+  | 'safetyViolationPage';
 
 export interface SOPItem {
   id: string;

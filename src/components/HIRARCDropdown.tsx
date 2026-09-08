@@ -72,9 +72,9 @@ export const HIRARCDropdown: React.FC<HIRARCDropdownProps> = ({ onSelectHIRARC }
       </button>
 
       {isOpen && (
-        <div className="absolute left-0 right-0 top-full mt-2 z-40 rounded-2xl bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 shadow-2xl overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
+        <div className="absolute left-0 right-0 top-full mt-2 z-40 rounded-2xl bg-slate-900 border border-cyan-500/30 shadow-2xl overflow-hidden animate-in fade-in slide-in-from-top-2 duration-200">
           
-          <div className="p-3 border-b border-slate-200 dark:border-zinc-800 bg-slate-50 dark:bg-zinc-950/80">
+          <div className="p-3 border-b border-cyan-500/20 bg-slate-950/80">
             <div className="relative">
               <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-lg">
                 search
@@ -84,14 +84,14 @@ export const HIRARCDropdown: React.FC<HIRARCDropdownProps> = ({ onSelectHIRARC }
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 placeholder="Search 25 HIRARCs by activity or location..."
-                className="w-full pl-9 pr-9 py-2 rounded-xl bg-white dark:bg-zinc-800 border border-slate-200 dark:border-zinc-700 text-xs sm:text-sm text-slate-800 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-amber-500"
+                className="w-full pl-9 pr-9 py-2 rounded-xl bg-slate-800 border border-cyan-500/20 text-xs sm:text-sm text-white focus:outline-none focus:ring-2 focus:ring-amber-500"
                 autoFocus
               />
               {searchTerm && (
                 <button
                   type="button"
                   onClick={() => setSearchTerm('')}
-                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 p-0.5 rounded-full"
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white p-0.5 rounded-full"
                   title="Clear search"
                 >
                   <span className="material-symbols-outlined text-base">close</span>
@@ -100,9 +100,9 @@ export const HIRARCDropdown: React.FC<HIRARCDropdownProps> = ({ onSelectHIRARC }
             </div>
           </div>
 
-          <div className="max-h-80 overflow-y-auto divide-y divide-slate-100 dark:divide-zinc-800/80">
+          <div className="max-h-80 overflow-y-auto divide-y divide-cyan-500/10">
             {filteredHIRARCs.length === 0 ? (
-              <div className="p-4 text-center text-xs text-slate-500 dark:text-zinc-400">
+              <div className="p-4 text-center text-xs text-slate-400">
                 No HIRARC evaluation found matching "{searchTerm}"
               </div>
             ) : (
@@ -110,18 +110,18 @@ export const HIRARCDropdown: React.FC<HIRARCDropdownProps> = ({ onSelectHIRARC }
                 <button
                   key={item.id}
                   onClick={() => handleSelect(item)}
-                  className="w-full text-left p-3 hover:bg-amber-50/50 dark:hover:bg-zinc-800/80 transition-colors flex items-start justify-between gap-3 group"
+                  className="w-full text-left p-3 hover:bg-cyan-950/40 transition-colors flex items-start justify-between gap-3 group"
                 >
                   <div className="flex-1">
                     <div className="flex items-center gap-2">
-                      <span className="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-zinc-800 text-slate-600 dark:text-zinc-300 text-[9px] sm:text-[10px] font-mono font-bold">
+                      <span className="px-1.5 py-0.5 rounded bg-cyan-950/80 border border-cyan-500/20 text-cyan-200 text-[9px] sm:text-[10px] font-mono font-bold">
                         {item.code}
                       </span>
-                      <span className="text-xs font-bold text-slate-800 dark:text-zinc-100 group-hover:text-amber-600 dark:group-hover:text-amber-400">
+                      <span className="text-xs font-bold text-white group-hover:text-amber-400">
                         {item.activityName}
                       </span>
                     </div>
-                    <p className="text-[11px] text-slate-500 dark:text-zinc-400 mt-0.5 line-clamp-1">
+                    <p className="text-[11px] text-slate-400 mt-0.5 line-clamp-1">
                       Location: {item.location} • Control: {item.controlMeasures}
                     </p>
                   </div>

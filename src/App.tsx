@@ -15,7 +15,6 @@ import { ExportGasModal } from './components/ExportGasModal';
 import { SupabaseModal } from './components/SupabaseModal';
 import { AllIncidentsPage } from './components/AllIncidentsPage';
 import { SafetyViolationPage } from './components/SafetyViolationPage';
-import { FirstAidKitPage } from './components/FirstAidKitPage';
 import { PWAInstallModal } from './components/PWAInstallModal';
 
 import { formatToPreviewUrl } from './utils/formatDriveUrl';
@@ -24,8 +23,8 @@ export default function App() {
   const [showSplash, setShowSplash] = useState(false);
   const [activePage, setActivePage] = useState<PageType>('homePage');
   
-  // Theme State
-  const [isDarkMode, setIsDarkMode] = useState<boolean>(false);
+  // Theme State (Default to original dark purple theme)
+  const [isDarkMode, setIsDarkMode] = useState<boolean>(true);
 
   // Document Viewer Context
   const [docViewContext, setDocViewContext] = useState<DocumentViewContext | null>(null);
@@ -44,8 +43,8 @@ export default function App() {
   
   // Sync Theme with HTML element
   useEffect(() => {
-    document.documentElement.classList.remove('dark');
-    localStorage.setItem('theme', 'light');
+    document.documentElement.classList.add('dark');
+    localStorage.setItem('theme', 'dark');
   }, []);
 
   // Listen for PWA BeforeInstallPrompt and AppInstalled events
@@ -126,7 +125,6 @@ export default function App() {
               onNavigateSOP={() => setActivePage('sopPage')}
               onOpenAllIncidentsModal={() => setActivePage('allIncidentsPage')}
               onNavigateSafetyViolation={() => setActivePage('safetyViolationPage')}
-              onNavigateFirstAidKit={() => setActivePage('firstAidKitPage')}
               isDarkMode={isDarkMode}
               onOpenPWAInstall={() => setPwaModalOpen(true)}
               isPwaInstalled={isPwaInstalled}
@@ -136,17 +134,23 @@ export default function App() {
 
           {activePage === 'analyticsPage' && (
             <div className="space-y-6">
-              <div className="glass-card p-4 flex items-center justify-between">
+              <div className="glass-card p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                 <div className="flex items-center gap-3">
                   <button
                     onClick={() => setActivePage('homePage')}
-                    className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 transition-colors"
+                    className="p-2 rounded-xl bg-slate-800 text-white hover:bg-slate-700 transition-colors border border-cyan-500/20"
                   >
                     <span className="material-symbols-outlined text-xl">arrow_back</span>
                   </button>
-                  <h2 className="text-xl font-extrabold text-slate-900 dark:text-white">
-                    INCIDENT ANALYTICS DEEP-DIVE
-                  </h2>
+                  <div>
+                    <h2 className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
+                      <span className="material-symbols-outlined text-white">analytics</span>
+                      <span>INCIDENT ANALYTICS DEEP-DIVE</span>
+                    </h2>
+                    <p className="text-xs text-white">
+                      Comprehensive Incident Records & Historical Trends
+                    </p>
+                  </div>
                 </div>
               </div>
               <IncidentChartsAndTables
@@ -194,18 +198,11 @@ export default function App() {
               onBackToHome={() => setActivePage('homePage')}
             />
           )}
-
-          {activePage === 'firstAidKitPage' && (
-            <FirstAidKitPage
-              onBackToHome={() => setActivePage('homePage')}
-              isDarkMode={isDarkMode}
-            />
-          )}
         </main>
 
         {/* Footer */}
-        <footer className="mt-8 py-6 border-t border-slate-200 dark:border-slate-800/80 text-center text-xs text-slate-500 dark:text-slate-400">
-          <p className="font-semibold text-slate-700 dark:text-slate-300">
+        <footer className="mt-8 py-6 border-t border-slate-800/80 text-center text-xs">
+          <p className="font-semibold text-slate-300">
             © 2026 Eastway Engineering Sdn. Bhd. All Rights Reserved.
           </p>
         </footer>

@@ -23,7 +23,7 @@ export const Header: React.FC<HeaderProps> = ({
   canInstallPwa = false,
 }) => {
   return (
-    <header className="bg-white/90 dark:bg-zinc-900/90 backdrop-blur-md border border-slate-200/80 dark:border-zinc-800 rounded-2xl p-3.5 sm:p-4 lg:p-5 mb-6 shadow-xl transition-all">
+    <header className="bg-slate-900/80 backdrop-blur-md border border-cyan-500/25 rounded-2xl p-3.5 sm:p-4 lg:p-5 mb-6 shadow-xl transition-all">
       <div className="flex flex-col xl:flex-row items-center justify-between gap-4">
         
         {/* Company Title & Brand Icon */}
@@ -40,10 +40,10 @@ export const Header: React.FC<HeaderProps> = ({
               />
             </div>
             <div>
-              <h1 className="text-xl sm:text-2xl font-black tracking-tight text-slate-900 dark:text-white uppercase leading-tight whitespace-nowrap">
+              <h1 className="text-xl sm:text-2xl font-black tracking-tight text-white uppercase leading-tight whitespace-nowrap">
                 EASTWAY ENGINEERING 
               </h1>
-              <p className="text-[11px] sm:text-xs text-slate-500 dark:text-zinc-400 font-bold tracking-[0.12em] sm:tracking-[0.15em] uppercase">
+              <p className="text-[11px] sm:text-xs text-white font-bold tracking-[0.12em] sm:tracking-[0.15em] uppercase">
                 HSE Integrated Management System
               </p>
             </div>
@@ -58,7 +58,7 @@ export const Header: React.FC<HeaderProps> = ({
               className={`px-3 py-2 sm:px-3.5 sm:py-2.5 rounded-xl text-xs sm:text-sm font-bold uppercase tracking-wider flex items-center gap-1.5 sm:gap-2 transition-all whitespace-nowrap flex-shrink-0 ${
                 activePage === 'homePage'
                   ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
-                  : 'text-slate-600 dark:text-zinc-300 hover:bg-slate-100/80 dark:hover:bg-zinc-800/80'
+                  : 'text-white hover:bg-cyan-950/40 hover:text-white'
               }`}
             >
               <span className="material-symbols-outlined text-lg sm:text-xl">dashboard</span>
@@ -70,7 +70,7 @@ export const Header: React.FC<HeaderProps> = ({
               className={`px-3 py-2 sm:px-3.5 sm:py-2.5 rounded-xl text-xs sm:text-sm font-bold uppercase tracking-wider flex items-center gap-1.5 sm:gap-2 transition-all whitespace-nowrap flex-shrink-0 ${
                 activePage === 'analyticsPage'
                   ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
-                  : 'text-slate-600 dark:text-zinc-300 hover:bg-slate-100/80 dark:hover:bg-zinc-800/80'
+                  : 'text-white hover:bg-cyan-950/40 hover:text-white'
               }`}
             >
               <span className="material-symbols-outlined text-lg sm:text-xl">analytics</span>
@@ -82,7 +82,7 @@ export const Header: React.FC<HeaderProps> = ({
               className={`px-3 py-2 sm:px-3.5 sm:py-2.5 rounded-xl text-xs sm:text-sm font-bold uppercase tracking-wider flex items-center gap-1.5 sm:gap-2 transition-all whitespace-nowrap flex-shrink-0 ${
                 activePage === 'minuteMeetingPage'
                   ? 'bg-blue-600 text-white shadow-md shadow-blue-600/30'
-                  : 'text-slate-600 dark:text-zinc-300 hover:bg-slate-100/80 dark:hover:bg-zinc-800/80'
+                  : 'text-white hover:bg-cyan-950/40 hover:text-white'
               }`}
             >
               <span className="material-symbols-outlined text-lg sm:text-xl">description</span>
@@ -90,23 +90,11 @@ export const Header: React.FC<HeaderProps> = ({
             </button>
 
             <button
-              onClick={() => setActivePage('firstAidKitPage')}
-              className={`px-3 py-2 sm:px-3.5 sm:py-2.5 rounded-xl text-xs sm:text-sm font-bold uppercase tracking-wider flex items-center gap-1.5 sm:gap-2 transition-all whitespace-nowrap flex-shrink-0 ${
-                activePage === 'firstAidKitPage'
-                  ? 'bg-emerald-600 text-white shadow-md shadow-emerald-600/30'
-                  : 'text-slate-600 dark:text-zinc-300 hover:bg-slate-100/80 dark:hover:bg-zinc-800/80'
-              }`}
-            >
-              <span className="material-symbols-outlined text-lg sm:text-xl">medical_services</span>
-              <span>First Aid Kits</span>
-            </button>
-
-            <button
               onClick={() => setActivePage('emergencyPlanPage')}
               className={`px-3 py-2 sm:px-3.5 sm:py-2.5 rounded-xl text-xs sm:text-sm font-bold uppercase tracking-wider flex items-center gap-1.5 sm:gap-2 transition-all whitespace-nowrap flex-shrink-0 ${
                 activePage === 'emergencyPlanPage'
                   ? 'bg-red-600 text-white shadow-md shadow-red-600/30'
-                  : 'text-slate-600 dark:text-zinc-300 hover:bg-slate-100/80 dark:hover:bg-zinc-800/80'
+                  : 'text-white hover:bg-cyan-950/40 hover:text-white'
               }`}
             >
               <span className="material-symbols-outlined text-lg sm:text-xl">e911_emergency</span>
@@ -119,10 +107,10 @@ export const Header: React.FC<HeaderProps> = ({
             {onRefreshData && (
               <button
                 onClick={onRefreshData}
-                className="p-2.5 rounded-xl border border-slate-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 text-slate-700 dark:text-zinc-300 hover:bg-slate-100 dark:hover:bg-zinc-800 transition-colors shadow-sm"
+                className="p-2.5 rounded-xl border border-cyan-500/30 bg-slate-900/80 text-white hover:bg-cyan-950/40 hover:text-white transition-colors shadow-sm"
                 title="Refresh Telemetry Data"
               >
-                <span className="material-symbols-outlined text-xl">refresh</span>
+                <span className="material-symbols-outlined text-xl text-white">refresh</span>
               </button>
             )}
           </div>
