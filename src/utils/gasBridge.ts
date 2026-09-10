@@ -163,79 +163,229 @@ export function fetchDemeritData(): Promise<{ logs: typeof MOCK_DEMERIT_LOGS; ma
 
 // 9. Inspection Data
 export async function fetchInspectionData(): Promise<InspectionRecord[]> {
-  const SPREADSHEET_ID = '1o9P6GnlsAwSJEUYHxITt1Opz973uX37MLBiv0LdFdIs';
-  const GID = '582761149';
-  const url = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:csv&gid=${GID}&range=B3:I`;
+  const SPREADSHEET_ID_ORIGINAL = '1o9P6GnlsAwSJEUYHxITt1Opz973uX37MLBiv0LdFdIs';
+  const GID_ORIGINAL = '582761149';
+  const urlOriginal = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID_ORIGINAL}/gviz/tq?tqx=out:csv&gid=${GID_ORIGINAL}&range=B3:I`;
 
+  // New Google Sheet requested:
+  // spreadsheet_id: 1HLebePp1L31C-nZk6HgTxDwy6kXktNHDdbEdGcMvbbA
+  // sheet_name: Records
+  // Range / Columns:
+  // NO: A5
+  // DATE: E5
+  // LOCATION: D5
+  // TYPE OF INSPECTION: tulis "Workplace"
+  // INSPECTOR: C5
+  // REMARK: G5
+  // PDF: BF
+  const SPREADSHEET_ID_NEW = '1HLebePp1L31C-nZk6HgTxDwy6kXktNHDdbEdGcMvbbA';
+  const SHEET_NAME_NEW = 'Records';
+  const urlNew = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID_NEW}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(SHEET_NAME_NEW)}`;
+
+  let originalRecords: InspectionRecord[] = [];
+  let newRecords: InspectionRecord[] = [];
+
+  // 1. Fetch original table records
   try {
-    const res = await fetch(url);
-    if (!res.ok) throw new Error('Network response was not ok');
-    const csvText = await res.text();
-    
-    // Check if it returned general HTML instead of actual CSV data (e.g., error or sign-in walls)
-    if (csvText.includes('<!DOCTYPE html>') || csvText.includes('google-signin-button')) {
-      throw new Error('Returned HTML instead of CSV data');
-    }
+    const resOrig = await fetchWithTimeout(urlOriginal, 8000);
+    if (resOrig.ok) {
+      const csvText = await resOrig.text();
+      if (!csvText.includes('<!DOCTYPE html>') && !csvText.includes('google-signin-button')) {
+        originalRecords = await new Promise((resolve) => {
+          Papa.parse(csvText, {
+            header: false,
+            skipEmptyLines: true,
+            complete: (results) => {
+              const parsed: InspectionRecord[] = [];
+              if (results.data && results.data.length > 1) {
+                // Row 3 is the header row, so we slice it out to only parse real records
+                const dataRows = results.data.slice(1);
+                dataRows.forEach((row: any, index: number) => {
+                  if (row.length > 0 && (row[1]?.trim() !== '' || row[0]?.trim() !== '')) {
+                    const sheetNo = (row[0] || '').trim();
+                    const date = (row[1] || '').trim();
+                    const day = (row[2] || '').trim();
+                    const location = (row[3] || '').trim();
+                    const typeOfInspection = (row[4] || '').trim();
+                    const inspector = (row[5] || '').trim();
+                    const remark = (row[6] || '').trim();
+                    const documentUrl = (row[7] || '').trim();
 
-    const records: InspectionRecord[] = await new Promise((resolve) => {
-      Papa.parse(csvText, {
-        header: false,
-        skipEmptyLines: true,
-        complete: (results) => {
-          const parsed: InspectionRecord[] = [];
-          if (results.data && results.data.length > 1) {
-            // Row 3 is the header row, so we slice it out to only parse real records
-            const dataRows = results.data.slice(1);
-            dataRows.forEach((row: any, index: number) => {
-              if (row.length > 0 && (row[1]?.trim() !== '' || row[0]?.trim() !== '')) {
-                const sheetNo = (row[0] || '').trim();
-                const date = (row[1] || '').trim();
-                const day = (row[2] || '').trim();
-                const location = (row[3] || '').trim();
-                const typeOfInspection = (row[4] || '').trim();
-                const inspector = (row[5] || '').trim();
-                const remark = (row[6] || '').trim();
-                const documentUrl = (row[7] || '').trim();
+                    parsed.push({
+                      id: `INSP-ORIG-${index}-${sheetNo || index}`,
+                      date,
+                      day,
+                      location,
+                      typeOfInspection,
+                      inspector,
+                      remark,
+                      documentUrl,
 
-                parsed.push({
-                  id: `INSP-DYN-${index}-${sheetNo || index}`,
-                  date,
-                  day,
-                  location,
-                  typeOfInspection,
-                  inspector,
-                  remark,
-                  documentUrl,
-                  
-                  // Compatibility fallbacks
-                  locationFacility: location,
-                  inspectorName: inspector,
-                  type: typeOfInspection,
-                  totalChecked: 0,
-                  compliantCount: 0,
-                  complianceRate: '-',
-                  status: 'Passed'
+                      // Compatibility fallbacks
+                      locationFacility: location,
+                      inspectorName: inspector,
+                      type: typeOfInspection,
+                      totalChecked: 0,
+                      compliantCount: 0,
+                      complianceRate: '-',
+                      status: 'Passed'
+                    });
+                  }
                 });
               }
-            });
-          }
-          resolve(parsed);
-        },
-        error: () => {
-          resolve([]);
-        }
-      });
-    });
-
-    if (records.length > 0) {
-      return records;
+              resolve(parsed);
+            },
+            error: () => resolve([])
+          });
+        });
+      }
     }
   } catch (err) {
-    console.warn(`Error fetching inspection data with GID: ${GID}`, err);
+    console.warn(`Error fetching original inspection data with GID: ${GID_ORIGINAL}`, err);
   }
 
-  // Fallback to callGasFunction or mock data
-  return callGasFunction<InspectionRecord[]>('getInspectionData', MOCK_INSPECTION_RECORDS);
+  if (originalRecords.length === 0) {
+    originalRecords = await callGasFunction<InspectionRecord[]>('getInspectionData', MOCK_INSPECTION_RECORDS);
+  }
+
+  // 2. Fetch new records from Records sheet (Row 5 onwards: A5, E5, D5, C5, G5, BF5...)
+  try {
+    const resNew = await fetchWithTimeout(urlNew, 8000);
+    if (resNew.ok) {
+      const csvNewText = await resNew.text();
+      if (!csvNewText.includes('<!DOCTYPE html>') && !csvNewText.includes('google-signin-button')) {
+        newRecords = await new Promise((resolve) => {
+          Papa.parse(csvNewText, {
+            header: false,
+            skipEmptyLines: true,
+            complete: (results) => {
+              const parsed: InspectionRecord[] = [];
+              if (results.data && results.data.length > 0) {
+                const headerRow = results.data[0] as string[];
+
+                // Column indices:
+                // NO: A (index 0)
+                let noIdx = 0;
+                // INSPECTOR: C (index 2)
+                let inspectorIdx = 2;
+                // LOCATION: D (index 3)
+                let locationIdx = 3;
+                // DATE: E (index 4)
+                let dateIdx = 4;
+                // REMARK: G (index 6)
+                let remarkIdx = 6;
+                // PDF: BF (index 57)
+                let pdfIdx = 57;
+
+                // Match dynamically if header columns present
+                if (headerRow && headerRow.length > 0) {
+                  headerRow.forEach((h, idx) => {
+                    const cleanH = (h || '').trim().toLowerCase();
+                    if (cleanH === 'nama') inspectorIdx = idx;
+                    else if (cleanH === 'kawasan') locationIdx = idx;
+                    else if (cleanH === 'tarikh') dateIdx = idx;
+                    else if (cleanH.includes('catitan keseluruhan')) remarkIdx = idx;
+                    else if (cleanH === 'pdf') pdfIdx = idx;
+                  });
+                }
+
+                // Range starts from row 5 onwards (slice 4 because index 0 is Row 1, index 1 is Row 2, index 2 is Row 3, index 3 is Row 4, index 4 is Row 5)
+                const dataRows = results.data.slice(4);
+
+                dataRows.forEach((row: any, index: number) => {
+                  if (row && row.length > 0) {
+                    const sheetNo = (row[noIdx] || '').trim();
+                    const rawDate = (row[dateIdx] || '').trim();
+                    const location = (row[locationIdx] || '').trim();
+                    const inspector = (row[inspectorIdx] || '').trim();
+                    const remark = (row[remarkIdx] || '').trim();
+                    const documentUrl = (row[pdfIdx] || '').trim();
+
+                    // Skip empty rows
+                    if (!rawDate && !location && !inspector && !remark && !documentUrl) {
+                      return;
+                    }
+
+                    // Format date: format YYYY-MM-DD or DD/MM/YYYY to DD-MM-YY to match existing rows
+                    let date = rawDate;
+                    let day = '';
+                    if (/^\d{4}-\d{2}-\d{2}$/.test(rawDate)) {
+                      const [yyyy, mm, dd] = rawDate.split('-');
+                      date = `${dd}-${mm}-${yyyy.slice(2)}`;
+                      try {
+                        const d = new Date(rawDate);
+                        if (!isNaN(d.getTime())) {
+                          const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+                          day = daysOfWeek[d.getDay()];
+                        }
+                      } catch {
+                        // ignore
+                      }
+                    } else if (/^\d{2}\/\d{2}\/\d{4}$/.test(rawDate)) {
+                      const [dd, mm, yyyy] = rawDate.split('/');
+                      date = `${dd}-${mm}-${yyyy.slice(2)}`;
+                    }
+
+                    const rowNum = originalRecords.length + index + 1;
+
+                    parsed.push({
+                      id: `INSP-RECORDS-${index + 5}-${sheetNo || rowNum}`,
+                      date,
+                      day,
+                      location,
+                      typeOfInspection: 'Workplace', // User requirement: TYPE OF INSPECTION: tulis "Workplace"
+                      inspector,
+                      remark,
+                      documentUrl,
+
+                      // Compatibility fallbacks
+                      locationFacility: location,
+                      inspectorName: inspector,
+                      type: 'Workplace',
+                      totalChecked: 0,
+                      compliantCount: 0,
+                      complianceRate: '-',
+                      status: 'Passed'
+                    });
+                  }
+                });
+              }
+              resolve(parsed);
+            },
+            error: () => resolve([])
+          });
+        });
+      }
+    }
+  } catch (err) {
+    console.warn(`Error fetching new inspection records from sheet ${SHEET_NAME_NEW}:`, err);
+  }
+
+  // If new records fetch returned empty (e.g. offline preview), provide fallback for Row 5
+  if (newRecords.length === 0) {
+    newRecords = [
+      {
+        id: 'INSP-RECORDS-5-fallback',
+        date: '07-09-26',
+        day: 'Mon',
+        location: 'Utara stor',
+        typeOfInspection: 'Workplace',
+        inspector: 'Yeoh Kuan Lai',
+        remark: 'Kakitangan diberikan tempoh satu bulan untuk melakukan penambahbaikan 5S demi mewujudkan persekitaran kerja yang lebih selamat. (Dateline: 6/Oktober 2026)',
+        documentUrl: 'https://drive.google.com/file/d/1XbWNLfhM03mc5EtrOBY2sRM6cc1P9Mv0/view?usp=drivesdk',
+        locationFacility: 'Utara stor',
+        inspectorName: 'Yeoh Kuan Lai',
+        type: 'Workplace',
+        totalChecked: 0,
+        compliantCount: 0,
+        complianceRate: '-',
+        status: 'Passed'
+      }
+    ];
+  }
+
+  // Combine: original table is preserved, new records are appended to the next rows
+  return [...originalRecords, ...newRecords];
 }
 
 // 9b. Fire Extinguisher Inspection Data

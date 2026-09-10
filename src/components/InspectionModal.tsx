@@ -419,7 +419,7 @@ export const InspectionModal: React.FC<InspectionModalProps> = ({ isOpen, filter
                           </td>
                         </tr>
                       ) : (
-                        filteredFEData.map((item) => {
+                        filteredFEData.map((item, index) => {
                           // Check if row 2 or row 19 (Header Rows)
                           if (item.isHeader) {
                             return (
