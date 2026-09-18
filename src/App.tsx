@@ -214,8 +214,8 @@ export default function App() {
         </main>
 
         {/* Footer */}
-        <footer className="mt-8 py-6 border-t border-slate-800/80 text-center text-xs">
-          <p className="font-semibold text-slate-300">
+        <footer id="app-footer" className="mt-8 py-6 border-t border-slate-800/80 text-center px-4">
+          <p className="text-[10px] sm:text-xs font-medium tracking-wider sm:tracking-widest text-slate-400/90 select-none transition-colors">
             © 2026 Eastway Engineering Sdn. Bhd. All Rights Reserved.
           </p>
         </footer>
