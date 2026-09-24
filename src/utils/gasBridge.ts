@@ -62,23 +62,42 @@ async function fetchWithTimeout(url: string, timeoutMs: number = 6000): Promise<
 }
 
 // 1. Days Without Incident
+let cachedDaysWithoutIncident: number = (() => {
+  try {
+    const val = localStorage.getItem('HSE_CACHED_DAYS_WITHOUT_INCIDENT');
+    if (val) {
+      const p = parseInt(val, 10);
+      if (!isNaN(p)) return p;
+    }
+  } catch {}
+  return 17;
+})();
+
+export function getCachedDaysWithoutIncident(): number {
+  return cachedDaysWithoutIncident;
+}
+
 export async function fetchDaysWithoutIncident(): Promise<number> {
   const SPREADSHEET_ID = '1o9P6GnlsAwSJEUYHxITt1Opz973uX37MLBiv0LdFdIs';
   const url = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:csv&sheet=HSE+FILE&range=I2:I2`;
   try {
-    const res = await fetch(url);
+    const res = await fetchWithTimeout(url, 3500);
     if (!res.ok) throw new Error('Failed to fetch from sheets');
     const csvText = await res.text();
     
-    // csvText is usually '"18"' or '18'
+    // csvText is usually '"17"' or '17'
     const value = parseInt(csvText.replace(/"/g, '').trim(), 10);
     if (!isNaN(value)) {
+      cachedDaysWithoutIncident = value;
+      try {
+        localStorage.setItem('HSE_CACHED_DAYS_WITHOUT_INCIDENT', String(value));
+      } catch {}
       return value;
     }
   } catch (err) {
     console.warn('Error fetching days without incident:', err);
   }
-  return callGasFunction<number>('getDaysWithoutIncident', INITIAL_DAYS_WITHOUT_INCIDENT);
+  return cachedDaysWithoutIncident;
 }
 
 // 2. All Incidents
@@ -689,21 +708,35 @@ export interface JkkMeetingSummary {
   totalMeetings?: number;
 }
 
+const DEFAULT_JKK_MEETING: JkkMeetingSummary = {
+  date: '09/10/2026',
+  meetingTitle: '13th Minute Meeting',
+  location: 'IJOK',
+  meetingNo: '13',
+  totalMeetings: 13
+};
+
+let cachedJkkMeeting: JkkMeetingSummary = (() => {
+  try {
+    const val = localStorage.getItem('HSE_CACHED_JKK_MEETING');
+    if (val) {
+      return JSON.parse(val);
+    }
+  } catch {}
+  return DEFAULT_JKK_MEETING;
+})();
+
+export function getCachedLatestJkkMeeting(): JkkMeetingSummary {
+  return cachedJkkMeeting;
+}
+
 export async function fetchLatestJkkMeeting(): Promise<JkkMeetingSummary> {
   const SPREADSHEET_ID = '1o9P6GnlsAwSJEUYHxITt1Opz973uX37MLBiv0LdFdIs';
   // Query JKK MEETING sheet column D (and A:D)
   const url = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:csv&sheet=JKK%20MEETING&range=A:D`;
 
-  const fallback: JkkMeetingSummary = {
-    date: '09/10/2026',
-    meetingTitle: '13th Minute Meeting',
-    location: 'IJOK',
-    meetingNo: '13',
-    totalMeetings: 13
-  };
-
   try {
-    const res = await fetch(url);
+    const res = await fetchWithTimeout(url, 3500);
     if (!res.ok) throw new Error('Failed to fetch from JKK MEETING sheet');
     const csvText = await res.text();
 
@@ -737,26 +770,33 @@ export async function fetchLatestJkkMeeting(): Promise<JkkMeetingSummary> {
               const location = lastRow.length >= 3 ? lastRow[2] : 'IJOK';
               const meetingNo = lastRow.length >= 1 ? lastRow[0] : String(validDateRows.length);
 
-              resolve({
+              const summary: JkkMeetingSummary = {
                 date: dateVal || '09/10/2026',
                 meetingTitle: meetingTitle || 'Latest Minute Meeting',
                 location: location || 'IJOK',
                 meetingNo: meetingNo || String(validDateRows.length),
                 totalMeetings: validDateRows.length
-              });
+              };
+
+              cachedJkkMeeting = summary;
+              try {
+                localStorage.setItem('HSE_CACHED_JKK_MEETING', JSON.stringify(summary));
+              } catch {}
+
+              resolve(summary);
               return;
             }
           }
-          resolve(fallback);
+          resolve(cachedJkkMeeting);
         },
         error: () => {
-          resolve(fallback);
+          resolve(cachedJkkMeeting);
         }
       });
     });
   } catch (err) {
     console.warn('Error fetching JKK Meeting data:', err);
-    return fallback;
+    return cachedJkkMeeting;
   }
 }
 

@@ -165,10 +165,8 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
   // Canvas Refs for Charts
   const chartRef1 = useRef<HTMLCanvasElement | null>(null);
   const chartRef2 = useRef<HTMLCanvasElement | null>(null);
-  const occupationalChartRef = useRef<HTMLCanvasElement | null>(null);
   const chartInstance1 = useRef<any>(null);
   const chartInstance2 = useRef<any>(null);
-  const occupationalChartInstance = useRef<any>(null);
   const lastActiveTabRef = useRef<string>('');
   const lastThemeRef = useRef<boolean>(isDarkMode);
 
@@ -382,114 +380,6 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
         },
       };
     };
-
-    // Render Occupational Incidents (YES only) Sharp Line Chart
-    const occCountsByYear: Record<string, number> = {};
-    incidents.forEach((r) => {
-      const isOcc = r.occupationalIncident?.trim().toUpperCase() === 'YES';
-      if (isOcc) {
-        let yr = r.year?.trim() || '';
-        if (!yr || yr === '-') {
-          if (r.date && r.date.includes('/')) {
-            const parts = r.date.split('/');
-            if (parts.length === 3) {
-              const possibleYear = parts[2].trim();
-              if (possibleYear.length === 4) {
-                yr = possibleYear;
-              }
-            }
-          } else if (r.date && r.date.includes('-')) {
-            const parts = r.date.split('-');
-            if (parts.length === 3) {
-              const possibleYear = parts[0].trim();
-              if (possibleYear.length === 4) {
-                yr = possibleYear;
-              }
-            }
-          }
-        }
-        if (yr && yr !== '-') {
-          occCountsByYear[yr] = (occCountsByYear[yr] || 0) + 1;
-        }
-      }
-    });
-
-    const occYears = Object.keys(occCountsByYear).sort();
-    const occData = occYears.map((y) => occCountsByYear[y]);
-    const finalOccYears = occYears.length > 0 ? occYears : ['2022', '2023', '2024', '2025', '2026'];
-    const finalOccData = occYears.length > 0 ? occData : [0, 0, 0, 0, 0];
-
-    if (!themeChanged && occupationalChartInstance.current && occupationalChartInstance.current.config.type === 'line') {
-      occupationalChartInstance.current.data.labels = finalOccYears;
-      occupationalChartInstance.current.data.datasets[0].data = finalOccData;
-      occupationalChartInstance.current.update('none');
-    } else if (occupationalChartRef.current) {
-      if (occupationalChartInstance.current) {
-        occupationalChartInstance.current.destroy();
-        occupationalChartInstance.current = null;
-      }
-      const existingOcc = Chart.getChart(occupationalChartRef.current);
-      if (existingOcc) existingOcc.destroy();
-
-      const occCtx = occupationalChartRef.current.getContext('2d');
-      if (occCtx) {
-        const baseLineOpts = getMovementOptions('line');
-        occupationalChartInstance.current = new Chart(occCtx, {
-          type: 'line',
-          data: {
-            labels: finalOccYears,
-            datasets: [
-              {
-                label: 'Occupational Incidents',
-                data: finalOccData,
-                borderColor: '#F59E0B',
-                backgroundColor: 'rgba(245, 158, 11, 0.08)',
-                borderWidth: 3.5,
-                tension: 0, // Sharp line segments ("jenis tajam")
-                pointBackgroundColor: '#F59E0B',
-                pointBorderColor: isDarkMode ? '#1E293B' : '#FFFFFF',
-                pointBorderWidth: 2,
-                pointRadius: 6,
-                pointHoverRadius: 10,
-                pointHitRadius: 25,
-                pointHoverBorderWidth: 3,
-                pointHoverBackgroundColor: '#FBBF24',
-                fill: true,
-              },
-            ],
-          },
-          options: {
-            ...baseLineOpts,
-            scales: {
-              x: {
-                ticks: { color: textColor, font: { weight: 'bold', size: 11 } },
-                grid: { color: gridColor },
-              },
-              y: {
-                ticks: { color: textColor, precision: 0 },
-                grid: { color: gridColor },
-                suggestedMin: 0,
-              },
-            },
-            plugins: {
-              legend: { display: false },
-              tooltip: {
-                enabled: true,
-                animation: { duration: 200 },
-                padding: 10,
-                cornerRadius: 8,
-              },
-              title: {
-                display: true,
-                text: 'OCCUPATIONAL INCIDENTS ANNUAL TREND',
-                color: textColor,
-                font: { size: 12, weight: 'bold' },
-              },
-            },
-          },
-        });
-      }
-    }
 
     if (!chartRef1.current) return;
 
@@ -1364,49 +1254,13 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
         </div>
       ) : (
         <div>
-          {/* Interactive Chart Container - Fixed Compact Height */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-5">
-            <div className="flex flex-col gap-4">
-              <div className="relative p-3.5 rounded-2xl bg-slate-900/60 border border-cyan-500/20 h-[260px] shadow-sm w-full">
-                <canvas ref={chartRef1} className="w-full h-full cursor-pointer" style={{ touchAction: 'pan-y' }}></canvas>
-              </div>
-
-              {/* On smartphone/mobile/tablet, the table goes here right below the first interactive chart */}
-              {renderSummaryTable("block lg:hidden")}
-            </div>
-
-            <div className="p-4 rounded-2xl bg-slate-900/60 border border-cyan-500/20 flex flex-col justify-between space-y-3">
-              {/* Annual Occupational Incidents Sharp Line Chart - Fixed Compact Height */}
-              <div className="relative p-2.5 bg-slate-900/80 border border-cyan-500/20 rounded-xl shadow-sm h-[135px] w-full">
-                <canvas ref={occupationalChartRef} className="w-full h-full cursor-pointer" style={{ touchAction: 'pan-y' }}></canvas>
-              </div>
-
-              <div className="flex flex-col space-y-2.5">
-                <div className="flex items-center gap-2 border-b border-cyan-500/20 pb-1.5">
-                  <span className="material-symbols-outlined text-cyan-400 text-lg">insights</span>
-                  <h3 className="text-xs font-bold text-white uppercase tracking-wider">
-                    HEADER KPI SUMMARY: {activeTab}
-                  </h3>
-                </div>
-
-                <div className="grid grid-cols-2 gap-2.5">
-                  <div className="p-2.5 rounded-xl bg-slate-800/80 border border-cyan-500/20">
-                    <p className="text-xs font-bold text-slate-300 uppercase">Total Records</p>
-                    <p className="text-sm sm:text-base font-extrabold text-white">{incidents.length}</p>
-                  </div>
-                  <div className="p-2.5 rounded-xl bg-slate-800/80 border border-cyan-500/20">
-                    <p className="text-xs font-bold text-slate-300 uppercase">Occupational</p>
-                    <p className="text-sm sm:text-base font-extrabold text-white">
-                      {incidents.filter((i) => i.occupationalIncident?.toUpperCase() === 'YES').length}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
+          {/* Interactive Chart Container */}
+          <div className="relative p-3.5 rounded-2xl bg-slate-900/60 border border-cyan-500/20 h-[280px] sm:h-[320px] shadow-sm w-full mb-5">
+            <canvas ref={chartRef1} className="w-full h-full cursor-pointer" style={{ touchAction: 'pan-y' }}></canvas>
           </div>
 
-          {/* On desktop (large screens), the summary table is displayed full-width below both boxes */}
-          {renderSummaryTable("hidden lg:block mb-6")}
+          {/* Summary Table */}
+          {renderSummaryTable("block mb-6")}
 
           {/* Search Toolbar */}
           <div className="mb-4 flex flex-col sm:flex-row items-center justify-between gap-3 bg-slate-900/60 p-3 rounded-xl border border-cyan-500/20">

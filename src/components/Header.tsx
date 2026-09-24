@@ -31,7 +31,7 @@ export const Header: React.FC<HeaderProps> = ({
           <div className="flex items-center gap-2.5 sm:gap-3 cursor-pointer" onClick={() => setActivePage('homePage')}>
             <div className="w-11 h-11 sm:w-14 sm:h-14 flex items-center justify-center flex-shrink-0 overflow-hidden">
               <img
-                src="/EE LOGO.png"
+                src="/EE LOGO.png?v=2"
                 alt="EASTWAY Logo"
                 className="w-full h-full object-contain"
                 onError={(e) => {

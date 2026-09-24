@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { MinuteMeeting, DocumentViewContext } from '../types';
 import { fetchDynamicMinuteMeetings } from '../utils/gasBridge';
 import { formatToPreviewUrl } from '../utils/formatDriveUrl';
-import { MOCK_MINUTE_MEETINGS } from '../data/mockData';
 
 interface MinuteMeetingPageProps {
   onOpenDocument: (doc: DocumentViewContext) => void;
@@ -12,15 +11,19 @@ interface MinuteMeetingPageProps {
 export const MinuteMeetingPage: React.FC<MinuteMeetingPageProps> = ({
   onBackToHome
 }) => {
-  const [meetings, setMeetings] = useState<MinuteMeeting[]>(MOCK_MINUTE_MEETINGS);
-  const [loading, setLoading] = useState(false);
+  const [meetings, setMeetings] = useState<MinuteMeeting[]>([]);
+  const [loading, setLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedMeetingId, setSelectedMeetingId] = useState<string | null>(null);
 
-  const loadMeetings = () => {
+  const loadMeetings = (isBackground: boolean = false) => {
     let isMounted = true;
-    setIsRefreshing(true);
+    if (isBackground) {
+      setIsRefreshing(true);
+    } else {
+      setLoading(true);
+    }
     fetchDynamicMinuteMeetings()
       .then((data) => {
         if (isMounted && data && data.length > 0) {
@@ -40,7 +43,7 @@ export const MinuteMeetingPage: React.FC<MinuteMeetingPageProps> = ({
   };
 
   useEffect(() => {
-    return loadMeetings();
+    return loadMeetings(false);
   }, []);
 
   const filteredMeetings = meetings.filter((m) => {
@@ -103,9 +106,9 @@ export const MinuteMeetingPage: React.FC<MinuteMeetingPageProps> = ({
             )}
           </div>
           <button
-            onClick={loadMeetings}
-            disabled={isRefreshing}
-            className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white transition-colors border border-cyan-500/20 flex-shrink-0"
+            onClick={() => loadMeetings(true)}
+            disabled={isRefreshing || loading}
+            className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white transition-colors border border-cyan-500/20 flex-shrink-0 disabled:opacity-50"
             title="Refresh from Google Sheets"
           >
             <span className={`material-symbols-outlined text-xl ${isRefreshing ? 'animate-spin text-white' : ''}`}>
@@ -117,8 +120,9 @@ export const MinuteMeetingPage: React.FC<MinuteMeetingPageProps> = ({
 
       {/* Meeting Records Table */}
       {loading ? (
-        <div className="p-12 text-center flex flex-col items-center justify-center glass-card">
-          <span className="material-symbols-outlined text-4xl text-white animate-spin">sync</span>
+        <div className="p-12 text-center flex flex-col items-center justify-center glass-card gap-3">
+          <span className="material-symbols-outlined text-4xl text-cyan-400 animate-spin">sync</span>
+          <span className="text-xs uppercase font-semibold text-cyan-300 tracking-wider">Loading Meeting Minutes...</span>
         </div>
       ) : (
         <div className="glass-card overflow-hidden">

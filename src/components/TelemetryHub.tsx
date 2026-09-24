@@ -1,6 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { WeatherInfo } from '../types';
-import { fetchDaysWithoutIncident, fetchLatestJkkMeeting, JkkMeetingSummary } from '../utils/gasBridge';
+import {
+  fetchDaysWithoutIncident,
+  fetchLatestJkkMeeting,
+  getCachedDaysWithoutIncident,
+  getCachedLatestJkkMeeting,
+  JkkMeetingSummary
+} from '../utils/gasBridge';
 
 interface TelemetryHubProps {
   onNavigateMinuteMeetings?: () => void;
@@ -53,16 +59,8 @@ const getRealisticLocalWeather = (): WeatherInfo => {
 
 export const TelemetryHub: React.FC<TelemetryHubProps> = ({ onNavigateMinuteMeetings }) => {
   const [timeStr, setTimeStr] = useState<string>('-- MMM YYYY | --:--:--');
-  const [daysCount, setDaysCount] = useState<number>(438);
-  const [loadingDays, setLoadingDays] = useState<boolean>(true);
-  const [jkkMeeting, setJkkMeeting] = useState<JkkMeetingSummary>({
-    date: '09/10/2026',
-    meetingTitle: '13th Minute Meeting',
-    location: 'IJOK',
-    meetingNo: '13',
-    totalMeetings: 13
-  });
-  const [loadingJkk, setLoadingJkk] = useState<boolean>(true);
+  const [daysCount, setDaysCount] = useState<number>(() => getCachedDaysWithoutIncident());
+  const [jkkMeeting, setJkkMeeting] = useState<JkkMeetingSummary>(() => getCachedLatestJkkMeeting());
   const [weather, setWeather] = useState<WeatherInfo>(() => {
     try {
       const cached = localStorage.getItem('HSE_CACHED_WEATHER');
@@ -91,67 +89,56 @@ export const TelemetryHub: React.FC<TelemetryHubProps> = ({ onNavigateMinuteMeet
     return () => clearInterval(interval);
   }, []);
 
-  // Fetch Days Without Incident
+  // Fetch Days Without Incident in background (Instant load with SWR)
   useEffect(() => {
     let isMounted = true;
-    setLoadingDays(true);
     fetchDaysWithoutIncident()
       .then((days) => {
-        if (isMounted) {
+        if (isMounted && typeof days === 'number') {
           setDaysCount(days);
-          setLoadingDays(false);
         }
       })
-      .catch(() => {
-        if (isMounted) setLoadingDays(false);
-      });
+      .catch(() => {});
     return () => { isMounted = false; };
   }, []);
 
-  // Fetch JKK Meeting Data (Dynamic from Sheet JKK MEETING column D / latest row)
+  // Fetch JKK Meeting Data in background (Instant load with SWR)
   useEffect(() => {
     let isMounted = true;
-    setLoadingJkk(true);
     fetchLatestJkkMeeting()
       .then((data) => {
-        if (isMounted) {
+        if (isMounted && data && data.date) {
           setJkkMeeting(data);
-          setLoadingJkk(false);
         }
       })
-      .catch(() => {
-        if (isMounted) setLoadingJkk(false);
-      });
+      .catch(() => {});
     return () => { isMounted = false; };
   }, []);
 
-  // Live Weather API Fetch (Open-Meteo with fallback and caching)
+  // Live Weather API Fetch (Optimized multi-coordinate single request with fast timeout)
   useEffect(() => {
     let isMounted = true;
     const getWeather = async () => {
       try {
         setLoadingWeather(true);
         const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 4000);
+        const timeoutId = setTimeout(() => controller.abort(), 3500);
 
-        // Kuala Lumpur: Lat 3.1390, Lon 101.6869
-        // Pulau Pinang (Penang): Lat 5.4164, Lon 100.3327
-        const [resKL, resPenang] = await Promise.all([
-          fetch('https://api.open-meteo.com/v1/forecast?latitude=3.1390&longitude=101.6869&current_weather=true', {
+        // Fetch Kuala Lumpur (3.1390, 101.6869) and Pulau Pinang (5.4164, 100.3327) in one single request
+        const res = await fetch(
+          'https://api.open-meteo.com/v1/forecast?latitude=3.1390,5.4164&longitude=101.6869,100.3327&current_weather=true',
+          {
             signal: controller.signal,
             headers: { Accept: 'application/json' },
-          }),
-          fetch('https://api.open-meteo.com/v1/forecast?latitude=5.4164&longitude=100.3327&current_weather=true', {
-            signal: controller.signal,
-            headers: { Accept: 'application/json' },
-          }),
-        ]);
+          }
+        );
 
         clearTimeout(timeoutId);
 
-        if (resKL.ok && resPenang.ok) {
-          const dataKL = await resKL.json();
-          const dataPenang = await resPenang.json();
+        if (res.ok) {
+          const rawData = await res.json();
+          const dataKL = Array.isArray(rawData) ? rawData[0] : rawData;
+          const dataPenang = Array.isArray(rawData) ? rawData[1] : rawData;
 
           const codeMap: Record<number, string> = {
             0: 'Clear Sky',
@@ -165,13 +152,13 @@ export const TelemetryHub: React.FC<TelemetryHubProps> = ({ onNavigateMinuteMeet
             95: 'Thunderstorm'
           };
 
-          const klCode = dataKL.current_weather?.weathercode ?? 2;
-          const penangCode = dataPenang.current_weather?.weathercode ?? 0;
+          const klCode = dataKL?.current_weather?.weathercode ?? 2;
+          const penangCode = dataPenang?.current_weather?.weathercode ?? 0;
 
           const updatedWeather: WeatherInfo = {
-            tempKL: Math.round(dataKL.current_weather?.temperature ?? 31.8),
+            tempKL: Math.round(dataKL?.current_weather?.temperature ?? 31.8),
             weatherKL: codeMap[klCode] || 'Partly Cloudy',
-            tempPenang: Math.round(dataPenang.current_weather?.temperature ?? 30.5),
+            tempPenang: Math.round(dataPenang?.current_weather?.temperature ?? 30.5),
             weatherPenang: codeMap[penangCode] || 'Fair & Sunny',
             lastUpdated: new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })
           };
@@ -339,11 +326,7 @@ export const TelemetryHub: React.FC<TelemetryHubProps> = ({ onNavigateMinuteMeet
               DAYS WITHOUT INCIDENT
             </div>
             <div className="text-xs sm:text-sm font-bold text-white flex items-baseline gap-1.5 mt-0.5">
-              {loadingDays ? (
-                <span>--</span>
-              ) : (
-                <span>{daysCount}</span>
-              )}
+              <span>{daysCount}</span>
               <span className="uppercase tracking-wider text-white">
                 DAYS SAFE
               </span>
@@ -367,14 +350,9 @@ export const TelemetryHub: React.FC<TelemetryHubProps> = ({ onNavigateMinuteMeet
           <div className="flex-1 min-w-0">
             <div className="text-xs font-bold text-cyan-400 uppercase tracking-wider flex items-center justify-between">
               <span>NEXT JKK MEETING</span>
-              {loadingJkk && <span className="material-symbols-outlined text-[10px] animate-spin">sync</span>}
             </div>
             <div className="text-xs sm:text-sm font-bold text-white mt-0.5 tracking-tight flex items-center justify-between">
-              {loadingJkk ? (
-                <span>--/--/----</span>
-              ) : (
-                <span>{jkkMeeting.date}</span>
-              )}
+              <span>{jkkMeeting.date}</span>
               <span className="text-xs sm:text-sm font-bold text-white ml-1">
                 {getDaysRemaining(jkkMeeting.date)}
               </span>

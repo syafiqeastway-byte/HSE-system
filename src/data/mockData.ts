@@ -10,7 +10,7 @@ import {
   MinuteMeeting
 } from '../types';
 
-export const INITIAL_DAYS_WITHOUT_INCIDENT = 438;
+export const INITIAL_DAYS_WITHOUT_INCIDENT = 17;
 
 export const MOCK_SOPS: SOPItem[] = [
   { id: '1', code: 'SOP-EE-001', title: 'Visitors Safety Induction & Site Protocol', category: 'General HSE', description: 'Mandatory registration, briefing, and PPE requirements for all site visitors.', revisionDate: '2026-01-15', documentUrl: 'https://docs.google.com/document/d/e/2PACX-1vSOP-EE-001/pub?embedded=true' },
