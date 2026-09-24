@@ -37,7 +37,6 @@ export const TAB_HEADERS: { key: TabHeaderKey; label: string; icon: string }[] =
   { key: 'YEAR', label: 'YEAR', icon: 'event' },
   { key: 'LOCATION', label: 'LOCATION', icon: 'location_on' },
   { key: 'DESCRIPTION', label: 'DESCRIPTION', icon: 'notes' },
-  { key: 'OCCUPATIONAL INCIDENT?', label: 'OCCUPATIONAL INCIDENT?', icon: 'engineering' },
   { key: 'INCIDENT CATEGORY', label: 'INCIDENT CATEGORY', icon: 'category' },
   { key: 'PROPERTY DAMAGE', label: 'PROPERTY DAMAGE', icon: 'home_repair_service' },
   { key: 'DAMAGE LEVEL', label: 'DAMAGE LEVEL', icon: 'warning' },
