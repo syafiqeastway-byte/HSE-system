@@ -12,6 +12,7 @@ import { formatToPreviewUrl } from '../utils/formatDriveUrl';
 import * as XLSX from 'xlsx';
 import Chart from 'chart.js/auto';
 import { generateIncidentFullAnalyticsReport } from '../utils/incidentReportPdfGenerator';
+import { useAutoRefresh } from '../hooks/useAutoRefresh';
 
 interface IncidentChartsAndTablesProps {
   isDarkMode: boolean;
@@ -227,6 +228,9 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
   useEffect(() => {
     loadData();
   }, []);
+
+  // AUTO-REFRESH: Automatically poll live Google Sheets incidents and summary tables every 60s & on tab switch
+  useAutoRefresh(() => loadData(), { intervalMs: 60000 });
 
   // Helper to get active summary table from Google Sheets data matching dropdown list selection
   const getActiveSummaryTable = (): SummaryTableSectionData | null => {

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { SOPRecord } from '../types';
 import { fetchDynamicSOP } from '../utils/gasBridge';
 import { formatToPreviewUrl } from '../utils/formatDriveUrl';
+import { useAutoRefresh } from '../hooks/useAutoRefresh';
 
 interface SOPPageProps {
   onBackToHome: () => void;
@@ -45,6 +46,11 @@ export const SOPPage: React.FC<SOPPageProps> = ({
   useEffect(() => {
     return loadSOP(false);
   }, []);
+
+  // AUTO-REFRESH: Automatically poll live SOP records in background
+  useAutoRefresh(() => {
+    loadSOP(true);
+  }, { intervalMs: 60000 });
 
   const filteredRecords = records.filter((r) => {
     if (!r) return false;

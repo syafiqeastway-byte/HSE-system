@@ -5,6 +5,7 @@ import { MOCK_INCIDENT_RECORDS } from '../data/mockData';
 import { fetchLiveIncidentRecords } from '../utils/gasBridge';
 import { formatToPreviewUrl } from '../utils/formatDriveUrl';
 import { generateIncidentFullAnalyticsReport } from '../utils/incidentReportPdfGenerator';
+import { useAutoRefresh } from '../hooks/useAutoRefresh';
 
 interface AllIncidentsPageProps {
   onBackToHome: () => void;
@@ -97,6 +98,11 @@ export const AllIncidentsPage: React.FC<AllIncidentsPageProps> = ({ onBackToHome
   useEffect(() => {
     fetchIncidents();
   }, []);
+
+  // AUTO-REFRESH: Automatically poll live incident records in background
+  useAutoRefresh(() => {
+    fetchIncidents();
+  }, { intervalMs: 60000 });
 
   const filteredIncidents = incidents.filter(inc => {
     if (!inc) return false;

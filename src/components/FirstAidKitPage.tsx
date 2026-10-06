@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import * as XLSX from 'xlsx';
 import { FirstAidKitTableData } from '../types';
 import { fetchFirstAidKitTableData } from '../utils/gasBridge';
+import { useAutoRefresh } from '../hooks/useAutoRefresh';
 
 interface FirstAidKitPageProps {
   onBackToHome: () => void;
@@ -48,6 +49,11 @@ export const FirstAidKitPage: React.FC<FirstAidKitPageProps> = ({ onBackToHome }
   useEffect(() => {
     return loadData(false);
   }, []);
+
+  // AUTO-REFRESH: Automatically poll live First Aid Kit table in background
+  useAutoRefresh(() => {
+    loadData(true);
+  }, { intervalMs: 60000 });
 
   // Filter rows based on search query
   const filteredRows = data.rows.filter((row) => {

@@ -3,6 +3,7 @@ import * as XLSX from 'xlsx';
 import { InspectionRecord, FireExtinguisherRecord } from '../types';
 import { fetchInspectionData, fetchFireExtinguisherData } from '../utils/gasBridge';
 import { formatToPreviewUrl } from '../utils/formatDriveUrl';
+import { useAutoRefresh } from '../hooks/useAutoRefresh';
 
 interface InspectionPageProps {
   onBackToHome: () => void;
@@ -75,6 +76,11 @@ export const InspectionPage: React.FC<InspectionPageProps> = ({
   useEffect(() => {
     return loadAllData(false);
   }, []);
+
+  // AUTO-REFRESH: Automatically poll live inspection data in background
+  useAutoRefresh(() => {
+    loadAllData(true);
+  }, { intervalMs: 60000 });
 
   // Filtered Workplace Data
   const filteredWorkplaceData = inspections.filter((item) => {

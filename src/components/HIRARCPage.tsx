@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { HIRARCRecord } from '../types';
 import { fetchDynamicHIRARC } from '../utils/gasBridge';
 import { formatToPreviewUrl } from '../utils/formatDriveUrl';
+import { useAutoRefresh } from '../hooks/useAutoRefresh';
 
 interface HIRARCPageProps {
   onBackToHome: () => void;
@@ -45,6 +46,11 @@ export const HIRARCPage: React.FC<HIRARCPageProps> = ({
   useEffect(() => {
     return loadHIRARC(false);
   }, []);
+
+  // AUTO-REFRESH: Automatically poll live HIRARC records in background
+  useAutoRefresh(() => {
+    loadHIRARC(true);
+  }, { intervalMs: 60000 });
 
   const filteredRecords = records.filter((r) => {
     if (!r) return false;

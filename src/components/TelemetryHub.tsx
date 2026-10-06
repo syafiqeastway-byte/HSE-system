@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { WeatherInfo } from '../types';
 import {
   fetchDaysWithoutIncident,
@@ -7,6 +7,7 @@ import {
   getCachedLatestJkkMeeting,
   JkkMeetingSummary
 } from '../utils/gasBridge';
+import { useAutoRefresh } from '../hooks/useAutoRefresh';
 
 interface TelemetryHubProps {
   onNavigateMinuteMeetings?: () => void;
@@ -89,121 +90,114 @@ export const TelemetryHub: React.FC<TelemetryHubProps> = ({ onNavigateMinuteMeet
     return () => clearInterval(interval);
   }, []);
 
-  // Fetch Days Without Incident in background (Instant load with SWR)
-  useEffect(() => {
-    let isMounted = true;
-    fetchDaysWithoutIncident()
-      .then((days) => {
-        if (isMounted && typeof days === 'number') {
-          setDaysCount(days);
-        }
-      })
-      .catch(() => {});
-    return () => { isMounted = false; };
-  }, []);
-
-  // Fetch JKK Meeting Data in background (Instant load with SWR)
-  useEffect(() => {
-    let isMounted = true;
-    fetchLatestJkkMeeting()
-      .then((data) => {
-        if (isMounted && data && data.date) {
-          setJkkMeeting(data);
-        }
-      })
-      .catch(() => {});
-    return () => { isMounted = false; };
-  }, []);
-
-  // Live Weather API Fetch (Optimized multi-coordinate single request with fast timeout)
-  useEffect(() => {
-    let isMounted = true;
-    const getWeather = async () => {
-      try {
-        setLoadingWeather(true);
-        const controller = new AbortController();
-        const timeoutId = setTimeout(() => controller.abort(), 3500);
-
-        // Fetch Kuala Lumpur (3.1390, 101.6869) and Pulau Pinang (5.4164, 100.3327) in one single request
-        const res = await fetch(
-          'https://api.open-meteo.com/v1/forecast?latitude=3.1390,5.4164&longitude=101.6869,100.3327&current_weather=true',
-          {
-            signal: controller.signal,
-            headers: { Accept: 'application/json' },
-          }
-        );
-
-        clearTimeout(timeoutId);
-
-        if (res.ok) {
-          const rawData = await res.json();
-          const dataKL = Array.isArray(rawData) ? rawData[0] : rawData;
-          const dataPenang = Array.isArray(rawData) ? rawData[1] : rawData;
-
-          const codeMap: Record<number, string> = {
-            0: 'Clear Sky',
-            1: 'Mainly Clear',
-            2: 'Partly Cloudy',
-            3: 'Overcast',
-            45: 'Foggy',
-            51: 'Light Drizzle',
-            61: 'Slight Rain',
-            80: 'Rain Showers',
-            95: 'Thunderstorm'
-          };
-
-          const klCode = dataKL?.current_weather?.weathercode ?? 2;
-          const penangCode = dataPenang?.current_weather?.weathercode ?? 0;
-
-          const updatedWeather: WeatherInfo = {
-            tempKL: Math.round(dataKL?.current_weather?.temperature ?? 31.8),
-            weatherKL: codeMap[klCode] || 'Partly Cloudy',
-            tempPenang: Math.round(dataPenang?.current_weather?.temperature ?? 30.5),
-            weatherPenang: codeMap[penangCode] || 'Fair & Sunny',
-            lastUpdated: new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })
-          };
-
-          if (isMounted) {
-            setWeather(updatedWeather);
-            try {
-              localStorage.setItem('HSE_CACHED_WEATHER', JSON.stringify(updatedWeather));
-            } catch {
-              // ignore
-            }
-            setLoadingWeather(false);
-          }
-          return;
-        }
-      } catch {
-        // Silently handled: Fallback to local cache or realistic ambient estimation
+  // Fetch Days Without Incident
+  const refreshDaysWithoutIncident = useCallback(async () => {
+    try {
+      const days = await fetchDaysWithoutIncident();
+      if (typeof days === 'number') {
+        setDaysCount(days);
       }
+    } catch {}
+  }, []);
 
-      if (isMounted) {
+  // Fetch JKK Meeting Data
+  const refreshJkkMeeting = useCallback(async () => {
+    try {
+      const data = await fetchLatestJkkMeeting();
+      if (data && data.date) {
+        setJkkMeeting(data);
+      }
+    } catch {}
+  }, []);
+
+  // Live Weather API Fetch
+  const refreshWeather = useCallback(async () => {
+    try {
+      setLoadingWeather(true);
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 3500);
+
+      const res = await fetch(
+        'https://api.open-meteo.com/v1/forecast?latitude=3.1390,5.4164&longitude=101.6869,100.3327&current_weather=true',
+        {
+          signal: controller.signal,
+          headers: { Accept: 'application/json' },
+        }
+      );
+
+      clearTimeout(timeoutId);
+
+      if (res.ok) {
+        const rawData = await res.json();
+        const dataKL = Array.isArray(rawData) ? rawData[0] : rawData;
+        const dataPenang = Array.isArray(rawData) ? rawData[1] : rawData;
+
+        const codeMap: Record<number, string> = {
+          0: 'Clear Sky',
+          1: 'Mainly Clear',
+          2: 'Partly Cloudy',
+          3: 'Overcast',
+          45: 'Foggy',
+          51: 'Light Drizzle',
+          61: 'Slight Rain',
+          80: 'Rain Showers',
+          95: 'Thunderstorm'
+        };
+
+        const klCode = dataKL?.current_weather?.weathercode ?? 2;
+        const penangCode = dataPenang?.current_weather?.weathercode ?? 0;
+
+        const updatedWeather: WeatherInfo = {
+          tempKL: Math.round(dataKL?.current_weather?.temperature ?? 31.8),
+          weatherKL: codeMap[klCode] || 'Partly Cloudy',
+          tempPenang: Math.round(dataPenang?.current_weather?.temperature ?? 30.5),
+          weatherPenang: codeMap[penangCode] || 'Fair & Sunny',
+          lastUpdated: new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })
+        };
+
+        setWeather(updatedWeather);
         try {
-          const cached = localStorage.getItem('HSE_CACHED_WEATHER');
-          if (cached) {
-            const parsed = JSON.parse(cached);
-            setWeather({
-              ...parsed,
-              lastUpdated: new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }),
-            });
-            setLoadingWeather(false);
-            return;
-          }
-        } catch {
-          // ignore
-        }
-
-        const fallback = getRealisticLocalWeather();
-        setWeather(fallback);
+          localStorage.setItem('HSE_CACHED_WEATHER', JSON.stringify(updatedWeather));
+        } catch {}
         setLoadingWeather(false);
+        return;
       }
-    };
+    } catch {}
 
-    getWeather();
-    const weatherInterval = setInterval(getWeather, 300000); // 5 mins
-    return () => { isMounted = false; clearInterval(weatherInterval); };
+    try {
+      const cached = localStorage.getItem('HSE_CACHED_WEATHER');
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        setWeather({
+          ...parsed,
+          lastUpdated: new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' }),
+        });
+        setLoadingWeather(false);
+        return;
+      }
+    } catch {}
+
+    const fallback = getRealisticLocalWeather();
+    setWeather(fallback);
+    setLoadingWeather(false);
   }, []);
+
+  // Combined Telemetry Refresh Callback
+  const refreshAllTelemetry = useCallback(async () => {
+    await Promise.allSettled([
+      refreshDaysWithoutIncident(),
+      refreshJkkMeeting(),
+      refreshWeather(),
+    ]);
+  }, [refreshDaysWithoutIncident, refreshJkkMeeting, refreshWeather]);
+
+  // Initial fetch on mount
+  useEffect(() => {
+    refreshAllTelemetry();
+  }, [refreshAllTelemetry]);
+
+  // AUTO-REFRESH: Automatically updates telemetry every 60 seconds, on tab focus/visibility, or on global refresh
+  useAutoRefresh(refreshAllTelemetry, { intervalMs: 60000 });
 
   const getWeatherIcon = (weatherDesc: string) => {
     const desc = weatherDesc.toLowerCase();

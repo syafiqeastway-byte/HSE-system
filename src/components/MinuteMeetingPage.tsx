@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { MinuteMeeting, DocumentViewContext } from '../types';
 import { fetchDynamicMinuteMeetings } from '../utils/gasBridge';
 import { formatToPreviewUrl } from '../utils/formatDriveUrl';
+import { useAutoRefresh } from '../hooks/useAutoRefresh';
 
 interface MinuteMeetingPageProps {
   onOpenDocument: (doc: DocumentViewContext) => void;
@@ -45,6 +46,11 @@ export const MinuteMeetingPage: React.FC<MinuteMeetingPageProps> = ({
   useEffect(() => {
     return loadMeetings(false);
   }, []);
+
+  // AUTO-REFRESH: Automatically poll live minute meetings in background
+  useAutoRefresh(() => {
+    loadMeetings(true);
+  }, { intervalMs: 60000 });
 
   const filteredMeetings = meetings.filter((m) => {
     if (!m) return false;

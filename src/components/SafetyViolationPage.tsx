@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { fetchSafetyViolationScoring, fetchSafetyViolationSummaryTable } from '../utils/gasBridge';
+import { useAutoRefresh } from '../hooks/useAutoRefresh';
 
 interface SafetyViolationPageProps {
   onBackToHome: () => void;
@@ -50,6 +51,11 @@ export const SafetyViolationPage: React.FC<SafetyViolationPageProps> = ({
   useEffect(() => {
     return loadData(false);
   }, []);
+
+  // AUTO-REFRESH: Automatically poll live safety violations in background
+  useAutoRefresh(() => {
+    loadData(true);
+  }, { intervalMs: 60000 });
 
   // First table (A3:N33)
   const headers = tableData.length > 0 ? tableData[0] : [];

@@ -3,6 +3,7 @@ import * as XLSX from 'xlsx';
 import { InspectionRecord, FireExtinguisherRecord } from '../types';
 import { fetchInspectionData, fetchFireExtinguisherData } from '../utils/gasBridge';
 import { formatToPreviewUrl } from '../utils/formatDriveUrl';
+import { useAutoRefresh } from '../hooks/useAutoRefresh';
 
 interface InspectionModalProps {
   isOpen: boolean;
@@ -68,6 +69,22 @@ export const InspectionModal: React.FC<InspectionModalProps> = ({ isOpen, filter
       isMounted = false;
     };
   }, [isOpen, filterType]);
+
+  // AUTO-REFRESH: Automatically poll live inspection data while modal is open
+  useAutoRefresh(() => {
+    if (!isOpen) return;
+    fetchInspectionData().then((data) => {
+      if (filterType === 'All' || filterType === 'Fire Extinguisher') {
+        setInspections(data);
+      } else {
+        setInspections(data.filter((item) => item.type === filterType));
+      }
+    }).catch(() => {});
+
+    fetchFireExtinguisherData().then((data) => {
+      setFireExtinguishers(data);
+    }).catch(() => {});
+  }, { intervalMs: 60000 });
 
   if (!isOpen) return null;
 

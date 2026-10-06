@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { PageType } from '../types';
 
 interface HeaderProps {
@@ -22,6 +22,15 @@ export const Header: React.FC<HeaderProps> = ({
   isPwaInstalled = false,
   canInstallPwa = false,
 }) => {
+  const [isRefreshing, setIsRefreshing] = useState(false);
+
+  const handleManualRefresh = () => {
+    if (onRefreshData) {
+      setIsRefreshing(true);
+      onRefreshData();
+      setTimeout(() => setIsRefreshing(false), 1000);
+    }
+  };
   return (
     <header className="bg-slate-900/80 backdrop-blur-md border border-cyan-500/25 rounded-2xl p-3.5 sm:p-4 lg:p-5 mb-6 shadow-xl transition-all">
       <div className="flex flex-col xl:flex-row items-center justify-between gap-4">
@@ -106,11 +115,14 @@ export const Header: React.FC<HeaderProps> = ({
           <div className="flex items-center gap-2 flex-shrink-0 ml-1">
             {onRefreshData && (
               <button
-                onClick={onRefreshData}
-                className="p-2.5 rounded-xl border border-cyan-500/30 bg-slate-900/80 text-white hover:bg-cyan-950/40 hover:text-white transition-colors shadow-sm"
-                title="Refresh Telemetry Data"
+                onClick={handleManualRefresh}
+                disabled={isRefreshing}
+                className="p-2.5 rounded-xl border border-cyan-500/30 bg-slate-900/80 text-white hover:bg-cyan-950/40 hover:text-white transition-all shadow-sm active:scale-95 disabled:opacity-75"
+                title="Auto & Live Refresh (Sync All Data)"
               >
-                <span className="material-symbols-outlined text-xl text-white">refresh</span>
+                <span className={`material-symbols-outlined text-xl text-white ${isRefreshing ? 'animate-spin text-cyan-400' : ''}`}>
+                  refresh
+                </span>
               </button>
             )}
           </div>

@@ -5,6 +5,7 @@ import { MOCK_INCIDENT_RECORDS } from '../data/mockData';
 import { fetchLiveIncidentRecords } from '../utils/gasBridge';
 import { formatToPreviewUrl } from '../utils/formatDriveUrl';
 import { generateIncidentFullAnalyticsReport } from '../utils/incidentReportPdfGenerator';
+import { useAutoRefresh } from '../hooks/useAutoRefresh';
 
 interface AllIncidentRecordModalProps {
   isOpen: boolean;
@@ -62,11 +63,18 @@ export const AllIncidentRecordModal: React.FC<AllIncidentRecordModalProps> = ({ 
     XLSX.utils.book_append_sheet(wb, ws, "Incidents");
     XLSX.writeFile(wb, "Incident_Records.xlsx");
   };
-useEffect(() => {
+  useEffect(() => {
     if (isOpen) {
       fetchIncidents();
     }
   }, [isOpen]);
+
+  // AUTO-REFRESH: Automatically poll live incident records while modal is open
+  useAutoRefresh(() => {
+    if (isOpen) {
+      fetchIncidents();
+    }
+  }, { intervalMs: 60000 });
 
   if (!isOpen) return null;
 

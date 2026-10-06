@@ -20,6 +20,7 @@ import { FirstAidKitPage } from './components/FirstAidKitPage';
 import { InspectionPage } from './components/InspectionPage';
 
 import { formatToPreviewUrl } from './utils/formatDriveUrl';
+import { triggerGlobalDataRefresh } from './hooks/useAutoRefresh';
 
 export default function App() {
   const [showSplash, setShowSplash] = useState(false);
@@ -106,6 +107,7 @@ export default function App() {
           }}
           isDarkMode={isDarkMode}
           toggleTheme={toggleTheme}
+          onRefreshData={triggerGlobalDataRefresh}
           onOpenPWAInstall={() => setPwaModalOpen(true)}
           isPwaInstalled={isPwaInstalled}
           canInstallPwa={!!deferredPrompt}
