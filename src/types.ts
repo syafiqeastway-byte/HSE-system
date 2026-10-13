@@ -8,6 +8,7 @@ export type PageType =
   | 'sopPage' 
   | 'firstAidKitPage'
   | 'inspectionPage'
+  | 'safetyEquipmentPage'
   | 'allIncidentsPage' 
   | 'safetyViolationPage';
 

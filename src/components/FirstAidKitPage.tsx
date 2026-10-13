@@ -3,6 +3,7 @@ import * as XLSX from 'xlsx';
 import { FirstAidKitTableData } from '../types';
 import { fetchFirstAidKitTableData } from '../utils/gasBridge';
 import { useAutoRefresh } from '../hooks/useAutoRefresh';
+import { FirstAidKitFormModal } from './FirstAidKitFormModal';
 
 interface FirstAidKitPageProps {
   onBackToHome: () => void;
@@ -18,6 +19,7 @@ export const FirstAidKitPage: React.FC<FirstAidKitPageProps> = ({ onBackToHome }
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedRowIndex, setSelectedRowIndex] = useState<number | null>(null);
+  const [isFormOpen, setIsFormOpen] = useState(false);
 
   const loadData = (isBackground: boolean = false) => {
     let isMounted = true;
@@ -150,6 +152,16 @@ export const FirstAidKitPage: React.FC<FirstAidKitPageProps> = ({ onBackToHome }
               </button>
             )}
           </div>
+          
+          <button
+            onClick={() => setIsFormOpen(true)}
+            className="px-3.5 py-2 rounded-xl bg-cyan-600 hover:bg-cyan-700 text-white text-xs sm:text-sm font-bold flex items-center justify-center gap-1.5 border border-cyan-500/30 shadow-sm transition-all flex-shrink-0"
+          >
+            <span className="material-symbols-outlined text-base">add_box</span>
+            <span>New Inspection</span>
+          </button>
+          
+          <FirstAidKitFormModal isOpen={isFormOpen} onClose={() => setIsFormOpen(false)} />
 
           {/* Download Excel */}
           <button

@@ -18,6 +18,7 @@ import { SafetyViolationPage } from './components/SafetyViolationPage';
 import { PWAInstallModal } from './components/PWAInstallModal';
 import { FirstAidKitPage } from './components/FirstAidKitPage';
 import { InspectionPage } from './components/InspectionPage';
+import { SafetyEquipmentPage } from './components/SafetyEquipmentPage';
 
 import { formatToPreviewUrl } from './utils/formatDriveUrl';
 import { triggerGlobalDataRefresh } from './hooks/useAutoRefresh';
@@ -131,6 +132,7 @@ export default function App() {
               onNavigateSOP={() => setActivePage('sopPage')}
               onOpenAllIncidentsModal={() => setActivePage('allIncidentsPage')}
               onNavigateSafetyViolation={() => setActivePage('safetyViolationPage')}
+              onNavigateSafetyEquipment={() => setActivePage('safetyEquipmentPage')}
               isDarkMode={isDarkMode}
               onOpenPWAInstall={() => setPwaModalOpen(true)}
               isPwaInstalled={isPwaInstalled}
@@ -190,6 +192,12 @@ export default function App() {
 
           {activePage === 'inspectionPage' && (
             <InspectionPage
+              onBackToHome={() => setActivePage('homePage')}
+            />
+          )}
+
+          {activePage === 'safetyEquipmentPage' && (
+            <SafetyEquipmentPage
               onBackToHome={() => setActivePage('homePage')}
             />
           )}

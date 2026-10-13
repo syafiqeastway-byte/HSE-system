@@ -136,17 +136,17 @@ export const SOPPage: React.FC<SOPPageProps> = ({
             <table className="w-full border-collapse border border-cyan-500/20 text-left text-xs sm:text-sm whitespace-nowrap bg-transparent">
               <thead className="bg-slate-950/95 text-cyan-400 border-b-2 border-cyan-500/40">
                 <tr className="h-8">
-                  <th className="w-14 py-1 px-3 font-bold uppercase tracking-wider border border-cyan-500/20 text-center text-xs text-cyan-400">No</th>
-                  <th className="min-w-[260px] py-1 px-3 font-bold uppercase tracking-wider border border-cyan-500/20 text-xs text-cyan-400">Title</th>
-                  <th className="w-28 py-1 px-3 font-bold uppercase tracking-wider border border-cyan-500/20 text-center text-xs text-cyan-400">Date</th>
-                  <th className="w-28 py-1 px-3 font-bold uppercase tracking-wider border border-cyan-500/20 text-center text-xs text-cyan-400">Rev Date</th>
-                  <th className="w-28 py-1 px-3 font-bold uppercase tracking-wider border border-cyan-500/20 text-center text-xs text-cyan-400">Document</th>
+                  <th className="w-14 py-1.5 px-2 font-bold uppercase tracking-wider border border-cyan-500/20 text-center text-xs text-cyan-400">No</th>
+                  <th className="min-w-[260px] py-1.5 px-2 font-bold uppercase tracking-wider border border-cyan-500/20 text-left text-xs text-cyan-400">Title</th>
+                  <th className="w-28 py-1.5 px-2 font-bold uppercase tracking-wider border border-cyan-500/20 text-center text-xs text-cyan-400">Date</th>
+                  <th className="w-28 py-1.5 px-2 font-bold uppercase tracking-wider border border-cyan-500/20 text-center text-xs text-cyan-400">Rev Date</th>
+                  <th className="w-28 py-1.5 px-2 font-bold uppercase tracking-wider border border-cyan-500/20 text-center text-xs text-cyan-400">Document</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-cyan-500/10 text-xs sm:text-sm text-white">
                 {filteredRecords.length === 0 ? (
                   <tr className="h-9">
-                    <td colSpan={5} className="py-4 text-center text-xs text-white border border-cyan-500/20">
+                    <td colSpan={5} className="py-2 px-2 text-center text-xs text-white border border-cyan-500/20">
                       No records found matching "{searchQuery}"
                     </td>
                   </tr>
@@ -157,7 +157,7 @@ export const SOPPage: React.FC<SOPPageProps> = ({
                       <tr 
                         key={r.id} 
                         onClick={() => setSelectedRowId(isSelected ? null : r.id)}
-                        className={`h-9 transition-colors cursor-pointer select-none ${
+                        className={`transition-colors cursor-pointer select-none ${
                           isSelected
                             ? '!bg-cyan-600 !text-white font-bold [&>td]:!bg-cyan-600 [&>td]:!text-white [&>td]:!border-cyan-400/40 [&_*]:!text-white shadow-md'
                             : rIdx % 2 === 0
@@ -165,19 +165,19 @@ export const SOPPage: React.FC<SOPPageProps> = ({
                             : 'bg-slate-900/80 hover:bg-cyan-950/40'
                         }`}
                       >
-                        <td className="py-1 px-3 font-medium text-white border border-cyan-500/20 text-center leading-none">
+                        <td className="py-1.5 px-2 font-medium text-white border border-cyan-500/20 text-center">
                           {r.id.split('-')[0]}
                         </td>
-                        <td className="py-1 px-3 font-medium text-white border border-cyan-500/20 leading-none">
+                        <td className="py-1.5 px-2 font-medium text-white border border-cyan-500/20 text-left">
                           {r.title}
                         </td>
-                        <td className="py-1 px-3 text-white border border-cyan-500/20 text-center leading-none">
+                        <td className="py-1.5 px-2 text-white border border-cyan-500/20 text-center">
                           {r.date}
                         </td>
-                        <td className="py-1 px-3 text-white border border-cyan-500/20 text-center leading-none">
+                        <td className="py-1.5 px-2 text-white border border-cyan-500/20 text-center">
                           {r.revDate}
                         </td>
-                        <td className="py-1 px-3 text-center border border-cyan-500/20 leading-none">
+                        <td className="py-1.5 px-2 text-center border border-cyan-500/20 text-center">
                           {r.documentUrl && r.documentUrl !== 'Buka File' ? (
                             <a 
                               href={formatToPreviewUrl(r.documentUrl)} 

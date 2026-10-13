@@ -193,42 +193,6 @@ export const InspectionPage: React.FC<InspectionPageProps> = ({
           </div>
         </div>
 
-        {/* Tab Switcher */}
-        <div className="flex items-center gap-2 p-1 bg-slate-950/80 rounded-xl border border-cyan-500/20 w-full sm:w-auto overflow-x-auto">
-          <button
-            onClick={() => setActiveTab('workplace')}
-            className={`px-3.5 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider flex items-center gap-2 transition-all whitespace-nowrap ${
-              activeTab === 'workplace'
-                ? 'bg-cyan-600 text-white shadow-sm'
-                : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
-            }`}
-          >
-            <span className="material-symbols-outlined text-base">fact_check</span>
-            <span>Workplace & Workshop</span>
-            <span className={`px-1.5 py-0.2 rounded-full text-[10px] font-extrabold ${
-              activeTab === 'workplace' ? 'bg-white/20 text-white' : 'bg-slate-800 text-slate-300'
-            }`}>
-              {inspections.length}
-            </span>
-          </button>
-
-          <button
-            onClick={() => setActiveTab('fireExtinguisher')}
-            className={`px-3.5 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider flex items-center gap-2 transition-all whitespace-nowrap ${
-              activeTab === 'fireExtinguisher'
-                ? 'bg-red-600 text-white shadow-sm'
-                : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
-            }`}
-          >
-            <span className="material-symbols-outlined text-base">local_fire_department</span>
-            <span>Fire Extinguisher</span>
-            <span className={`px-1.5 py-0.2 rounded-full text-[10px] font-extrabold ${
-              activeTab === 'fireExtinguisher' ? 'bg-white/20 text-white' : 'bg-slate-800 text-slate-300'
-            }`}>
-              {fireExtinguishers.filter(r => !r.isHeader).length}
-            </span>
-          </button>
-        </div>
       </div>
 
       {/* ========================================================================= */}

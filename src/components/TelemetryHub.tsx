@@ -263,7 +263,7 @@ export const TelemetryHub: React.FC<TelemetryHubProps> = ({ onNavigateMinuteMeet
               <span>DATE/TIME</span>
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
             </div>
-            <div className="text-xs sm:text-sm font-bold text-white mt-0.5 tracking-tight">
+            <div className="text-xs sm:text-sm font-normal text-white mt-0.5 tracking-tight">
               {timeStr}
             </div>
           </div>
@@ -284,7 +284,7 @@ export const TelemetryHub: React.FC<TelemetryHubProps> = ({ onNavigateMinuteMeet
             
             <div className="flex flex-col gap-0.5 mt-0.5">
               {/* KUALA LUMPUR Weather */}
-              <div className="flex items-center justify-between text-xs sm:text-sm font-bold text-white">
+              <div className="flex items-center justify-between text-xs sm:text-sm font-normal text-white">
                 <span className="truncate text-white">KUALA LUMPUR:</span>
                 <span className="flex items-center gap-1 flex-shrink-0 ml-1">
                   <span>{weather.tempKL}°C</span>
@@ -295,7 +295,7 @@ export const TelemetryHub: React.FC<TelemetryHubProps> = ({ onNavigateMinuteMeet
               </div>
               
               {/* PULAU PINANG Weather */}
-              <div className="flex items-center justify-between text-xs sm:text-sm font-bold text-white">
+              <div className="flex items-center justify-between text-xs sm:text-sm font-normal text-white">
                 <span className="truncate text-white">PULAU PINANG:</span>
                 <span className="flex items-center gap-1 flex-shrink-0 ml-1">
                   <span>{weather.tempPenang}°C</span>
@@ -316,12 +316,12 @@ export const TelemetryHub: React.FC<TelemetryHubProps> = ({ onNavigateMinuteMeet
             <span className="material-symbols-outlined text-xl sm:text-2xl">verified_user</span>
           </div>
           <div>
-            <div className="text-xs font-bold text-cyan-400 uppercase tracking-wider">
+            <div className="text-xs font-bold text-red-400 uppercase tracking-wider">
               DAYS WITHOUT INCIDENT
             </div>
-            <div className="text-xs sm:text-sm font-bold text-white flex items-baseline gap-1.5 mt-0.5">
+            <div className="text-xs sm:text-sm font-normal text-white flex items-baseline gap-1.5 mt-0.5">
               <span>{daysCount}</span>
-              <span className="uppercase tracking-wider text-white">
+              <span className="uppercase tracking-wider text-white font-normal">
                 DAYS SAFE
               </span>
             </div>
@@ -345,9 +345,9 @@ export const TelemetryHub: React.FC<TelemetryHubProps> = ({ onNavigateMinuteMeet
             <div className="text-xs font-bold text-cyan-400 uppercase tracking-wider flex items-center justify-between">
               <span>NEXT JKK MEETING</span>
             </div>
-            <div className="text-xs sm:text-sm font-bold text-white mt-0.5 tracking-tight flex items-center justify-between">
+            <div className="text-xs sm:text-sm font-normal text-white mt-0.5 tracking-tight flex items-center justify-between">
               <span>{jkkMeeting.date}</span>
-              <span className="text-xs sm:text-sm font-bold text-white ml-1">
+              <span className="text-xs sm:text-sm font-normal text-white ml-1">
                 {getDaysRemaining(jkkMeeting.date)}
               </span>
             </div>
