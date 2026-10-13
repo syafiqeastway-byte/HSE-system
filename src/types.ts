@@ -133,6 +133,7 @@ export interface FirstAidCert {
 
 export interface MinuteMeeting {
   id: string;
+  no?: string;
   title: string;
   location: string;
   date: string;
@@ -160,6 +161,7 @@ export interface DocumentViewContext {
 
 export interface HIRARCRecord {
   id: string;
+  no?: string;
   title: string;
   date: string;
   revDate: string;
@@ -168,6 +170,7 @@ export interface HIRARCRecord {
 
 export interface SOPRecord {
   id: string;
+  no?: string;
   title: string;
   date: string;
   revDate: string;

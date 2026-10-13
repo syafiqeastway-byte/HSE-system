@@ -259,21 +259,21 @@ export const InspectionPage: React.FC<InspectionPageProps> = ({
           ) : (
             <div className="glass-card overflow-hidden">
               <div className="overflow-x-auto">
-                <table className="w-full border-collapse border border-cyan-500/20 text-left text-xs sm:text-sm whitespace-nowrap bg-transparent">
+                <table className="w-full border-collapse border border-cyan-500/20 text-center text-xs whitespace-nowrap bg-transparent">
                   <thead className="bg-slate-950/95 text-cyan-400 border-b-2 border-cyan-500/40">
                     <tr className="h-8">
-                      <th className="py-1.5 px-3 font-bold uppercase tracking-wider border border-cyan-500/20 text-center w-12 text-xs text-cyan-400">NO</th>
-                      <th className="py-1.5 px-3 font-bold uppercase tracking-wider border border-cyan-500/20 text-center w-28 text-xs text-cyan-400">DATE</th>
-                      <th className="py-1.5 px-3 font-bold uppercase tracking-wider border border-cyan-500/20 min-w-[150px] text-xs text-cyan-400">LOCATION</th>
-                      <th className="py-1.5 px-3 font-bold uppercase tracking-wider border border-cyan-500/20 min-w-[160px] text-xs text-cyan-400">TYPE OF INSPECTION</th>
-                      <th className="py-1.5 px-3 font-bold uppercase tracking-wider border border-cyan-500/20 min-w-[140px] text-xs text-cyan-400">INSPECTOR</th>
-                      <th className="py-1.5 px-3 font-bold uppercase tracking-wider border border-cyan-500/20 min-w-[180px] text-xs text-cyan-400">REMARK</th>
-                      <th className="py-1.5 px-3 font-bold uppercase tracking-wider border border-cyan-500/20 text-center w-28 text-xs text-cyan-400">PDF</th>
+                      <th className="py-1 px-2.5 font-bold uppercase tracking-wider border border-cyan-500/20 text-center w-12 text-xs text-cyan-400">NO</th>
+                      <th className="py-1 px-2.5 font-bold uppercase tracking-wider border border-cyan-500/20 text-center w-28 text-xs text-cyan-400">DATE</th>
+                      <th className="py-1 px-2.5 font-bold uppercase tracking-wider border border-cyan-500/20 text-center min-w-[150px] text-xs text-cyan-400">LOCATION</th>
+                      <th className="py-1 px-2.5 font-bold uppercase tracking-wider border border-cyan-500/20 text-center min-w-[160px] text-xs text-cyan-400">TYPE OF INSPECTION</th>
+                      <th className="py-1 px-2.5 font-bold uppercase tracking-wider border border-cyan-500/20 text-center min-w-[140px] text-xs text-cyan-400">INSPECTOR</th>
+                      <th className="py-1 px-2.5 font-bold uppercase tracking-wider border border-cyan-500/20 text-center min-w-[180px] text-xs text-cyan-400">REMARK</th>
+                      <th className="py-1 px-2.5 font-bold uppercase tracking-wider border border-cyan-500/20 text-center w-28 text-xs text-cyan-400">PDF</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-cyan-500/10 text-xs sm:text-sm text-white">
+                  <tbody className="divide-y divide-cyan-500/10 text-xs text-white">
                     {filteredWorkplaceData.length === 0 ? (
-                      <tr className="h-9">
+                      <tr className="h-8">
                         <td colSpan={7} className="py-6 text-center text-xs text-white border border-cyan-500/20">
                           No workplace inspection records found matching "{searchQueryWorkplace}"
                         </td>
@@ -283,9 +283,9 @@ export const InspectionPage: React.FC<InspectionPageProps> = ({
                         const isSelected = selectedWorkplaceId === String(item.id);
                         return (
                           <tr 
-                            key={item.id} 
+                            key={`${item.id}-${index}`} 
                             onClick={() => setSelectedWorkplaceId(isSelected ? null : String(item.id))}
-                            className={`h-9 transition-colors cursor-pointer select-none ${
+                            className={`h-8 transition-colors cursor-pointer select-none ${
                               isSelected
                                 ? '!bg-cyan-600 !text-white font-bold [&>td]:!bg-cyan-600 [&>td]:!text-white [&>td]:!border-cyan-400/40 [&_*]:!text-white shadow-md'
                                 : index % 2 === 0
@@ -293,20 +293,20 @@ export const InspectionPage: React.FC<InspectionPageProps> = ({
                                 : 'bg-slate-900/80 hover:bg-cyan-950/40'
                             }`}
                           >
-                            <td className="py-1 px-3 text-center font-mono font-medium text-white border border-cyan-500/20 leading-none">{index + 1}</td>
-                            <td className="py-1 px-3 whitespace-nowrap font-mono text-center text-white border border-cyan-500/20 leading-none">{item.date}</td>
-                            <td className="py-1 px-3 font-medium text-white border border-cyan-500/20 leading-none">{item.location || '-'}</td>
-                            <td className="py-1 px-3 font-medium text-white border border-cyan-500/20 leading-none">{item.typeOfInspection || '-'}</td>
-                            <td className="py-1 px-3 text-white border border-cyan-500/20 leading-none">{item.inspector || '-'}</td>
-                            <td className="py-1 px-3 text-white max-w-xs truncate border border-cyan-500/20 leading-none" title={item.remark}>{item.remark || '-'}</td>
-                            <td className="py-1 px-3 text-center border border-cyan-500/20 leading-none">
+                            <td className="py-1 px-2.5 text-center font-mono font-medium text-white border border-cyan-500/20 leading-none">{index + 1}</td>
+                            <td className="py-1 px-2.5 whitespace-nowrap font-mono text-center text-white border border-cyan-500/20 leading-none">{item.date}</td>
+                            <td className="py-1 px-2.5 text-center font-medium text-white border border-cyan-500/20 leading-none">{item.location || '-'}</td>
+                            <td className="py-1 px-2.5 text-center font-medium text-white border border-cyan-500/20 leading-none">{item.typeOfInspection || '-'}</td>
+                            <td className="py-1 px-2.5 text-center text-white border border-cyan-500/20 leading-none">{item.inspector || '-'}</td>
+                            <td className="py-1 px-2.5 text-center text-white max-w-xs truncate border border-cyan-500/20 leading-none" title={item.remark}>{item.remark || '-'}</td>
+                            <td className="py-1 px-2.5 text-center border border-cyan-500/20 leading-none">
                               {item.documentUrl ? (
                                 <a
                                   href={formatToPreviewUrl(item.documentUrl)}
                                   target="_blank"
                                   rel="noopener noreferrer"
                                   onClick={(e) => e.stopPropagation()}
-                                  className="inline-flex items-center justify-center gap-1 px-2.5 py-0.5 bg-red-600 hover:bg-red-700 text-white rounded text-[11px] font-semibold transition-colors leading-tight"
+                                  className="inline-flex items-center justify-center gap-1 px-2 py-0.5 bg-red-600 hover:bg-red-700 text-white rounded text-[11px] font-semibold transition-colors leading-tight"
                                 >
                                   <span className="material-symbols-outlined text-[13px]">open_in_new</span>
                                   View PDF
@@ -418,7 +418,7 @@ export const InspectionPage: React.FC<InspectionPageProps> = ({
                         if (item.isHeader) {
                           return (
                             <tr 
-                              key={item.id} 
+                              key={`fe-hdr-${item.id}-${rIdx}`} 
                               className="h-8 bg-slate-950 text-cyan-400 font-bold uppercase tracking-wider text-xs border-y-2 border-cyan-500/40"
                             >
                               <td className="py-1 px-3 text-center font-bold border border-cyan-500/20 text-cyan-400 leading-none">{item.no || '—'}</td>
@@ -438,7 +438,7 @@ export const InspectionPage: React.FC<InspectionPageProps> = ({
                         const isSelected = selectedFEId === item.id;
                         return (
                           <tr
-                            key={item.id}
+                            key={`fe-row-${item.id}-${rIdx}`} 
                             onClick={() => setSelectedFEId(isSelected ? null : item.id)}
                             className={`h-9 transition-colors cursor-pointer select-none ${
                               isSelected

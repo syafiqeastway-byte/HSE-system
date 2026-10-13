@@ -256,7 +256,7 @@ export const AllIncidentRecordModal: React.FC<AllIncidentRecordModalProps> = ({ 
                     const isSelected = selectedRowId === inc.id;
                     return (
                       <tr 
-                        key={inc.id} 
+                        key={`${inc.id}-${idx}`} 
                         onClick={() => setSelectedRowId(isSelected ? null : inc.id)}
                         className={`h-9 transition-colors cursor-pointer select-none ${
                           isSelected

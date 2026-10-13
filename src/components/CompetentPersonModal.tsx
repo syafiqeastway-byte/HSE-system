@@ -38,9 +38,9 @@ export const CompetentPersonModal: React.FC<CompetentPersonModalProps> = ({ isOp
 
         {/* Credentials Grid List */}
         <div className="p-4 sm:p-6 overflow-y-auto space-y-4">
-          {MOCK_COMPETENT_PERSONS.map((cp) => (
+          {MOCK_COMPETENT_PERSONS.map((cp, idx) => (
             <div
-              key={cp.id}
+              key={`${cp.id}-${idx}`}
               className="p-4 rounded-2xl bg-slate-900/60 border border-purple-500/20 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:border-purple-500/40 hover:bg-purple-950/30 transition-all"
             >
               <div className="flex items-start gap-3.5">

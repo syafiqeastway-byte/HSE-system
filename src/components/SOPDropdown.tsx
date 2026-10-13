@@ -97,9 +97,9 @@ export const SOPDropdown: React.FC<SOPDropdownProps> = ({ onSelectSOP }) => {
                 No SOP found matching "{searchTerm}"
               </div>
             ) : (
-              filteredSOPs.map((sop) => (
+              filteredSOPs.map((sop, idx) => (
                 <button
-                  key={sop.id}
+                  key={`${sop.id}-${idx}`}
                   onClick={() => handleSelect(sop)}
                   className="w-full text-left p-3 hover:bg-cyan-950/40 transition-colors flex items-start justify-between gap-3 group"
                 >

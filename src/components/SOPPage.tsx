@@ -155,7 +155,7 @@ export const SOPPage: React.FC<SOPPageProps> = ({
                     const isSelected = selectedRowId === r.id;
                     return (
                       <tr 
-                        key={r.id} 
+                        key={`${r.id}-${rIdx}`} 
                         onClick={() => setSelectedRowId(isSelected ? null : r.id)}
                         className={`transition-colors cursor-pointer select-none ${
                           isSelected

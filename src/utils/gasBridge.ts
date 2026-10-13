@@ -70,7 +70,7 @@ let cachedDaysWithoutIncident: number = (() => {
       if (!isNaN(p)) return p;
     }
   } catch {}
-  return 17;
+  return 36;
 })();
 
 export function getCachedDaysWithoutIncident(): number {
@@ -534,32 +534,34 @@ export async function fetchFirstAidCertData(requireAuth: boolean = false): Promi
 // 10b. First Aid Kit Table Data (Spreadsheet ID: 17RUlbsvnS8c2keut4n1ZqW5LZJIFGTfZBFuVV_sjnDA, Sheet: FIRST AID KIT, Range: A1:Y20)
 export function getMockFirstAidKitData(): FirstAidKitTableData {
   const headers = [
-    'NO', 'ITEM / CONTENT', 'SPECIFICATION / SIZE', 'MIN QTY', 'LOCATION',
-    'JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN',
-    'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC',
-    'EXPIRY DATE', 'CONDITION', 'REMARK', 'INSPECTED BY', 'VERIFIED BY', 'STATUS', 'REPLENISHMENT REQUIRED', 'ACTION PLAN'
+    'NO', 'MODELS/PLACE', 'PLATE NO', 'LOCATION', 'CODE', 'LAST INSPECTION',
+    '1) STERILE GAUZE PAD', '2) PLASTER LUKA', '3) WOW/ELASTIC BANDAGE', '4) PITA PELEKAT PERUBATAN',
+    '5) KAPAS', '6) IODINE', '7) GUNTING/PISAU', '8) KAIN ANDUH/TRIANGULAR BANDAGE',
+    '9) WOODEN SPLINT', '10) PIN', '11) SARUNG TANGAN', '12) MUSCLE CREAM',
+    '13) ALCOHOL SWAB', '14) ANTISEPTIC CREAM', '15) PENGEPIT', '16) STERILE EYE PADS',
+    '17) COLD PACK', 'NEXT INSPECTION', 'DESCRIPTION'
   ];
   
   const sampleItems = [
-    ['1', 'Triangular Bandage', '90cm x 90cm x 130cm', '4 pcs', 'Main First Aid Box A', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', '2028-12-31', 'Good', 'Adequate Stock', 'Safety Officer', 'HSE Committee', 'COMPLIANT', 'NO', 'Routine monitoring'],
-    ['2', 'Roller Bandage 5cm', '5cm x 5m', '6 rolls', 'Main First Aid Box A', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', '2028-06-30', 'Good', 'Stock Verified', 'Safety Officer', 'HSE Committee', 'COMPLIANT', 'NO', 'Routine monitoring'],
-    ['3', 'Roller Bandage 7.5cm', '7.5cm x 5m', '6 rolls', 'Main First Aid Box A', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', '2028-06-30', 'Good', 'Stock Verified', 'Safety Officer', 'HSE Committee', 'COMPLIANT', 'NO', 'Routine monitoring'],
-    ['4', 'Sterile Gauze Pad', '7.5cm x 7.5cm (Pack of 5)', '5 pkts', 'Main First Aid Box A', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', '2027-10-15', 'Sealed', 'Sufficient', 'Safety Officer', 'HSE Committee', 'COMPLIANT', 'NO', 'None'],
-    ['5', 'Adhesive Plaster (Assorted)', 'Assorted Waterproof', '40 pcs', 'Main First Aid Box A', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', '2027-08-20', 'Good', 'Replenished', 'Safety Officer', 'HSE Committee', 'COMPLIANT', 'NO', 'Regular check'],
-    ['6', 'Microporous Surgical Tape', '2.5cm x 5m', '2 rolls', 'Main First Aid Box A', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', '2028-04-10', 'Good', 'Original box', 'Safety Officer', 'HSE Committee', 'COMPLIANT', 'NO', 'None'],
-    ['7', 'Burn Dressing / Hydrogel', '10cm x 10cm', '2 pkts', 'Main First Aid Box A', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', '2027-05-30', 'Good', 'Sterile packaging', 'Safety Officer', 'HSE Committee', 'COMPLIANT', 'NO', 'None'],
-    ['8', 'Antiseptic Solution / Povidone', '60 ml', '1 bottle', 'Main First Aid Box A', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', '2027-12-31', 'Intact', 'Cap sealed', 'Safety Officer', 'HSE Committee', 'COMPLIANT', 'NO', 'Check seal'],
-    ['9', 'Normal Saline Solution (Eye / Wound wash)', '500 ml', '2 bottles', 'Main First Aid Box A', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', '2027-09-15', 'Intact', 'Sterile', 'Safety Officer', 'HSE Committee', 'COMPLIANT', 'NO', 'None'],
-    ['10', 'Stainless Steel Bandage Scissors', '15cm Surgical Grade', '1 pair', 'Main First Aid Box A', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'N/A', 'Sharp & Clean', 'Inspected', 'Safety Officer', 'HSE Committee', 'COMPLIANT', 'NO', 'None'],
-    ['11', 'Safety Pins', 'Assorted Sizes', '12 pcs', 'Main First Aid Box A', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'N/A', 'Rust-free', 'In pouch', 'Safety Officer', 'HSE Committee', 'COMPLIANT', 'NO', 'None'],
-    ['12', 'Disposable Nitrile Gloves (Pairs)', 'Size L Powder-free', '4 pairs', 'Main First Aid Box A', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', '2028-02-28', 'Good elasticity', 'Pouch sealed', 'Safety Officer', 'HSE Committee', 'COMPLIANT', 'NO', 'None'],
-    ['13', 'CPR Face Shield / Pocket Mask', 'With One-Way Valve', '2 pcs', 'Main First Aid Box A', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', '2028-11-30', 'Good', 'Hygienic case', 'Safety Officer', 'HSE Committee', 'COMPLIANT', 'NO', 'None'],
-    ['14', 'First Aid Booklet & Log Sheet', 'DOSH Standard Format', '1 set', 'Main First Aid Box A', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'N/A', 'Updated', 'Records active', 'Safety Officer', 'HSE Committee', 'COMPLIANT', 'NO', 'None'],
-    ['15', 'Sterile Eye Pad', 'Oval Shape', '2 pkts', 'Main First Aid Box A', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', '2027-11-15', 'Sealed', 'Intact', 'Safety Officer', 'HSE Committee', 'COMPLIANT', 'NO', 'None'],
-    ['16', 'Elastic Crepe Bandage', '10cm x 4.5m', '2 rolls', 'Main First Aid Box A', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', '2028-01-31', 'Good elasticity', 'Clean wrap', 'Safety Officer', 'HSE Committee', 'COMPLIANT', 'NO', 'None'],
-    ['17', 'Forehead Thermometer / Digital', 'Digital LCD', '1 unit', 'Main First Aid Box A', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'N/A', 'Functional', 'Battery full', 'Safety Officer', 'HSE Committee', 'COMPLIANT', 'NO', 'None'],
-    ['18', 'Absorbent Cotton Wool', '50g Pack', '1 pkt', 'Main First Aid Box A', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', '2028-08-31', 'Clean', 'Sealed bag', 'Safety Officer', 'HSE Committee', 'COMPLIANT', 'NO', 'None'],
-    ['19', 'Emergency Blanket / Foil', '140cm x 210cm', '1 pc', 'Main First Aid Box A', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', 'OK', '2029-01-01', 'Folded neat', 'Unused', 'Safety Officer', 'HSE Committee', 'COMPLIANT', 'NO', 'None'],
+    ['1', 'ISUZU DMAX', 'BRU 9233', 'IJOK', 'CASA', '21/7/2026', '', '10', '1', '1', '', '1-EXP', '', '1', '1', '', 'NA', 'NA', 'NA', 'NA', 'NA', 'NA', '1', '17/1/2027', ''],
+    ['2', 'ISUZU DMAX DOUBLE', 'BRF 6233', 'IJOK', 'T12', '23/7/2026', '1', '5', '7', '3', '2', '4-EXP', '1', '4', '4', '10', 'NA', 'NA', 'NA', 'NA', 'NA', 'NA', 'NA', '19/1/2027', ''],
+    ['3', 'ISUZU DMAX', 'JXB 9233', 'IJOK', 'T7', '23/7/2026', '1', '10', '8', '4', '5', '4-EXP', '1', '5', '5', '10', 'NA', 'NA', 'NA', 'NA', 'NA', 'NA', 'NA', '19/1/2027', ''],
+    ['4', 'TOYOTA HILUX', 'BPE 2233', 'IJOK', 'T3', '14/1/2026', '1', '8', '8', '2', '4', '4-EXP', '1', '5', '4', '10', 'NA', 'NA', '3', 'NA', 'NA', 'NA', '1', '13/7/2026', ''],
+    ['5', 'PERODUA VIVA', 'WA 1584 K', 'IJOK', 'T8', '31/12/2025', '1', '5', '1', '2', '5', '2-EXP', '1', '2', '2', '5', 'NA', 'NA', 'NA', 'NA', 'NA', 'NA', 'NA', '29/6/2026', ''],
+    ['6', 'PERODUA VIVA', 'WA 1582 K', 'IJOK', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
+    ['7', 'ISUZU LORRY', 'WMP 2233', 'IJOK', 'T1', '23/7/2026', '1', '4', '8', '3', '5', '4-EXP', '1', '5', '5', '1', 'NA', 'NA', 'NA', 'NA', 'NA', 'NA', 'NA', '19/1/2027', 'STOCK REMAIN UNCHANGE'],
+    ['8', 'HICOM LORRY', 'WVS 7589', 'IJOK', 'T5', '4/8/2026', '1', '10', '8', '3', '5', '4-EXP', '1', '5', '5', '6', 'NA', 'NA', 'NA', 'NA', 'NA', 'NA', 'NA', '31/1/2027', ''],
+    ['9', 'NISSAN LOADERS', 'NDS 8310', 'IJOK', 'T9', '12/1/2026', '1', '8', '8', '2', '5', '4-EXP', '1', '5', '5', '10', 'NA', 'NA', 'NA', 'NA', 'NA', 'NA', 'NA', '11/7/2026', ''],
+    ['10', 'TOYOTA HILUX DOUBLE', 'WYX 2233', 'IJOK', 'ADA', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
+    ['11', 'PROTON ARENA', 'WPY 105', 'PENANG', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
+    ['12', 'NISSAN NAVARA', 'BMG 2233', 'PENANG', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
+    ['13', 'ISUZU DMAX', 'VKA 9233', 'PENANG', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
+    ['14', 'PERODUA KEMBARA', 'WMM 4589', 'PENANG', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
+    ['15', 'IJOK WAREHOUSE (01)', '', 'KITCHEN', '', '20/7/2026', '2', '15', '4', '1', '2', '0', '1', '3', '1', '10', 'NA', '1-EXP', '11', '1-EXP', 'NA', 'NA', '2', '16/1/2027', 'TAMBAH 15 PLASTER- 5 DAH GUNA'],
+    ['16', 'IJOK WAREHOUSE ', '', 'ROOM', '', '20/7/2026', '4', '12', '2', '2', '3', '0', '1', '4', '3', '', '2', '1-EXP', 'NA', 'NA', 'NA', 'NA', '1', '16/1/2027', 'TAMBAH 10 PLASTER- 3 DAH GUNA'],
+    ['17', 'SUBANG OFFICE HQ (1)', '', 'SUBANG', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
+    ['18', 'SUBANG OFFICE HQ (2)', '', 'SUBANG', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
+    ['19', 'PENANG WAREHOUSE', '', 'PENANG', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', ''],
   ];
 
   const rawRecords = sampleItems.map((row) => {
@@ -709,11 +711,11 @@ export interface JkkMeetingSummary {
 }
 
 const DEFAULT_JKK_MEETING: JkkMeetingSummary = {
-  date: '09/10/2026',
-  meetingTitle: '13th Minute Meeting',
+  date: '08/01/2027',
+  meetingTitle: '14th JKK Meeting',
   location: 'IJOK',
-  meetingNo: '13',
-  totalMeetings: 13
+  meetingNo: '14',
+  totalMeetings: 14
 };
 
 let cachedJkkMeeting: JkkMeetingSummary = (() => {
@@ -818,8 +820,10 @@ export async function fetchDynamicMinuteMeetings(): Promise<any[]> {
           if (results.data && results.data.length > 0) {
             results.data.forEach((row: any, index: number) => {
               if (row.length >= 4 && row[0]?.trim() !== '') {
+                const meetingNo = row[0]?.trim() || `${index + 1}`;
                 meetings.push({
-                  id: row[0],
+                  id: `MM-${index + 1}-${meetingNo}`,
+                  no: meetingNo,
                   title: row[1] || '-',
                   location: row[2] || '-',
                   date: row[3] || '-',
@@ -847,6 +851,7 @@ export async function fetchDynamicHIRARC(): Promise<any[]> {
 
   const fallbackHirarc = MOCK_HIRARCS.map((h, index) => ({
     id: h.code || `HIRARC-${index + 1}`,
+    no: String(index + 1),
     title: h.activityName,
     date: '15/01/2026',
     revDate: '15/02/2026',
@@ -865,10 +870,12 @@ export async function fetchDynamicHIRARC(): Promise<any[]> {
         complete: (results) => {
           const records: any[] = [];
           if (results.data && results.data.length > 0) {
-            results.data.forEach((row: any) => {
+            results.data.forEach((row: any, index: number) => {
               if (row.length >= 4 && row[0]?.trim() !== '' && row[1]?.trim() !== '' && row[0] !== 'HIRARC') {
+                const hirarcNo = row[0]?.trim() || `${index + 1}`;
                 records.push({
-                  id: row[0],
+                  id: `HIRARC-${index + 1}-${hirarcNo}`,
+                  no: hirarcNo,
                   title: row[1] || '-',
                   date: row[2] || '-',
                   revDate: row[3] || '-',

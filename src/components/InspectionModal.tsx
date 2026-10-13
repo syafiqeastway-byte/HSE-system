@@ -320,7 +320,7 @@ export const InspectionModal: React.FC<InspectionModalProps> = ({ isOpen, filter
                           const isSelected = selectedWorkplaceId === String(item.id);
                           return (
                             <tr 
-                              key={item.id} 
+                              key={`${item.id}-${index}`} 
                               onClick={() => setSelectedWorkplaceId(isSelected ? null : String(item.id))}
                               className={`h-9 transition-colors cursor-pointer select-none ${
                                 isSelected
@@ -441,7 +441,7 @@ export const InspectionModal: React.FC<InspectionModalProps> = ({ isOpen, filter
                           if (item.isHeader) {
                             return (
                               <tr 
-                                key={item.id} 
+                                key={`fe-hdr-${item.id}-${index}`} 
                                 className="h-8 bg-slate-950 text-cyan-400 font-bold uppercase tracking-wider text-xs border-y-2 border-cyan-500/40 shadow-sm"
                               >
                                 <td className="py-1 px-3 text-center font-bold border border-slate-700 text-cyan-400 leading-none">{item.no || '—'}</td>
@@ -463,7 +463,7 @@ export const InspectionModal: React.FC<InspectionModalProps> = ({ isOpen, filter
 
                           return (
                             <tr
-                              key={item.id}
+                              key={`fe-row-${item.id}-${index}`} 
                               onClick={() => setSelectedFEId(isSelected ? null : item.id)}
                               className={`h-9 transition-colors cursor-pointer select-none ${
                                 isSelected

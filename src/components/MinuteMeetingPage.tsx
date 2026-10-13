@@ -133,19 +133,19 @@ export const MinuteMeetingPage: React.FC<MinuteMeetingPageProps> = ({
       ) : (
         <div className="glass-card overflow-hidden">
           <div className="overflow-x-auto">
-            <table className="w-full border-collapse border border-cyan-500/20 text-left text-xs sm:text-sm whitespace-nowrap bg-transparent">
+            <table className="w-full border-collapse border border-cyan-500/20 text-center text-xs whitespace-nowrap bg-transparent">
               <thead className="bg-slate-950/95 text-cyan-400 border-b-2 border-cyan-500/40">
                 <tr className="h-8">
-                  <th className="w-14 py-1 px-3 font-bold uppercase tracking-wider border border-cyan-500/20 text-center text-xs text-cyan-400">No</th>
-                  <th className="min-w-[260px] py-1 px-3 font-bold uppercase tracking-wider border border-cyan-500/20 text-xs text-cyan-400">Title</th>
-                  <th className="min-w-[140px] py-1 px-3 font-bold uppercase tracking-wider border border-cyan-500/20 text-xs text-cyan-400">Location</th>
-                  <th className="w-28 py-1 px-3 font-bold uppercase tracking-wider border border-cyan-500/20 text-center text-xs text-cyan-400">Date</th>
-                  <th className="w-28 py-1 px-3 font-bold uppercase tracking-wider border border-cyan-500/20 text-center text-xs text-cyan-400">Document</th>
+                  <th className="w-14 py-1 px-2.5 font-bold uppercase tracking-wider border border-cyan-500/20 text-center text-xs text-cyan-400">No</th>
+                  <th className="min-w-[260px] py-1 px-2.5 font-bold uppercase tracking-wider border border-cyan-500/20 text-center text-xs text-cyan-400">Title</th>
+                  <th className="min-w-[140px] py-1 px-2.5 font-bold uppercase tracking-wider border border-cyan-500/20 text-center text-xs text-cyan-400">Location</th>
+                  <th className="w-28 py-1 px-2.5 font-bold uppercase tracking-wider border border-cyan-500/20 text-center text-xs text-cyan-400">Date</th>
+                  <th className="w-28 py-1 px-2.5 font-bold uppercase tracking-wider border border-cyan-500/20 text-center text-xs text-cyan-400">Document</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-cyan-500/10 text-xs sm:text-sm text-white">
+              <tbody className="divide-y divide-cyan-500/10 text-xs text-white">
                 {filteredMeetings.length === 0 ? (
-                  <tr className="h-9">
+                  <tr className="h-8">
                     <td colSpan={5} className="py-4 text-center text-xs text-white border border-cyan-500/20">
                       No meeting records found matching "{searchQuery}"
                     </td>
@@ -155,9 +155,9 @@ export const MinuteMeetingPage: React.FC<MinuteMeetingPageProps> = ({
                     const isSelected = selectedMeetingId === m.id;
                     return (
                       <tr 
-                        key={m.id} 
+                        key={`${m.id}-${mIdx}`} 
                         onClick={() => setSelectedMeetingId(isSelected ? null : m.id)}
-                        className={`h-9 transition-colors cursor-pointer select-none ${
+                        className={`h-8 transition-colors cursor-pointer select-none ${
                           isSelected
                             ? '!bg-cyan-600 !text-white font-bold [&>td]:!bg-cyan-600 [&>td]:!text-white [&>td]:!border-cyan-400/40 [&_*]:!text-white shadow-md'
                             : mIdx % 2 === 0
@@ -165,21 +165,21 @@ export const MinuteMeetingPage: React.FC<MinuteMeetingPageProps> = ({
                             : 'bg-slate-900/80 hover:bg-cyan-950/40'
                         }`}
                       >
-                        <td className="py-1 px-3 font-medium text-white border border-cyan-500/20 text-center leading-none">
-                          {m.id}
+                        <td className="py-1 px-2.5 font-medium text-white border border-cyan-500/20 text-center leading-none">
+                          {m.no || m.id?.replace(/^MM-\d+-/, '') || mIdx + 1}
                         </td>
-                        <td className="py-1 px-3 font-medium text-white border border-cyan-500/20 leading-none">
+                        <td className="py-1 px-2.5 font-medium text-white border border-cyan-500/20 text-center leading-none">
                           {m.title}
                         </td>
-                        <td className="py-1 px-3 text-white border border-cyan-500/20 leading-none">
+                        <td className="py-1 px-2.5 text-white border border-cyan-500/20 text-center leading-none">
                           <span className="inline-flex items-center px-2 py-0.5 rounded bg-slate-800 text-[11px] font-medium leading-tight text-white border border-cyan-500/20">
                             {m.location}
                           </span>
                         </td>
-                        <td className="py-1 px-3 font-mono text-white border border-cyan-500/20 text-center leading-none">
+                        <td className="py-1 px-2.5 font-mono text-white border border-cyan-500/20 text-center leading-none">
                           {m.date}
                         </td>
-                        <td className="py-1 px-3 text-center border border-cyan-500/20 leading-none">
+                        <td className="py-1 px-2.5 text-center border border-cyan-500/20 leading-none">
                           {m.documentUrl ? (
                             <a 
                               href={formatToPreviewUrl(m.documentUrl)} 

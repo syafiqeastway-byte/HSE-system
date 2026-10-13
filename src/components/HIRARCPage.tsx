@@ -155,7 +155,7 @@ export const HIRARCPage: React.FC<HIRARCPageProps> = ({
                     const isSelected = selectedRowId === r.id;
                     return (
                       <tr 
-                        key={r.id} 
+                        key={`${r.id}-${rIdx}`} 
                         onClick={() => setSelectedRowId(isSelected ? null : r.id)}
                         className={`transition-colors cursor-pointer select-none ${
                           isSelected
@@ -166,7 +166,7 @@ export const HIRARCPage: React.FC<HIRARCPageProps> = ({
                         }`}
                       >
                         <td className="py-1.5 px-2 font-medium text-white border border-cyan-500/20 text-center">
-                          {r.id.split('-')[0]}
+                          {r.no || r.id.replace(/^HIRARC-\d+-/, '') || rIdx + 1}
                         </td>
                         <td className="py-1.5 px-2 font-medium text-white border border-cyan-500/20 text-left">
                           {r.title}

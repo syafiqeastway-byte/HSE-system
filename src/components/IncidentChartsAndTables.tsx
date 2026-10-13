@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useMemo } from 'react';
 import { IncidentRecord } from '../types';
 import { MOCK_INCIDENT_RECORDS } from '../data/mockData';
 import {
@@ -115,6 +115,52 @@ const centerDataLabelsPlugin = {
   },
 };
 
+const MONTH_LABELS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+/**
+ * Robust helper to parse year and month index (0-11) from incident record
+ * Supports DD/MM/YYYY, YYYY-MM-DD, and Date timestamps
+ */
+const parseIncidentDateAndYear = (r: IncidentRecord): { year: string; monthIndex: number } => {
+  let year = String(r.year || '').trim();
+  let monthIndex = -1;
+
+  if (r.date && typeof r.date === 'string') {
+    const trimmed = r.date.trim();
+    if (trimmed.includes('/')) {
+      const parts = trimmed.split('/');
+      if (parts.length >= 2) {
+        monthIndex = parseInt(parts[1], 10) - 1;
+      }
+      if (parts.length >= 3 && !year) {
+        year = parts[2].trim();
+      }
+    } else if (trimmed.includes('-')) {
+      const parts = trimmed.split('-');
+      if (parts.length >= 2) {
+        if (parts[0].length === 4) {
+          if (!year) year = parts[0].trim();
+          monthIndex = parseInt(parts[1], 10) - 1;
+        } else if (parts[2]?.length === 4) {
+          if (!year) year = parts[2].trim();
+          monthIndex = parseInt(parts[1], 10) - 1;
+        }
+      }
+    }
+  }
+
+  // Fallback to Date parser
+  if ((monthIndex < 0 || monthIndex > 11) && r.date) {
+    const d = new Date(r.date);
+    if (!isNaN(d.getTime())) {
+      monthIndex = d.getMonth();
+      if (!year) year = String(d.getFullYear());
+    }
+  }
+
+  return { year, monthIndex };
+};
+
 export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = ({
   isDarkMode,
   onOpenAllIncidentsModal,
@@ -161,6 +207,45 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
   const [selectedRowId, setSelectedRowId] = useState<string | null>(null);
   const [selectedSummaryRowIdx, setSelectedSummaryRowIdx] = useState<number | null>(null);
   const [isGeneratingPdf, setIsGeneratingPdf] = useState<boolean>(false);
+
+  // Selected year state for month breakdown chart: null means automatically show latest year
+  const [selectedMonthYear, setSelectedMonthYear] = useState<number | null>(null);
+
+  // Compute available years from incidents, latest first
+  const availableYears = useMemo(() => {
+    const set = new Set<number>();
+    incidents.forEach((r) => {
+      const { year } = parseIncidentDateAndYear(r);
+      if (year && !isNaN(parseInt(year, 10))) {
+        const y = parseInt(year, 10);
+        if (y >= 2000 && y <= 2100) set.add(y);
+      }
+    });
+    // Include current calendar year (if year 2027 comes, it automatically shows 2027)
+    const currentCalYear = new Date().getFullYear();
+    set.add(currentCalYear);
+    return Array.from(set).sort((a, b) => b - a);
+  }, [incidents]);
+
+  // Dynamic latest year available (e.g. 2026, or 2027 if new year)
+  const latestYear = availableYears.length > 0 ? availableYears[0] : new Date().getFullYear();
+  const activeMonthYear = selectedMonthYear ?? latestYear;
+
+  // Monthly breakdown data for activeMonthYear (Jan to Dec)
+  const { monthData, activeMonthTotal } = useMemo(() => {
+    const counts = new Array(12).fill(0);
+    const targetYearStr = String(activeMonthYear).trim();
+
+    incidents.forEach((r) => {
+      const { year, monthIndex } = parseIncidentDateAndYear(r);
+      if (year === targetYearStr && monthIndex >= 0 && monthIndex < 12) {
+        counts[monthIndex]++;
+      }
+    });
+
+    const total = counts.reduce((acc, val) => acc + val, 0);
+    return { monthData: counts, activeMonthTotal: total };
+  }, [incidents, activeMonthYear]);
 
   // Canvas Refs for Charts
   const chartRef1 = useRef<HTMLCanvasElement | null>(null);
@@ -495,7 +580,7 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
               {
                 label: 'Total Incidents',
                 data,
-                backgroundColor: ['#3B82F6', '#8B5CF6', '#EC4899', '#10B981'],
+                backgroundColor: ['#3B82F6', '#8B5CF6', '#EC4899', '#10B981', '#06B6D4', '#F59E0B'],
                 hoverBorderColor: textColor,
                 hoverBorderWidth: 2,
                 borderRadius: 8,
@@ -504,9 +589,18 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
           },
           options: {
             ...baseBarOpts,
+            onClick: (_event: any, elements: any[]) => {
+              if (elements && elements.length > 0) {
+                const clickedIdx = elements[0].index;
+                const clickedYear = parseInt(labels[clickedIdx], 10);
+                if (!isNaN(clickedYear)) {
+                  setSelectedMonthYear(clickedYear === latestYear ? null : clickedYear);
+                }
+              }
+            },
             scales: {
-              x: { ticks: { color: textColor }, grid: { color: gridColor } },
-              y: { ticks: { color: textColor, precision: 0 }, grid: { color: gridColor } },
+              x: { ticks: { color: textColor, font: { weight: 'bold' } }, grid: { color: gridColor } },
+              y: { ticks: { color: textColor, precision: 0 }, grid: { color: gridColor }, beginAtZero: true },
             },
             plugins: {
               legend: { display: false },
@@ -515,6 +609,10 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
                 animation: { duration: 200 },
                 padding: 10,
                 cornerRadius: 8,
+                callbacks: {
+                  label: (item: any) => `Total Incidents: ${item.formattedValue}`,
+                  afterLabel: () => 'Click bar to view monthly breakdown',
+                },
               },
               title: {
                 display: true,
@@ -1029,6 +1127,122 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
     }
   }, [activeTab, incidents, isDarkMode, loading]);
 
+  // Render Chart 2: Incidents by Month for activeMonthYear (Jan - Dec) to the right of Year breakdown
+  useEffect(() => {
+    if (loading || incidents.length === 0) return;
+
+    if (activeTab !== 'YEAR') {
+      if (chartInstance2.current) {
+        chartInstance2.current.destroy();
+        chartInstance2.current = null;
+      }
+      return;
+    }
+
+    if (!chartRef2.current) return;
+
+    // Destroy previous Chart 2 safely before rebuilding
+    if (chartInstance2.current) {
+      chartInstance2.current.destroy();
+      chartInstance2.current = null;
+    }
+    const existing2 = Chart.getChart(chartRef2.current);
+    if (existing2) existing2.destroy();
+
+    const ctx2 = chartRef2.current.getContext('2d');
+    if (!ctx2) return;
+
+    const textColor = isDarkMode ? '#F8FAFC' : '#0F172A';
+    const gridColor = isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(15, 23, 42, 0.08)';
+
+    chartInstance2.current = new Chart(ctx2, {
+      type: 'bar',
+      data: {
+        labels: MONTH_LABELS,
+        datasets: [
+          {
+            label: `Incidents in ${activeMonthYear}`,
+            data: monthData,
+            backgroundColor: [
+              '#38BDF8', '#38BDF8', '#38BDF8', // Q1 Jan-Mar (Sky Blue)
+              '#10B981', '#10B981', '#10B981', // Q2 Apr-Jun (Emerald)
+              '#F59E0B', '#F59E0B', '#F59E0B', // Q3 Jul-Sep (Amber)
+              '#8B5CF6', '#8B5CF6', '#8B5CF6', // Q4 Oct-Dec (Purple)
+            ],
+            hoverBackgroundColor: [
+              '#0284C7', '#0284C7', '#0284C7',
+              '#059669', '#059669', '#059669',
+              '#D97706', '#D97706', '#D97706',
+              '#7C3AED', '#7C3AED', '#7C3AED',
+            ],
+            hoverBorderColor: textColor,
+            hoverBorderWidth: 2,
+            borderRadius: 6,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        animation: {
+          duration: 600,
+          easing: 'easeOutQuart',
+        },
+        events: ['mousemove', 'mouseout', 'click', 'touchstart', 'touchmove'],
+        interaction: {
+          mode: 'index',
+          intersect: false,
+        },
+        scales: {
+          x: {
+            ticks: {
+              color: textColor,
+              font: { weight: 'bold', size: 10 },
+            },
+            grid: { color: gridColor },
+          },
+          y: {
+            ticks: {
+              color: textColor,
+              precision: 0,
+            },
+            grid: { color: gridColor },
+            beginAtZero: true,
+          },
+        },
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            enabled: true,
+            animation: { duration: 200 },
+            padding: 10,
+            cornerRadius: 8,
+            callbacks: {
+              title: (items: any) => {
+                const label = items[0]?.label || '';
+                return `${label} ${activeMonthYear}`;
+              },
+              label: (item: any) => `Incidents: ${item.formattedValue}`,
+            },
+          },
+          title: {
+            display: true,
+            text: `INCIDENTS BY MONTH — ${activeMonthYear} (JAN - DEC)`,
+            color: textColor,
+            font: { size: 13, weight: 'bold' },
+          },
+        },
+      },
+    });
+
+    return () => {
+      if (chartInstance2.current) {
+        chartInstance2.current.destroy();
+        chartInstance2.current = null;
+      }
+    };
+  }, [activeTab, activeMonthYear, monthData, isDarkMode, loading, incidents.length]);
+
   // Client-Side Search Filter across all fields
   const filteredIncidents = incidents.filter((inc) => {
     if (!inc) return false;
@@ -1209,16 +1423,16 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
             <span className={`material-symbols-outlined text-base ${isRefreshing ? 'animate-spin text-cyan-400' : ''}`}>
               sync
             </span>
-            <span>REFRESH</span>
+            <span>Refresh</span>
           </button>
 
           {onOpenAllIncidentsModal && (
             <button
               onClick={onOpenAllIncidentsModal}
-              className="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-extrabold text-xs uppercase tracking-wider flex items-center gap-1.5 shadow-md border border-slate-600/50 transition-all hover:scale-105"
+              className="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs flex items-center gap-1.5 shadow-md border border-slate-600/50 transition-all hover:scale-105"
             >
               <span className="material-symbols-outlined text-base text-cyan-400">database</span>
-              <span>ALL INCIDENT RECORD TABLE</span>
+              <span>All incident record table</span>
             </button>
           )}
         </div>
@@ -1257,10 +1471,72 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
         </div>
       ) : (
         <div>
-          {/* Interactive Chart Container */}
-          <div className="relative p-3.5 rounded-2xl bg-slate-900/60 border border-cyan-500/20 h-[280px] sm:h-[320px] shadow-sm w-full mb-5">
-            <canvas ref={chartRef1} className="w-full h-full cursor-pointer" style={{ touchAction: 'pan-y' }}></canvas>
-          </div>
+          {/* Interactive Chart Container: Side-by-side on YEAR tab */}
+          {activeTab === 'YEAR' ? (
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-5 mb-5">
+              {/* Left Chart: INCIDENTS BREAKDOWN BY YEAR */}
+              <div className="relative p-3.5 sm:p-4 rounded-2xl bg-slate-900/60 border border-cyan-500/20 shadow-sm flex flex-col justify-between h-[320px] sm:h-[360px]">
+                <div className="flex items-center justify-between mb-2">
+                  <div className="flex items-center gap-2">
+                    <span className="material-symbols-outlined text-cyan-400 text-lg">bar_chart</span>
+                    <h4 className="text-xs sm:text-sm font-bold text-white tracking-wide uppercase">
+                      INCIDENTS BREAKDOWN BY YEAR
+                    </h4>
+                  </div>
+                  <span className="px-2.5 py-0.5 rounded-full text-[11px] font-extrabold bg-cyan-950/80 text-cyan-400 border border-cyan-500/30">
+                    Total: {incidents.length}
+                  </span>
+                </div>
+                <div className="relative flex-1 w-full min-h-0">
+                  <canvas ref={chartRef1} className="w-full h-full cursor-pointer" style={{ touchAction: 'pan-y' }}></canvas>
+                </div>
+              </div>
+
+              {/* Right Chart: INCIDENTS BY MONTH (JAN - DEC) for Latest Year */}
+              <div className="relative p-3.5 sm:p-4 rounded-2xl bg-slate-900/60 border border-cyan-500/20 shadow-sm flex flex-col justify-between h-[320px] sm:h-[360px]">
+                <div className="flex items-center justify-between mb-2 flex-wrap gap-2">
+                  <div className="flex items-center gap-2">
+                    <span className="material-symbols-outlined text-cyan-400 text-lg">calendar_month</span>
+                    <h4 className="text-xs sm:text-sm font-bold text-white tracking-wide uppercase">
+                      INCIDENT BY MONTH — {activeMonthYear} (JAN - DEC)
+                    </h4>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="px-2.5 py-0.5 rounded-full text-[11px] font-extrabold bg-cyan-950/80 text-cyan-400 border border-cyan-500/30">
+                      Total {activeMonthYear}: {activeMonthTotal}
+                    </span>
+                    <div className="relative">
+                      <select
+                        value={activeMonthYear}
+                        onChange={(e) => {
+                          const val = parseInt(e.target.value, 10);
+                          setSelectedMonthYear(val === latestYear ? null : val);
+                        }}
+                        className="px-2.5 py-1 rounded-lg bg-slate-800 border border-cyan-500/30 text-white font-bold text-xs cursor-pointer focus:outline-none focus:ring-1 focus:ring-cyan-500 appearance-none pr-7"
+                        title="Select Year for Monthly Incident Breakdown"
+                      >
+                        {availableYears.map((yr) => (
+                          <option key={yr} value={yr}>
+                            {yr} {yr === latestYear ? '(Latest)' : ''}
+                          </option>
+                        ))}
+                      </select>
+                      <span className="material-symbols-outlined absolute right-1.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none text-base">
+                        arrow_drop_down
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <div className="relative flex-1 w-full min-h-0">
+                  <canvas ref={chartRef2} className="w-full h-full cursor-pointer" style={{ touchAction: 'pan-y' }}></canvas>
+                </div>
+              </div>
+            </div>
+          ) : (
+            <div className="relative p-3.5 rounded-2xl bg-slate-900/60 border border-cyan-500/20 h-[280px] sm:h-[320px] shadow-sm w-full mb-5">
+              <canvas ref={chartRef1} className="w-full h-full cursor-pointer" style={{ touchAction: 'pan-y' }}></canvas>
+            </div>
+          )}
 
           {/* Summary Table */}
           {renderSummaryTable("block mb-6")}
@@ -1345,7 +1621,7 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
                     const isSelected = selectedRowId === inc.id;
                     return (
                       <tr 
-                        key={inc.id} 
+                        key={`${inc.id}-${idx}`} 
                         onClick={() => setSelectedRowId(isSelected ? null : inc.id)}
                         className={`h-9 transition-colors cursor-pointer select-none ${
                           isSelected

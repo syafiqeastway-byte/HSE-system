@@ -220,7 +220,7 @@ export const EmergencyPlanPage: React.FC<EmergencyPlanPageProps> = ({
                     const isSelected = selectedCertId === cert.id;
                     return (
                       <tr 
-                        key={cert.id} 
+                        key={`${cert.id}-${idx}`} 
                         onClick={() => setSelectedCertId(isSelected ? null : cert.id)}
                         className={`h-9 transition-colors cursor-pointer select-none ${
                           isSelected

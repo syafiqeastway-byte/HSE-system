@@ -106,9 +106,9 @@ export const HIRARCDropdown: React.FC<HIRARCDropdownProps> = ({ onSelectHIRARC }
                 No HIRARC evaluation found matching "{searchTerm}"
               </div>
             ) : (
-              filteredHIRARCs.map((item) => (
+              filteredHIRARCs.map((item, idx) => (
                 <button
-                  key={item.id}
+                  key={`${item.id}-${idx}`}
                   onClick={() => handleSelect(item)}
                   className="w-full text-left p-3 hover:bg-cyan-950/40 transition-colors flex items-start justify-between gap-3 group"
                 >

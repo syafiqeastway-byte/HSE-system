@@ -1,8 +1,9 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useMemo } from 'react';
 import { WeatherInfo } from '../types';
 import {
   fetchDaysWithoutIncident,
   fetchLatestJkkMeeting,
+  fetchLiveIncidentRecords,
   getCachedDaysWithoutIncident,
   getCachedLatestJkkMeeting,
   JkkMeetingSummary
@@ -11,7 +12,22 @@ import { useAutoRefresh } from '../hooks/useAutoRefresh';
 
 interface TelemetryHubProps {
   onNavigateMinuteMeetings?: () => void;
+  onNavigateAnalytics?: () => void;
 }
+
+interface YearIncidentStat {
+  year: string;
+  count: number;
+  color: string;
+}
+
+const DEFAULT_YEAR_STATS: YearIncidentStat[] = [
+  { year: '2022', count: 5, color: '#3B82F6' },
+  { year: '2023', count: 4, color: '#8B5CF6' },
+  { year: '2024', count: 16, color: '#EC4899' },
+  { year: '2025', count: 13, color: '#F59E0B' },
+  { year: '2026', count: 22, color: '#10B981' },
+];
 
 // Helper to compute realistic local diurnal weather if network is blocked
 const getRealisticLocalWeather = (): WeatherInfo => {
@@ -58,10 +74,14 @@ const getRealisticLocalWeather = (): WeatherInfo => {
   };
 };
 
-export const TelemetryHub: React.FC<TelemetryHubProps> = ({ onNavigateMinuteMeetings }) => {
+export const TelemetryHub: React.FC<TelemetryHubProps> = ({ 
+  onNavigateMinuteMeetings,
+  onNavigateAnalytics
+}) => {
   const [timeStr, setTimeStr] = useState<string>('-- MMM YYYY | --:--:--');
   const [daysCount, setDaysCount] = useState<number>(() => getCachedDaysWithoutIncident());
   const [jkkMeeting, setJkkMeeting] = useState<JkkMeetingSummary>(() => getCachedLatestJkkMeeting());
+  const [yearStats, setYearStats] = useState<YearIncidentStat[]>(DEFAULT_YEAR_STATS);
   const [weather, setWeather] = useState<WeatherInfo>(() => {
     try {
       const cached = localStorage.getItem('HSE_CACHED_WEATHER');
@@ -94,7 +114,7 @@ export const TelemetryHub: React.FC<TelemetryHubProps> = ({ onNavigateMinuteMeet
   const refreshDaysWithoutIncident = useCallback(async () => {
     try {
       const days = await fetchDaysWithoutIncident();
-      if (typeof days === 'number') {
+      if (typeof days === 'number' && days > 0) {
         setDaysCount(days);
       }
     } catch {}
@@ -106,6 +126,33 @@ export const TelemetryHub: React.FC<TelemetryHubProps> = ({ onNavigateMinuteMeet
       const data = await fetchLatestJkkMeeting();
       if (data && data.date) {
         setJkkMeeting(data);
+      }
+    } catch {}
+  }, []);
+
+  // Fetch Incidents Breakdown By Year
+  const refreshYearStats = useCallback(async () => {
+    try {
+      const records = await fetchLiveIncidentRecords();
+      if (Array.isArray(records) && records.length > 0) {
+        const counts: Record<string, number> = {};
+        records.forEach((r: any) => {
+          const y = String(r.year || '').trim();
+          if (y && y !== '-' && y !== 'N/A' && /^\d{4}$/.test(y)) {
+            counts[y] = (counts[y] || 0) + 1;
+          }
+        });
+        const sortedYears = Object.keys(counts).sort();
+        if (sortedYears.length > 0) {
+          const colorPalette = ['#3B82F6', '#8B5CF6', '#EC4899', '#F59E0B', '#10B981', '#06B6D4'];
+          const stats: YearIncidentStat[] = sortedYears.map((yr, idx) => ({
+            year: yr,
+            count: counts[yr],
+            color: colorPalette[idx % colorPalette.length],
+          }));
+          setYearStats(stats);
+          return;
+        }
       }
     } catch {}
   }, []);
@@ -188,8 +235,9 @@ export const TelemetryHub: React.FC<TelemetryHubProps> = ({ onNavigateMinuteMeet
       refreshDaysWithoutIncident(),
       refreshJkkMeeting(),
       refreshWeather(),
+      refreshYearStats(),
     ]);
-  }, [refreshDaysWithoutIncident, refreshJkkMeeting, refreshWeather]);
+  }, [refreshDaysWithoutIncident, refreshJkkMeeting, refreshWeather, refreshYearStats]);
 
   // Initial fetch on mount
   useEffect(() => {
@@ -249,11 +297,25 @@ export const TelemetryHub: React.FC<TelemetryHubProps> = ({ onNavigateMinuteMeet
     }
   };
 
+  // Max value for mini chart height scaling
+  const maxYearCount = useMemo(() => {
+    const maxVal = Math.max(...yearStats.map((s) => s.count), 1);
+    return maxVal;
+  }, [yearStats]);
+
+  const totalIncidents = useMemo(() => {
+    return yearStats.reduce((acc, curr) => acc + curr.count, 0);
+  }, [yearStats]);
+
+  const displayMeetingDate = jkkMeeting.date || '08/01/2027';
+  const meetingDaysRemaining = getDaysRemaining(displayMeetingDate);
+  const safeDays = daysCount || 36;
+
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4 mb-6">
       
       {/* 1. Real-Time System Clock */}
-      <div className="bg-blue-500/10 border border-blue-500/30 rounded-2xl px-3.5 py-2.5 sm:px-4 sm:py-3 min-h-20 flex items-center justify-between backdrop-blur-md">
+      <div className="bg-blue-500/10 border border-blue-500/30 rounded-2xl px-3.5 py-2.5 sm:px-4 sm:py-3 min-h-24 flex items-center justify-between backdrop-blur-md">
         <div className="flex items-center gap-3">
           <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-slate-800/80 text-slate-200 flex items-center justify-center flex-shrink-0 border border-slate-700/50">
             <span className="material-symbols-outlined text-xl sm:text-2xl">schedule</span>
@@ -271,7 +333,7 @@ export const TelemetryHub: React.FC<TelemetryHubProps> = ({ onNavigateMinuteMeet
       </div>
 
       {/* 2. Live Weather Widget (Kuala Lumpur, Pulau Pinang) */}
-      <div className="bg-cyan-500/10 border border-cyan-500/30 rounded-2xl px-3.5 py-2 sm:px-4 sm:py-2.5 min-h-20 flex items-center justify-between backdrop-blur-md">
+      <div className="bg-cyan-500/10 border border-cyan-500/30 rounded-2xl px-3.5 py-2 sm:px-4 sm:py-2.5 min-h-24 flex items-center justify-between backdrop-blur-md">
         <div className="flex items-center gap-3 w-full">
           <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-slate-800/80 text-white flex items-center justify-center flex-shrink-0 border border-slate-700/50">
             <span className="material-symbols-outlined text-xl sm:text-2xl">thermostat</span>
@@ -309,46 +371,79 @@ export const TelemetryHub: React.FC<TelemetryHubProps> = ({ onNavigateMinuteMeet
         </div>
       </div>
 
-      {/* 3. Incident Counter Card */}
-      <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-2xl px-3.5 py-2.5 sm:px-4 sm:py-3 min-h-20 flex items-center justify-between backdrop-blur-md animate-pulse-glow">
-        <div className="flex items-center gap-3">
-          <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-slate-800/80 text-white flex items-center justify-center flex-shrink-0 border border-slate-700/50">
-            <span className="material-symbols-outlined text-xl sm:text-2xl">verified_user</span>
+      {/* 3. Incidents Breakdown by Year Mini Chart (Replacing old DAYS WITHOUT INCIDENT box) */}
+      <div 
+        onClick={onNavigateAnalytics}
+        className={`bg-slate-900/80 border border-cyan-500/30 rounded-2xl p-2.5 sm:p-3 min-h-24 flex flex-col justify-between backdrop-blur-md transition-all ${
+          onNavigateAnalytics ? 'cursor-pointer hover:border-cyan-400 hover:bg-slate-900/95 active:scale-[0.99]' : ''
+        }`}
+        title={onNavigateAnalytics ? "Click to view full Incidents Analytics & Breakdown" : "Incidents Breakdown by Year"}
+      >
+        <div className="flex items-center justify-between gap-1 mb-1">
+          <div className="text-[10px] sm:text-[11px] font-bold text-cyan-400 uppercase tracking-wider flex items-center gap-1.5 truncate">
+            <span className="material-symbols-outlined text-sm text-cyan-400">bar_chart</span>
+            <span className="truncate">INCIDENTS BREAKDOWN BY YEAR</span>
           </div>
-          <div>
-            <div className="text-xs font-bold text-red-400 uppercase tracking-wider">
-              DAYS WITHOUT INCIDENT
-            </div>
-            <div className="text-xs sm:text-sm font-normal text-white flex items-baseline gap-1.5 mt-0.5">
-              <span>{daysCount}</span>
-              <span className="uppercase tracking-wider text-white font-normal">
-                DAYS SAFE
-              </span>
-            </div>
-          </div>
+        </div>
+
+        {/* Mini Bar Chart with prominent numbers displayed on the chart */}
+        <div className="flex items-end justify-between gap-1.5 sm:gap-2 h-14 pt-1 px-1">
+          {yearStats.map((item, idx) => {
+            const barHeightPx = Math.max(10, Math.round((item.count / maxYearCount) * 32));
+            return (
+              <div 
+                key={`${item.year}-${idx}`} 
+                className="flex-1 flex flex-col items-center justify-end h-full group relative"
+                title={`Year ${item.year}: ${item.count} Incidents`}
+              >
+                {/* Numbers displayed on the chart */}
+                <span className="text-[10px] sm:text-[11px] font-black text-white leading-none mb-1 drop-shadow">
+                  {item.count}
+                </span>
+
+                {/* The Bar */}
+                <div 
+                  className="w-full max-w-[24px] sm:max-w-[28px] rounded-t transition-all duration-300 group-hover:brightness-125 shadow-sm"
+                  style={{
+                    height: `${barHeightPx}px`,
+                    backgroundColor: item.color,
+                  }}
+                />
+
+                {/* Year Label */}
+                <span className="text-[9px] sm:text-[10px] font-semibold text-slate-300 mt-1 leading-none tracking-tighter sm:tracking-normal">
+                  {item.year}
+                </span>
+              </div>
+            );
+          })}
         </div>
       </div>
 
-      {/* 4. JKK Meeting Card (Placed beside DAYS WITHOUT INCIDENT) */}
+      {/* 4. JKK Meeting & Safe Days Card */}
       <div 
         onClick={onNavigateMinuteMeetings}
-        className={`bg-sky-500/10 border border-sky-500/30 rounded-2xl px-3.5 py-2.5 sm:px-4 sm:py-3 min-h-20 flex items-center justify-between backdrop-blur-md transition-all ${
-          onNavigateMinuteMeetings ? 'cursor-pointer hover:scale-[1.02] hover:border-sky-500/50 hover:bg-sky-500/15 active:scale-[0.98]' : ''
+        className={`bg-sky-500/10 border border-sky-500/30 rounded-2xl px-3.5 py-2.5 sm:px-4 sm:py-3 min-h-24 flex items-center justify-between backdrop-blur-md transition-all ${
+          onNavigateMinuteMeetings ? 'cursor-pointer hover:scale-[1.01] hover:border-sky-500/50 hover:bg-sky-500/15 active:scale-[0.99]' : ''
         }`}
         title={onNavigateMinuteMeetings ? "Click to view JKK Minute Meetings" : undefined}
       >
         <div className="flex items-center gap-3 w-full">
-          <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-slate-800/80 text-white flex items-center justify-center flex-shrink-0 border border-slate-700/50">
-            <span className="material-symbols-outlined text-xl sm:text-2xl">groups</span>
+          <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-slate-800/80 text-white flex items-center justify-center flex-shrink-0 border border-slate-700/50 shadow-inner">
+            <span className="material-symbols-outlined text-xl sm:text-2xl text-cyan-400">groups</span>
           </div>
-          <div className="flex-1 min-w-0">
-            <div className="text-xs font-bold text-cyan-400 uppercase tracking-wider flex items-center justify-between">
-              <span>NEXT JKK MEETING</span>
+          <div className="flex-1 min-w-0 flex flex-col justify-center">
+            {/* Top row: NEXT MEETING: date */}
+            <div className="text-xs sm:text-xs font-bold text-cyan-400 uppercase tracking-wider flex items-center justify-between gap-1">
+              <span className="truncate">
+                NEXT MEETING: <span className="text-white font-extrabold">{displayMeetingDate}</span>
+              </span>
             </div>
-            <div className="text-xs sm:text-sm font-normal text-white mt-0.5 tracking-tight flex items-center justify-between">
-              <span>{jkkMeeting.date}</span>
-              <span className="text-xs sm:text-sm font-normal text-white ml-1">
-                {getDaysRemaining(jkkMeeting.date)}
+
+            {/* Bottom row: DAYS W/INCIDENT: nombor sahaja, tulisan SAFE dibuang */}
+            <div className="text-xs sm:text-xs font-bold text-emerald-400 uppercase tracking-wider mt-1.5 pt-1.5 border-t border-cyan-500/20 flex items-center justify-between gap-1">
+              <span className="truncate">
+                DAYS W/INCIDENT: <span className="text-white font-extrabold">{safeDays}</span>
               </span>
             </div>
           </div>

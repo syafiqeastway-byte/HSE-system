@@ -239,34 +239,34 @@ export const AllIncidentsPage: React.FC<AllIncidentsPageProps> = ({ onBackToHome
             </div>
           ) : (
             <div className="overflow-x-auto sm:rounded-xl border-y sm:border border-cyan-500/20">
-              <table className="w-full border-collapse border border-cyan-500/20 text-left text-xs sm:text-sm whitespace-nowrap bg-transparent">
+              <table className="w-full border-collapse border border-cyan-500/20 text-center text-xs whitespace-nowrap bg-transparent">
                 <thead className="bg-slate-950/95 text-cyan-400 border-b-2 border-cyan-500/40">
                   <tr className="h-8">
-                    <th className="w-14 py-1.5 px-3 border border-cyan-500/20 font-bold uppercase text-xs tracking-wider whitespace-nowrap text-center text-cyan-400">NO</th>
-                    <th className="w-28 py-1.5 px-3 border border-cyan-500/20 font-bold uppercase text-xs tracking-wider whitespace-nowrap text-center text-cyan-400">DATE</th>
-                    <th className="w-20 py-1.5 px-3 border border-cyan-500/20 font-bold uppercase text-xs tracking-wider whitespace-nowrap text-center text-cyan-400">YEAR</th>
-                    <th className="min-w-[130px] py-1.5 px-3 border border-cyan-500/20 font-bold uppercase text-xs tracking-wider text-cyan-400">LOCATION</th>
-                    <th className="min-w-[220px] py-1.5 px-3 border border-cyan-500/20 font-bold uppercase text-xs tracking-wider text-cyan-400">DESCRIPTION</th>
-                    <th className="w-36 py-1.5 px-3 border border-cyan-500/20 font-bold uppercase text-xs tracking-wider whitespace-nowrap text-center text-cyan-400">OCCUPATIONAL INCIDENT?</th>
-                    <th className="min-w-[140px] py-1.5 px-3 border border-cyan-500/20 font-bold uppercase text-xs tracking-wider text-cyan-400">INCIDENT CATEGORY</th>
-                    <th className="w-32 py-1.5 px-3 border border-cyan-500/20 font-bold uppercase text-xs tracking-wider whitespace-nowrap text-center text-cyan-400">PROPERTY DAMAGE</th>
-                    <th className="w-28 py-1.5 px-3 border border-cyan-500/20 font-bold uppercase text-xs tracking-wider whitespace-nowrap text-cyan-400">DAMAGE LEVEL</th>
-                    <th className="min-w-[140px] py-1.5 px-3 border border-cyan-500/20 font-bold uppercase text-xs tracking-wider text-cyan-400">CLASSIFICATION</th>
-                    <th className="min-w-[120px] py-1.5 px-3 border border-cyan-500/20 font-bold uppercase text-xs tracking-wider text-cyan-400">INJURY TYPE</th>
-                    <th className="min-w-[120px] py-1.5 px-3 border border-cyan-500/20 font-bold uppercase text-xs tracking-wider text-cyan-400">PERSON INVOLVE</th>
-                    <th className="w-32 py-1.5 px-3 border border-cyan-500/20 font-bold uppercase text-xs tracking-wider whitespace-nowrap text-cyan-400">WORK EXPERIENCE</th>
-                    <th className="min-w-[110px] py-1.5 px-3 border border-cyan-500/20 font-bold uppercase text-xs tracking-wider text-cyan-400">REPORTED BY</th>
-                    <th className="w-28 py-1.5 px-3 border border-cyan-500/20 font-bold uppercase text-xs tracking-wider text-center whitespace-nowrap text-cyan-400">PDF</th>
+                    <th className="w-14 py-1 px-2.5 border border-cyan-500/20 font-bold uppercase text-xs tracking-wider whitespace-nowrap text-center text-cyan-400">NO</th>
+                    <th className="w-28 py-1 px-2.5 border border-cyan-500/20 font-bold uppercase text-xs tracking-wider whitespace-nowrap text-center text-cyan-400">DATE</th>
+                    <th className="w-20 py-1 px-2.5 border border-cyan-500/20 font-bold uppercase text-xs tracking-wider whitespace-nowrap text-center text-cyan-400">YEAR</th>
+                    <th className="min-w-[130px] py-1 px-2.5 border border-cyan-500/20 font-bold uppercase text-xs tracking-wider text-center text-cyan-400">LOCATION</th>
+                    <th className="min-w-[220px] py-1 px-2.5 border border-cyan-500/20 font-bold uppercase text-xs tracking-wider text-center text-cyan-400">DESCRIPTION</th>
+                    <th className="w-36 py-1 px-2.5 border border-cyan-500/20 font-bold uppercase text-xs tracking-wider whitespace-nowrap text-center text-cyan-400">OCCUPATIONAL INCIDENT?</th>
+                    <th className="min-w-[140px] py-1 px-2.5 border border-cyan-500/20 font-bold uppercase text-xs tracking-wider text-center text-cyan-400">INCIDENT CATEGORY</th>
+                    <th className="w-32 py-1 px-2.5 border border-cyan-500/20 font-bold uppercase text-xs tracking-wider whitespace-nowrap text-center text-cyan-400">PROPERTY DAMAGE</th>
+                    <th className="w-28 py-1 px-2.5 border border-cyan-500/20 font-bold uppercase text-xs tracking-wider whitespace-nowrap text-center text-cyan-400">DAMAGE LEVEL</th>
+                    <th className="min-w-[140px] py-1 px-2.5 border border-cyan-500/20 font-bold uppercase text-xs tracking-wider text-center text-cyan-400">CLASSIFICATION</th>
+                    <th className="min-w-[120px] py-1 px-2.5 border border-cyan-500/20 font-bold uppercase text-xs tracking-wider text-center text-cyan-400">INJURY TYPE</th>
+                    <th className="min-w-[120px] py-1 px-2.5 border border-cyan-500/20 font-bold uppercase text-xs tracking-wider text-center text-cyan-400">PERSON INVOLVE</th>
+                    <th className="w-32 py-1 px-2.5 border border-cyan-500/20 font-bold uppercase text-xs tracking-wider whitespace-nowrap text-center text-cyan-400">WORK EXPERIENCE</th>
+                    <th className="min-w-[110px] py-1 px-2.5 border border-cyan-500/20 font-bold uppercase text-xs tracking-wider text-center text-cyan-400">REPORTED BY</th>
+                    <th className="w-28 py-1 px-2.5 border border-cyan-500/20 font-bold uppercase text-xs tracking-wider text-center whitespace-nowrap text-cyan-400">PDF</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-cyan-500/10 text-white text-xs sm:text-sm">
+                <tbody className="divide-y divide-cyan-500/10 text-white text-xs">
                   {filteredIncidents.map((inc, idx) => {
                     const isSelected = selectedRowId === inc.id;
                     return (
                       <tr 
-                        key={inc.id} 
+                        key={`${inc.id}-${idx}`} 
                         onClick={() => setSelectedRowId(isSelected ? null : inc.id)}
-                        className={`h-9 transition-colors cursor-pointer select-none ${
+                        className={`h-8 transition-colors cursor-pointer select-none ${
                           isSelected
                             ? '!bg-cyan-600 !text-white font-bold [&>td]:!bg-cyan-600 [&>td]:!text-white [&>td]:!border-cyan-400/40 [&_*]:!text-white shadow-md'
                             : idx % 2 === 0
@@ -275,27 +275,27 @@ export const AllIncidentsPage: React.FC<AllIncidentsPageProps> = ({ onBackToHome
                         }`}
                       >
                       {/* 1. NO */}
-                      <td className="py-1 px-3 font-mono font-medium text-white whitespace-nowrap border border-cyan-500/20 text-center leading-none">
+                      <td className="py-1 px-2.5 font-mono font-medium text-white whitespace-nowrap border border-cyan-500/20 text-center leading-none">
                         {inc.id}
                       </td>
                       {/* 2. DATE */}
-                      <td className="py-1 px-3 whitespace-nowrap text-white border border-cyan-500/20 text-center leading-none">
+                      <td className="py-1 px-2.5 whitespace-nowrap text-white border border-cyan-500/20 text-center leading-none">
                         {inc.date}
                       </td>
                       {/* 3. YEAR */}
-                      <td className="py-1 px-3 whitespace-nowrap text-white border border-cyan-500/20 text-center leading-none">
+                      <td className="py-1 px-2.5 whitespace-nowrap text-white border border-cyan-500/20 text-center leading-none">
                         {inc.year || '-'}
                       </td>
                       {/* 4. LOCATION */}
-                      <td className="py-1 px-3 font-medium text-white whitespace-nowrap border border-cyan-500/20 leading-none">
+                      <td className="py-1 px-2.5 font-medium text-white whitespace-nowrap border border-cyan-500/20 text-center leading-none">
                         {inc.location}
                       </td>
                       {/* 5. DESCRIPTION */}
-                      <td className="py-1 px-3 text-white max-w-[240px] truncate border border-cyan-500/20 leading-none" title={(inc as any).rootCause || inc.description || (inc as any).root_cause || ''}>
+                      <td className="py-1 px-2.5 text-white max-w-[240px] truncate border border-cyan-500/20 text-center leading-none" title={(inc as any).rootCause || inc.description || (inc as any).root_cause || ''}>
                         {(inc as any).rootCause || inc.description || (inc as any).root_cause || '-'}
                       </td>
                       {/* 6. OCCUPATIONAL INCIDENT? */}
-                      <td className="py-1 px-3 text-center whitespace-nowrap border border-cyan-500/20 leading-none">
+                      <td className="py-1 px-2.5 text-center whitespace-nowrap border border-cyan-500/20 leading-none">
                         <span className={`inline-flex items-center justify-center px-2 py-0.5 rounded text-[11px] font-semibold uppercase leading-tight ${
                           inc.occupationalIncident?.toUpperCase() === 'YES'
                             ? 'bg-emerald-500/20 text-white border border-emerald-500/30'
@@ -305,37 +305,37 @@ export const AllIncidentsPage: React.FC<AllIncidentsPageProps> = ({ onBackToHome
                         </span>
                       </td>
                       {/* 7. INCIDENT CATEGORY */}
-                      <td className="py-1 px-3 whitespace-nowrap border border-cyan-500/20 leading-none">
+                      <td className="py-1 px-2.5 whitespace-nowrap border border-cyan-500/20 text-center leading-none">
                         <span className="inline-flex items-center justify-center px-2 py-0.5 rounded bg-slate-800 text-white border border-slate-700 text-[11px] font-medium leading-tight">
                           {inc.category || '-'}
                         </span>
                       </td>
                       {/* 8. PROPERTY DAMAGE */}
-                      <td className="py-1 px-3 text-center whitespace-nowrap font-medium text-white border border-cyan-500/20 leading-none">
+                      <td className="py-1 px-2.5 text-center whitespace-nowrap font-medium text-white border border-cyan-500/20 leading-none">
                         {inc.propertyDamage || '-'}
                       </td>
                       {/* 9. DAMAGE LEVEL */}
-                      <td className="py-1 px-3 whitespace-nowrap text-white border border-cyan-500/20 leading-none">
+                      <td className="py-1 px-2.5 whitespace-nowrap text-white border border-cyan-500/20 text-center leading-none">
                         {inc.damageLevel || '-'}
                       </td>
                       {/* 10. CLASSIFICATION */}
-                      <td className="py-1 px-3 font-medium text-white whitespace-nowrap border border-cyan-500/20 leading-none">
+                      <td className="py-1 px-2.5 font-medium text-white whitespace-nowrap border border-cyan-500/20 text-center leading-none">
                         {inc.classification || '-'}
                       </td>
                       {/* 11. INJURY TYPE */}
-                      <td className="py-1 px-3 text-white whitespace-nowrap border border-cyan-500/20 leading-none">
+                      <td className="py-1 px-2.5 text-white whitespace-nowrap border border-cyan-500/20 text-center leading-none">
                         {inc.injuryType || '-'}
                       </td>
                       {/* 12. PERSON INVOLVE */}
-                      <td className="py-1 px-3 font-medium text-white whitespace-nowrap border border-cyan-500/20 leading-none">
+                      <td className="py-1 px-2.5 font-medium text-white whitespace-nowrap border border-cyan-500/20 text-center leading-none">
                         {inc.personInvolved || (inc as any).person_involved || '-'}
                       </td>
                       {/* 13. WORK EXPERIENCE */}
-                      <td className="py-1 px-3 text-white whitespace-nowrap border border-cyan-500/20 leading-none">
+                      <td className="py-1 px-2.5 text-white whitespace-nowrap border border-cyan-500/20 text-center leading-none">
                         {inc.experienceLevel || '-'}
                       </td>
                       {/* 14. REPORTED BY */}
-                      <td className="py-1 px-3 text-white whitespace-nowrap border border-cyan-500/20 leading-none">
+                      <td className="py-1 px-2.5 text-white whitespace-nowrap border border-cyan-500/20 text-center leading-none">
                         {inc.reportedBy || (inc as any).investigator || '-'}
                       </td>
                       {/* 15. PDF / DOCUMENT */}
