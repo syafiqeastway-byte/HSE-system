@@ -70,7 +70,7 @@ let cachedDaysWithoutIncident: number = (() => {
       if (!isNaN(p)) return p;
     }
   } catch {}
-  return 36;
+  return 2;
 })();
 
 export function getCachedDaysWithoutIncident(): number {

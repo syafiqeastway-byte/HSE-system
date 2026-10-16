@@ -309,7 +309,7 @@ export const TelemetryHub: React.FC<TelemetryHubProps> = ({
 
   const displayMeetingDate = jkkMeeting.date || '08/01/2027';
   const meetingDaysRemaining = getDaysRemaining(displayMeetingDate);
-  const safeDays = daysCount || 36;
+  const safeDays = daysCount !== undefined && daysCount !== null ? daysCount : 2;
 
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4 mb-6">
@@ -440,10 +440,10 @@ export const TelemetryHub: React.FC<TelemetryHubProps> = ({
               </span>
             </div>
 
-            {/* Bottom row: DAYS W/INCIDENT: nombor sahaja, tulisan SAFE dibuang */}
+            {/* Bottom row: DAYS WITHOUT INCIDENT */}
             <div className="text-xs sm:text-xs font-bold text-emerald-400 uppercase tracking-wider mt-1.5 pt-1.5 border-t border-cyan-500/20 flex items-center justify-between gap-1">
               <span className="truncate">
-                DAYS W/INCIDENT: <span className="text-white font-extrabold">{safeDays}</span>
+                DAYS WITHOUT INCIDENT: <span className="text-white font-extrabold">{safeDays}</span>
               </span>
             </div>
           </div>
