@@ -1081,29 +1081,40 @@ export const IncidentChartsAndTables: React.FC<IncidentChartsAndTablesProps> = (
 
       case 'WORK EXPERIENCE': {
         const counts = getFrequencyMap((r) => r.experienceLevel || 'N/A');
-        const labels = Object.keys(counts);
-        const data = Object.values(counts);
+        const sortedEntries = Object.entries(counts).sort((a, b) => b[1] - a[1]);
+        const labels = sortedEntries.map(e => e[0]);
+        const data = sortedEntries.map(e => e[1]);
 
-        if (updateChart1InPlaceIfPossible('polarArea', labels, data)) break;
+        if (updateChart1InPlaceIfPossible('bar', labels, data)) break;
 
-        const basePolarOpts = getMovementOptions('polarArea');
+        const baseBarOpts = getMovementOptions('bar');
         chartInstance1.current = new Chart(ctx1, {
-          type: 'polarArea',
+          type: 'bar',
           data: {
             labels,
             datasets: [
               {
+                label: 'Cases',
                 data,
-                backgroundColor: PALETTE.slice(0, labels.length).map((c) => c + 'B3'),
+                backgroundColor: PALETTE.slice(0, labels.length).map((c) => c + 'E6'),
+                borderColor: PALETTE.slice(0, labels.length),
+                borderWidth: 2,
+                borderRadius: 8,
+                hoverBackgroundColor: PALETTE.slice(0, labels.length),
                 hoverBorderColor: textColor,
-                hoverBorderWidth: 3,
+                hoverBorderWidth: 2,
               },
             ],
           },
           options: {
-            ...basePolarOpts,
+            ...baseBarOpts,
+            indexAxis: 'y',
+            scales: {
+              x: { ticks: { color: textColor, precision: 0 }, grid: { color: gridColor } },
+              y: { ticks: { color: textColor, font: { size: 11, weight: 'bold' } }, grid: { display: false } },
+            },
             plugins: {
-              legend: { labels: { color: textColor, font: { size: 11, weight: 'bold' } } },
+              legend: { display: false },
               tooltip: {
                 enabled: true,
                 animation: { duration: 200 },
