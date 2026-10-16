@@ -54,7 +54,7 @@ export async function getSupabaseIncidents() {
       return data;
     }
   } catch (e) {
-    console.warn('[Supabase] Falling back to default records:', e);
+    console.warn('[Cloud DB] Falling back to default records:', e);
   }
   return MOCK_INCIDENT_RECORDS;
 }
@@ -69,7 +69,7 @@ export async function getSupabaseInspections() {
       return data;
     }
   } catch (e) {
-    console.warn('[Supabase] Falling back to default inspection records:', e);
+    console.warn('[Cloud DB] Falling back to default inspection records:', e);
   }
   return MOCK_INSPECTION_RECORDS;
 }
@@ -84,7 +84,7 @@ export async function getSupabaseFirstAidCerts() {
       return data;
     }
   } catch (e) {
-    console.warn('[Supabase] Falling back to default cert records:', e);
+    console.warn('[Cloud DB] Falling back to default cert records:', e);
   }
   return MOCK_FIRST_AID_CERTS;
 }
@@ -99,7 +99,7 @@ export async function getSupabaseMinuteMeetings() {
       return data;
     }
   } catch (e) {
-    console.warn('[Supabase] Falling back to default minute meetings:', e);
+    console.warn('[Cloud DB] Falling back to default minute meetings:', e);
   }
   return MOCK_MINUTE_MEETINGS;
 }
@@ -132,7 +132,7 @@ export async function submitFirstAidKitUsageToSupabase(submission: {
     }
   } catch {}
 
-  // Attempt to check existing records in Supabase to sync highest NO
+  // Attempt to check existing records in Cloud Database to sync highest NO
   try {
     const { data } = await supabase
       .from('First Aid Kit Records')
@@ -147,7 +147,7 @@ export async function submitFirstAidKitUsageToSupabase(submission: {
       }
     }
   } catch (err) {
-    console.warn('[Supabase] Could not query latest NO from First Aid Kit Records:', err);
+    console.warn('[Cloud DB] Could not query latest NO from First Aid Kit Records:', err);
   }
 
   // Update local sequential counter
@@ -180,12 +180,12 @@ export async function submitFirstAidKitUsageToSupabase(submission: {
       .insert([rowPayload]);
 
     if (error) {
-      console.warn('[Supabase Insert Error]:', error);
+      console.warn('[Cloud DB Insert Error]:', error);
       return { success: false, nextNo, error: error.message };
     }
     return { success: true, nextNo };
   } catch (err: any) {
-    console.warn('[Supabase Insert Exception]:', err);
+    console.warn('[Cloud DB Insert Exception]:', err);
     return { success: false, nextNo, error: err?.message || 'Network exception' };
   }
 }

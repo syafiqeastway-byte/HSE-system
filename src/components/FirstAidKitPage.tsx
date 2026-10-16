@@ -241,7 +241,7 @@ export const FirstAidKitPage: React.FC<FirstAidKitPageProps> = ({ onBackToHome }
             }}
             disabled={activeView === 'usageRecords' ? loadingSupabase : isRefreshing}
             className="p-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white transition-colors border border-cyan-500/20 flex-shrink-0"
-            title={activeView === 'usageRecords' ? "Sync live from Supabase" : "Sync live from Google Sheets"}
+            title={activeView === 'usageRecords' ? "Sync live from Database" : "Sync live from Google Sheets"}
           >
             <span className={`material-symbols-outlined text-xl ${
               (activeView === 'usageRecords' ? loadingSupabase : isRefreshing) ? 'animate-spin text-cyan-400' : ''
@@ -386,7 +386,7 @@ export const FirstAidKitPage: React.FC<FirstAidKitPageProps> = ({ onBackToHome }
                 type="text"
                 value={supabaseSearch}
                 onChange={(e) => setSupabaseSearch(e.target.value)}
-                placeholder="SEARCH SUPABASE USAGE RECORDS..."
+                placeholder="SEARCH LIVE USAGE RECORDS..."
                 className="w-full pl-9 pr-9 py-1.5 rounded-xl bg-slate-950 border border-slate-700 text-xs text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-cyan-500 uppercase font-mono"
               />
               {supabaseSearch && (
@@ -404,13 +404,13 @@ export const FirstAidKitPage: React.FC<FirstAidKitPageProps> = ({ onBackToHome }
             <div className="flex items-center gap-2 text-xs font-semibold text-slate-300">
               <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-900 border border-cyan-500/20 text-cyan-300 font-mono">
                 <span className="material-symbols-outlined text-sm text-cyan-400">database</span>
-                <span>SUPABASE API: <strong>{supabaseRecords.length}</strong> RECORDS</span>
+                <span>CLOUD API: <strong>{supabaseRecords.length}</strong> RECORDS</span>
               </span>
               <button
                 onClick={loadSupabaseRecords}
                 disabled={loadingSupabase}
                 className="px-2.5 py-1 rounded-lg bg-cyan-600/20 hover:bg-cyan-600/40 text-cyan-300 border border-cyan-500/30 flex items-center gap-1 text-xs font-bold transition-all disabled:opacity-50"
-                title="Refresh from Supabase"
+                title="Refresh records"
               >
                 <span className={`material-symbols-outlined text-sm ${loadingSupabase ? 'animate-spin' : ''}`}>sync</span>
                 <span>Refresh</span>
@@ -421,7 +421,7 @@ export const FirstAidKitPage: React.FC<FirstAidKitPageProps> = ({ onBackToHome }
           {loadingSupabase ? (
             <div className="glass-card p-12 text-center flex flex-col items-center justify-center gap-3">
               <span className="material-symbols-outlined text-4xl text-cyan-400 animate-spin">sync</span>
-              <span className="text-xs uppercase font-semibold text-cyan-300 tracking-wider">Loading Live Usage Records from Supabase...</span>
+              <span className="text-xs uppercase font-semibold text-cyan-300 tracking-wider">Loading Live Usage Records...</span>
             </div>
           ) : (
             <div className="glass-card overflow-hidden border border-cyan-500/20">
@@ -447,7 +447,7 @@ export const FirstAidKitPage: React.FC<FirstAidKitPageProps> = ({ onBackToHome }
                     {filteredSupabaseRecords.length === 0 ? (
                       <tr className="h-8">
                         <td colSpan={12} className="py-8 text-center text-xs text-slate-300 border border-cyan-500/20">
-                          {supabaseSearch ? `No usage records found matching "${supabaseSearch}"` : 'No usage records stored in Supabase yet.'}
+                          {supabaseSearch ? `No usage records found matching "${supabaseSearch}"` : 'No usage records stored in database yet.'}
                         </td>
                       </tr>
                     ) : (

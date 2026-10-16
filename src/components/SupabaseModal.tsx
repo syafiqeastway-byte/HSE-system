@@ -99,7 +99,7 @@ CREATE POLICY "Allow public read access" ON incidents FOR SELECT USING (true);
             </div>
             <div>
               <h2 className="text-lg font-extrabold text-slate-900 dark:text-white">
-                SUPABASE DASHBOARD INTEGRATION
+                CLOUD DATABASE INTEGRATION
               </h2>
               <p className="text-xs text-slate-500 dark:text-slate-400">
                 Connected Project & Real-Time Sync Status
@@ -123,7 +123,7 @@ CREATE POLICY "Allow public read access" ON incidents FOR SELECT USING (true);
               <div className="flex items-center gap-2">
                 <span className={`w-3 h-3 rounded-full ${status.connected ? 'bg-emerald-500 animate-pulse' : 'bg-amber-500'}`}></span>
                 <span className="text-sm font-bold text-slate-900 dark:text-white">
-                  {status.connected ? 'Supabase Project Active' : 'Supabase Connecting'}
+                  {status.connected ? 'Cloud Database Active' : 'Connecting'}
                 </span>
               </div>
               <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
@@ -147,7 +147,7 @@ CREATE POLICY "Allow public read access" ON incidents FOR SELECT USING (true);
           <div className="space-y-3">
             <div>
               <label className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block mb-1">
-                Supabase Project URL
+                Cloud Project URL
               </label>
               <div className="flex items-center gap-2">
                 <input
@@ -163,7 +163,7 @@ CREATE POLICY "Allow public read access" ON incidents FOR SELECT USING (true);
                   className="px-3.5 py-2.5 rounded-xl bg-blue-600 text-white font-bold text-xs flex items-center gap-1 hover:bg-blue-700 transition-all flex-shrink-0"
                 >
                   <span className="material-symbols-outlined text-base">open_in_new</span>
-                  <span>Open Supabase</span>
+                  <span>Open Database</span>
                 </a>
               </div>
             </div>
@@ -196,7 +196,7 @@ CREATE POLICY "Allow public read access" ON incidents FOR SELECT USING (true);
           <div>
             <div className="flex items-center justify-between mb-1.5">
               <label className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
-                SQL Schema Setup for Supabase SQL Editor
+                SQL Schema Setup for Database Editor
               </label>
               <button
                 onClick={() => copyToClipboard(sqlSchema, setCopiedSql)}
