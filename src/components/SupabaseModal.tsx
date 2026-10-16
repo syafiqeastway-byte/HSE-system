@@ -9,15 +9,15 @@ interface SupabaseModalProps {
 export const SupabaseModal: React.FC<SupabaseModalProps> = ({ isOpen, onClose }) => {
   const [status, setStatus] = useState<SupabaseStatus>({
     connected: false,
-    url: 'https://pbdnbxnzojlhntzdnsbh.supabase.co',
+    url: 'https://esmqveagrvugmkhxkvxj.supabase.co',
     message: 'Testing connection...'
   });
   const [testing, setTesting] = useState(false);
   const [copiedUrl, setCopiedUrl] = useState(false);
   const [copiedSql, setCopiedSql] = useState(false);
 
-  const supabaseUrl = 'https://pbdnbxnzojlhntzdnsbh.supabase.co';
-  const anonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBiZG5ieG56b2psaG50emRuc2JoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODYwODQ1MDMsImV4cCI6MjEwMTY2MDUwM30.z1PYELw5UI45QjHlc7Pf-PYy9uaH83QVU7UN5G_ja28';
+  const supabaseUrl = 'https://esmqveagrvugmkhxkvxj.supabase.co';
+  const anonKey = 'sb_publishable_nUotvQxnYnyld2f3xbi1IA_8REEibp8';
 
   const testConnection = async () => {
     setTesting(true);

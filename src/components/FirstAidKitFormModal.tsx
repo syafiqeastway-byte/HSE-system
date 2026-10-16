@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { FirstAidKitTableData } from '../types';
+import { submitFirstAidKitUsageToSupabase } from '../utils/supabaseService';
 
 export const FIRST_AID_17_ITEMS = [
   '1) STERILE GAUZE PAD',
@@ -146,6 +147,7 @@ export const FirstAidKitFormModal: React.FC<FirstAidKitFormModalProps> = ({
   const [reason, setReason] = useState<string>('');
   const [generalNotes, setGeneralNotes] = useState<string>('');
   const [submittedMessage, setSubmittedMessage] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
   // Dynamic list of items used by the user
   const [usedItems, setUsedItems] = useState<UsedItemRow[]>([
@@ -154,21 +156,25 @@ export const FirstAidKitFormModal: React.FC<FirstAidKitFormModalProps> = ({
 
   if (!isOpen && !isInline) return null;
 
-  // Add Item to dynamic list
+  // Add Item to dynamic list (Maximum 3 items allowed)
   const handleAddItem = () => {
+    if (usedItems.length >= 3) return;
     // Find next item not already in the list if possible
     const existingItems = new Set(usedItems.map(u => u.item));
     const nextItem = FIRST_AID_17_ITEMS.find(item => !existingItems.has(item)) || FIRST_AID_17_ITEMS[0];
     
-    setUsedItems(prev => [
-      ...prev,
-      {
-        id: `item-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
-        item: nextItem,
-        quantity: 1,
-        remarks: ''
-      }
-    ]);
+    setUsedItems(prev => {
+      if (prev.length >= 3) return prev;
+      return [
+        ...prev,
+        {
+          id: `item-${Date.now()}-${Math.random().toString(36).substr(2, 4)}`,
+          item: nextItem,
+          quantity: 1,
+          remarks: ''
+        }
+      ];
+    });
   };
 
   // Remove Item from dynamic list
@@ -205,13 +211,15 @@ export const FirstAidKitFormModal: React.FC<FirstAidKitFormModalProps> = ({
   };
 
   // Handle Submit
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (usedItems.length === 0) {
       alert('Please add at least one item used from the kit.');
       return;
     }
+
+    setIsSubmitting(true);
 
     const submission = {
       id: `USAGE-${Date.now()}`,
@@ -232,18 +240,23 @@ export const FirstAidKitFormModal: React.FC<FirstAidKitFormModalProps> = ({
       submittedAt: new Date().toISOString(),
     };
 
+    // Submit to Supabase "First Aid Kit Records" with auto-generated sequential NO (1, 2, 3...)
+    const supabaseResult = await submitFirstAidKitUsageToSupabase(submission);
+
     if (onSaveInspection) {
-      onSaveInspection(submission);
+      onSaveInspection({ ...submission, no: supabaseResult.nextNo });
     }
 
     try {
       const prev = JSON.parse(localStorage.getItem('HSE_FIRST_AID_USAGE_LOGS') || '[]');
-      prev.unshift(submission);
+      prev.unshift({ ...submission, no: supabaseResult.nextNo });
       localStorage.setItem('HSE_FIRST_AID_USAGE_LOGS', JSON.stringify(prev));
     } catch {}
 
+    setIsSubmitting(false);
+
     setSubmittedMessage(
-      `Usage report for ${activeUnit.modelPlace} (${activeUnit.plateNo || activeUnit.location}) has been submitted successfully! Stock replenishment notification logged.`
+      `Usage report (NO: ${supabaseResult.nextNo}) for ${activeUnit.modelPlace} (${activeUnit.plateNo || activeUnit.location}) has been submitted successfully to Supabase!`
     );
 
     // Reset items list after submission
@@ -453,14 +466,16 @@ export const FirstAidKitFormModal: React.FC<FirstAidKitFormModalProps> = ({
                 2. Items Used (Select from Dropdown List)
               </span>
             </div>
-            <button
-              type="button"
-              onClick={handleAddItem}
-              className="px-3 py-1.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-bold flex items-center gap-1.5 shadow-sm transition-all border border-cyan-400/40 active:scale-95"
-            >
-              <span className="material-symbols-outlined text-base">add_circle</span>
-              <span>Add Item</span>
-            </button>
+            {usedItems.length < 3 && (
+              <button
+                type="button"
+                onClick={handleAddItem}
+                className="px-3 py-1.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-bold flex items-center gap-1.5 shadow-sm transition-all border border-cyan-400/40 active:scale-95"
+              >
+                <span className="material-symbols-outlined text-base">add_circle</span>
+                <span>Add Item ({usedItems.length}/3)</span>
+              </button>
+            )}
           </div>
 
           <div className="overflow-x-auto">
@@ -475,9 +490,6 @@ export const FirstAidKitFormModal: React.FC<FirstAidKitFormModalProps> = ({
                   </th>
                   <th className="py-1 px-3 border border-cyan-500/20 text-center w-36 font-bold text-cyan-400">
                     QUANTITY
-                  </th>
-                  <th className="py-1 px-3 border border-cyan-500/20 text-left min-w-[200px] font-bold text-cyan-400">
-                    ITEM NOTES / TREATMENT REASON
                   </th>
                   <th className="py-1 px-2 border border-cyan-500/20 text-center w-16 font-bold text-rose-400">
                     ACTION
@@ -546,18 +558,7 @@ export const FirstAidKitFormModal: React.FC<FirstAidKitFormModalProps> = ({
                       </div>
                     </td>
 
-                    {/* 4. ITEM NOTES / REASON */}
-                    <td className="py-1.5 px-3 border border-cyan-500/20">
-                      <input
-                        type="text"
-                        value={row.remarks}
-                        onChange={(e) => handleItemChange(row.id, 'remarks', e.target.value)}
-                        placeholder="e.g. Cut on finger, headache, sprained wrist..."
-                        className="w-full px-2.5 py-1.5 rounded-lg bg-slate-950/70 border border-slate-800 text-slate-200 text-xs focus:outline-none focus:ring-1 focus:ring-cyan-500 placeholder-slate-500"
-                      />
-                    </td>
-
-                    {/* 5. ACTION (Remove) */}
+                    {/* 4. ACTION (Remove) */}
                     <td className="py-1.5 px-2 border border-cyan-500/20 text-center">
                       <button
                         type="button"
@@ -577,16 +578,22 @@ export const FirstAidKitFormModal: React.FC<FirstAidKitFormModalProps> = ({
           {/* Quick Add Button Bar */}
           <div className="flex items-center justify-between pt-1">
             <span className="text-[11px] text-slate-400">
-              Total items being logged: <strong className="text-cyan-400">{usedItems.length}</strong>
+              Total items being logged: <strong className="text-cyan-400">{usedItems.length}</strong> / 3
             </span>
-            <button
-              type="button"
-              onClick={handleAddItem}
-              className="px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-cyan-300 border border-cyan-500/30 text-xs font-semibold flex items-center gap-1.5 transition-all"
-            >
-              <span className="material-symbols-outlined text-sm">add</span>
-              <span>Add Another Item</span>
-            </button>
+            {usedItems.length < 3 ? (
+              <button
+                type="button"
+                onClick={handleAddItem}
+                className="px-3 py-1.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-cyan-300 border border-cyan-500/30 text-xs font-semibold flex items-center gap-1.5 transition-all"
+              >
+                <span className="material-symbols-outlined text-sm">add</span>
+                <span>Add Another Item</span>
+              </button>
+            ) : (
+              <span className="text-[11px] font-semibold text-amber-400">
+                Maximum 3 items reached
+              </span>
+            )}
           </div>
         </div>
 
@@ -620,10 +627,13 @@ export const FirstAidKitFormModal: React.FC<FirstAidKitFormModalProps> = ({
               )}
               <button
                 type="submit"
-                className="w-full sm:w-auto px-5 py-2 rounded-xl bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white text-xs sm:text-sm font-bold flex items-center justify-center gap-2 shadow-lg shadow-cyan-600/30 active:scale-95 transition-all"
+                disabled={isSubmitting}
+                className="w-full sm:w-auto px-5 py-2 rounded-xl bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white text-xs sm:text-sm font-bold flex items-center justify-center gap-2 shadow-lg shadow-cyan-600/30 active:scale-95 transition-all disabled:opacity-50 cursor-pointer"
               >
-                <span className="material-symbols-outlined text-base">send</span>
-                <span>Submit Usage Report</span>
+                <span className={`material-symbols-outlined text-base ${isSubmitting ? 'animate-spin' : ''}`}>
+                  {isSubmitting ? 'sync' : 'send'}
+                </span>
+                <span>{isSubmitting ? 'Submitting to Supabase...' : 'Submit Usage Report'}</span>
               </button>
             </div>
           </div>

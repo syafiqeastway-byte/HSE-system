@@ -17,15 +17,15 @@ export interface SupabaseStatus {
  */
 export async function checkSupabaseConnection(): Promise<SupabaseStatus> {
   const meta = import.meta as any;
-  const url = meta.env?.VITE_SUPABASE_URL || 'https://pbdnbxnzojlhntzdnsbh.supabase.co';
+  const url = meta.env?.VITE_SUPABASE_URL || 'https://esmqveagrvugmkhxkvxj.supabase.co';
   try {
-    // Attempt a light query or RPC test
-    const { error } = await supabase.from('incidents').select('id').limit(1);
+    // Attempt a light query test on First Aid Kit Records
+    const { error } = await supabase.from('First Aid Kit Records').select('NO').limit(1);
     if (!error) {
       return {
         connected: true,
         url,
-        message: 'Connected to Supabase Project'
+        message: 'Connected to Supabase Project (First Aid Kit Records ready)'
       };
     } else {
       // Table might not exist yet, but server reached
@@ -102,4 +102,90 @@ export async function getSupabaseMinuteMeetings() {
     console.warn('[Supabase] Falling back to default minute meetings:', e);
   }
   return MOCK_MINUTE_MEETINGS;
+}
+
+/**
+ * Submit First Aid Kit Usage Report to Supabase "First Aid Kit Records"
+ * Auto-generates sequential NO (1, 2, 3...)
+ */
+export async function submitFirstAidKitUsageToSupabase(submission: {
+  modelPlace: string;
+  plateNo: string;
+  location: string;
+  code: string;
+  userName: string;
+  department: string;
+  usageDate: string;
+  items: Array<{ item: string; quantity: number; remarks?: string }>;
+  generalNotes?: string;
+}): Promise<{ success: boolean; nextNo: number; error?: string }> {
+  // 1. Determine next auto-increment NO (1, 2, 3...) in sequential order
+  let nextNo = 1;
+
+  try {
+    const savedNo = localStorage.getItem('HSE_LAST_FIRST_AID_NO');
+    if (savedNo) {
+      const parsed = parseInt(savedNo, 10);
+      if (!isNaN(parsed) && parsed >= 1) {
+        nextNo = parsed + 1;
+      }
+    }
+  } catch {}
+
+  // Attempt to check existing records in Supabase to sync highest NO
+  try {
+    const { data } = await supabase
+      .from('First Aid Kit Records')
+      .select('NO')
+      .order('NO', { ascending: false })
+      .limit(1);
+
+    if (Array.isArray(data) && data.length > 0) {
+      const topNo = parseInt(String((data[0] as any)?.NO || (data[0] as any)?.no || 0), 10);
+      if (!isNaN(topNo) && topNo >= nextNo) {
+        nextNo = topNo + 1;
+      }
+    }
+  } catch (err) {
+    console.warn('[Supabase] Could not query latest NO from First Aid Kit Records:', err);
+  }
+
+  // Update local sequential counter
+  try {
+    localStorage.setItem('HSE_LAST_FIRST_AID_NO', String(nextNo));
+  } catch {}
+
+  // 2. Build row payload for "First Aid Kit Records" matching exact table schema
+  const rowPayload: Record<string, any> = {
+    NO: String(nextNo),
+    'MODELS/PLACE': submission.modelPlace || null,
+    'PLATE NO': submission.plateNo || null,
+    'LOCATION': submission.location || null,
+    'CODE': submission.code || null,
+    'DATE OF USE': submission.usageDate || null,
+    'PERSON NAME': submission.userName || null,
+    'DEPARTMENT': submission.department || null,
+    'ITEM DESCRIPTION 1': submission.items[0]?.item || null,
+    'QTY': submission.items[0] ? String(submission.items[0].quantity) : null,
+    'ITEM DESCRIPTION 2': submission.items[1]?.item || null,
+    'QTY_1': submission.items[1] ? String(submission.items[1].quantity) : null,
+    'ITEM DESCRIPTION 3': submission.items[2]?.item || null,
+    'QTY_2': submission.items[2] ? String(submission.items[2].quantity) : null,
+    'NOTES': submission.generalNotes || null
+  };
+
+  try {
+    const { error } = await supabase
+      .from('First Aid Kit Records')
+      .insert([rowPayload]);
+
+    if (error) {
+      console.warn('[Supabase Insert Error]:', error);
+      return { success: false, nextNo, error: error.message };
+    }
+    return { success: true, nextNo };
+  } catch (err: any) {
+    console.warn('[Supabase Insert Exception]:', err);
+    return { success: false, nextNo, error: err?.message || 'Network exception' };
+  }
 }
