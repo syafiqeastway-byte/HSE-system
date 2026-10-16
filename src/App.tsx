@@ -229,7 +229,10 @@ export default function App() {
         {/* Footer */}
         <footer id="app-footer" className="mt-8 py-6 border-t border-slate-800/80 text-center px-4">
           <p className="text-[10px] sm:text-xs font-medium tracking-wider sm:tracking-widest text-slate-400/90 select-none transition-colors">
-            © 2026 Eastway Engineering Sdn. Bhd. All Rights Reserved.
+            © 2026 Eastway Engineering Sdn. Bhd.
+          </p>
+          <p className="text-[10px] sm:text-xs font-medium tracking-wider sm:tracking-widest text-slate-500 select-none transition-colors mt-0.5">
+            All Rights Reserved.
           </p>
         </footer>
 
