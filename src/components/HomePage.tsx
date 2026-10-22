@@ -275,7 +275,7 @@ export const HomePage: React.FC<HomePageProps> = ({
           >
             <div className="flex items-center gap-2 truncate">
               <span className="material-symbols-outlined text-amber-400 text-base">fact_check</span>
-              <span className="truncate">INSPECTIONS</span>
+              <span className="truncate">WORKPLACE INSPECTION</span>
             </div>
             <span className="material-symbols-outlined text-slate-400 text-sm group-hover:text-white group-hover:translate-x-0.5 transition-transform">
               arrow_forward
@@ -291,7 +291,7 @@ export const HomePage: React.FC<HomePageProps> = ({
           >
             <div className="flex items-center gap-2 truncate">
               <span className="material-symbols-outlined text-emerald-400 text-base">edit_note</span>
-              <span className="truncate">FORM</span>
+              <span className="truncate">INSPECTION FORM</span>
             </div>
             <span className="material-symbols-outlined text-slate-400 text-sm group-hover:text-white group-hover:translate-x-0.5 transition-transform">
               open_in_new

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { FirstAidCert, DocumentViewContext } from '../types';
 import { fetchFirstAidCertData } from '../utils/gasBridge';
 import { MOCK_FIRST_AID_CERTS } from '../data/mockData';
+import { useAutoRefresh } from '../hooks/useAutoRefresh';
 
 interface EmergencyPlanPageProps {
   onOpenDocument: (doc: DocumentViewContext) => void;
@@ -47,6 +48,16 @@ export const EmergencyPlanPage: React.FC<EmergencyPlanPageProps> = ({
         setIsRefreshing(false);
       });
   };
+
+  useAutoRefresh(() => {
+    fetchFirstAidCertData(true)
+      .then((data) => {
+        if (data && data.length > 0) {
+          setCerts(data);
+        }
+      })
+      .catch(() => {});
+  }, { intervalMs: 60000 });
 
   const filteredCerts = certs.filter((c) => {
     const q = searchQuery.trim().toLowerCase();
@@ -231,7 +242,14 @@ export const EmergencyPlanPage: React.FC<EmergencyPlanPageProps> = ({
                         }`}
                       >
                         <td className="py-1 px-3 font-mono font-medium text-white border border-cyan-500/20 leading-none">
-                          {cert.employeeId || '-'}
+                          {(() => {
+                            const rawId = cert.employeeId?.trim();
+                            if (!rawId || rawId === '-') {
+                              return '';
+                            }
+                            if (rawId.startsWith('*')) return rawId;
+                            return rawId.length > 4 ? `***${rawId.slice(-4)}` : `***${rawId}`;
+                          })()}
                         </td>
                         <td className="py-1 px-3 font-medium text-white border border-cyan-500/20 leading-none">{cert.name}</td>
                         <td className="py-1 px-3 text-white border border-cyan-500/20 leading-none">{cert.department}</td>

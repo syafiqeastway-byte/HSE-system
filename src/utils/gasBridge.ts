@@ -472,7 +472,7 @@ export async function fetchFireExtinguisherData(): Promise<FireExtinguisherRecor
 // 10. First Aid Certifications
 export async function fetchFirstAidCertData(requireAuth: boolean = false): Promise<FirstAidCert[]> {
   const SPREADSHEET_ID = '1o9P6GnlsAwSJEUYHxITt1Opz973uX37MLBiv0LdFdIs';
-  const url = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:csv&sheet=FIRST%20AID%20KIT%20INSPECTION&range=AA5:AE12`;
+  const url = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:csv&sheet=FIRST%20AID%20KIT%20INSPECTION&range=AA5:AE`;
 
   try {
     const res = await fetch(url);
@@ -502,9 +502,9 @@ export async function fetchFirstAidCertData(requireAuth: boolean = false): Promi
             dataRows.forEach((row: any, index: number) => {
               if (Array.isArray(row) && row.length >= 2 && row.some((c: any) => c && String(c).trim() !== '')) {
                 const rawEmpId = (row[0] || '').trim();
-                let maskedEmpId = '-';
-                if (rawEmpId) {
-                  maskedEmpId = rawEmpId.length >= 3 ? '***' + rawEmpId.slice(3) : '***';
+                let maskedEmpId = '';
+                if (rawEmpId && rawEmpId !== '-') {
+                  maskedEmpId = rawEmpId.startsWith('*') ? rawEmpId : (rawEmpId.length > 4 ? '***' + rawEmpId.slice(-4) : '***' + rawEmpId);
                 }
 
                 certs.push({

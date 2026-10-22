@@ -314,21 +314,19 @@ export const TelemetryHub: React.FC<TelemetryHubProps> = ({
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4 mb-6">
       
-      {/* 1. Real-Time System Clock */}
-      <div className="bg-blue-500/10 border border-blue-500/30 rounded-2xl px-3.5 py-2.5 sm:px-4 sm:py-3 min-h-24 flex items-center justify-between backdrop-blur-md">
-        <div className="flex items-center gap-3">
-          <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-slate-800/80 text-slate-200 flex items-center justify-center flex-shrink-0 border border-slate-700/50">
-            <span className="material-symbols-outlined text-xl sm:text-2xl">schedule</span>
+      {/* 1. Days Without Incident Card (Replaces DATE/TIME) */}
+      <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-2xl px-3.5 py-2.5 sm:px-4 sm:py-3 min-h-24 flex items-center justify-between backdrop-blur-md shadow-sm">
+        <div className="flex-1 min-w-0 pr-2">
+          <div className="flex items-center gap-1.5 text-xs font-bold text-emerald-400 uppercase tracking-wider">
+            <span>DAYS WITHOUT INCIDENT</span>
           </div>
-          <div>
-            <div className="flex items-center gap-1.5 text-xs font-bold text-cyan-400 uppercase tracking-wider">
-              <span>DATE/TIME</span>
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-            </div>
-            <div className="text-xs sm:text-sm font-normal text-white mt-0.5 tracking-tight">
-              {timeStr}
-            </div>
+          <div className="text-2xl sm:text-3xl font-extrabold text-white font-mono mt-0.5 tracking-tight flex items-baseline gap-1.5">
+            <span>{safeDays}</span>
+            <span className="text-xs sm:text-sm font-bold text-emerald-400/80 uppercase">DAYS</span>
           </div>
+        </div>
+        <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center flex-shrink-0 border border-emerald-500/30 shadow-sm">
+          <span className="material-symbols-outlined text-2xl sm:text-3xl">check_circle</span>
         </div>
       </div>
 
@@ -420,7 +418,7 @@ export const TelemetryHub: React.FC<TelemetryHubProps> = ({
         </div>
       </div>
 
-      {/* 4. JKK Meeting & Safe Days Card */}
+      {/* 4. JKK Meeting Card */}
       <div 
         onClick={onNavigateMinuteMeetings}
         className={`bg-sky-500/10 border border-sky-500/30 rounded-2xl px-3.5 py-2.5 sm:px-4 sm:py-3 min-h-24 flex items-center justify-between backdrop-blur-md transition-all ${
@@ -433,19 +431,18 @@ export const TelemetryHub: React.FC<TelemetryHubProps> = ({
             <span className="material-symbols-outlined text-xl sm:text-2xl text-cyan-400">groups</span>
           </div>
           <div className="flex-1 min-w-0 flex flex-col justify-center">
-            {/* Top row: NEXT JKK MEETING: date */}
             <div className="text-xs sm:text-xs font-bold text-cyan-400 uppercase tracking-wider flex items-center justify-between gap-1">
-              <span className="truncate">
-                NEXT JKK MEETING: <span className="text-white font-extrabold">{displayMeetingDate}</span>
-              </span>
+              <span className="truncate">NEXT JKK MEETING</span>
             </div>
-
-            {/* Bottom row: DAYS WITHOUT INCIDENT */}
-            <div className="text-xs sm:text-xs font-bold text-emerald-400 uppercase tracking-wider mt-1.5 pt-1.5 border-t border-cyan-500/20 flex items-center justify-between gap-1">
-              <span className="truncate">
-                DAYS WITHOUT INCIDENT: <span className="text-white font-extrabold">{safeDays}</span>
-              </span>
+            <div className="text-xs sm:text-sm font-bold text-white mt-0.5 tracking-tight font-mono">
+              {displayMeetingDate}
             </div>
+            {meetingDaysRemaining && (
+              <div className="text-[10px] font-semibold text-slate-300 mt-1 flex items-center gap-1">
+                <span className="material-symbols-outlined text-xs text-cyan-400">event</span>
+                <span>{meetingDaysRemaining}</span>
+              </div>
+            )}
           </div>
         </div>
       </div>
