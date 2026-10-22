@@ -289,9 +289,6 @@ export const FirstAidKitFormModal: React.FC<FirstAidKitFormModalProps> = ({
               First Aid Kit Item Usage Form
             </h2>
           </div>
-          <p className="text-[11px] text-slate-300 mt-0.5">
-            Please log any items taken from this First Aid Kit for inventory control & immediate replenishment
-          </p>
         </div>
 
         {!isInline && (
