@@ -16,12 +16,10 @@ const getEnvVar = (key: string): string => {
 
 export const SUPABASE_URL = 
   getEnvVar('VITE_SUPABASE_URL') || 
-  getEnvVar('SUPABASE_URL') || 
   'https://esmqveagrvugmkhxkvxj.supabase.co';
 
 export const SUPABASE_ANON_KEY = 
   getEnvVar('VITE_SUPABASE_ANON_KEY') || 
-  getEnvVar('SUPABASE_ANON_KEY') || 
   'sb_publishable_nUotvQxnYnyld2f3xbi1IA_8REEibp8';
 
 export const isSupabaseConfigured = (): boolean => {

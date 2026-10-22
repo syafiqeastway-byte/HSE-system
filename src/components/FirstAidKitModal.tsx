@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import * as XLSX from 'xlsx';
 import { FirstAidKitTableData } from '../types';
-import { fetchFirstAidKitTableData } from '../utils/gasBridge';
+import { fetchFirstAidKitItemsFromSupabase } from '../utils/supabaseService';
 
 interface FirstAidKitModalProps {
   isOpen: boolean;
@@ -21,7 +21,7 @@ export const FirstAidKitModal: React.FC<FirstAidKitModalProps> = ({ isOpen, onCl
   const loadData = async () => {
     setLoading(true);
     try {
-      const res = await fetchFirstAidKitTableData();
+      const res = await fetchFirstAidKitItemsFromSupabase();
       setData(res);
     } catch (err) {
       console.warn('Error fetching First Aid Kit data:', err);

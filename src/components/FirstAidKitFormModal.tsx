@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { FirstAidKitTableData } from '../types';
-import { submitFirstAidKitUsageToSupabase } from '../utils/supabaseService';
+import { submitFirstAidKitUsageToSupabase, deductFirstAidKitStockInSupabase } from '../utils/supabaseService';
 
 export const FIRST_AID_17_ITEMS = [
   '1) STERILE GAUZE PAD',
@@ -242,6 +242,9 @@ export const FirstAidKitFormModal: React.FC<FirstAidKitFormModalProps> = ({
 
     // Submit to Supabase "First Aid Kit Records" with auto-generated sequential NO (1, 2, 3...)
     const supabaseResult = await submitFirstAidKitUsageToSupabase(submission);
+
+    // Automatically deduct items from "First Aid Kit Items" table
+    await deductFirstAidKitStockInSupabase(submission);
 
     if (onSaveInspection) {
       onSaveInspection({ ...submission, no: supabaseResult.nextNo });

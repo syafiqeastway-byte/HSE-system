@@ -1,10 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import * as XLSX from 'xlsx';
 import { FirstAidKitTableData } from '../types';
-import { fetchFirstAidKitTableData } from '../utils/gasBridge';
 import { supabase } from '../lib/supabase';
+import { fetchFirstAidKitItemsFromSupabase } from '../utils/supabaseService';
 import { useAutoRefresh } from '../hooks/useAutoRefresh';
 import { FirstAidKitFormModal } from './FirstAidKitFormModal';
+
+export const DEFAULT_KIT_HEADERS = [
+  'NO', 'MODELS/PLACE', 'PLATE NO', 'LOCATION', 'CODE', 'LAST INSPECTION',
+  '1) STERILE GAUZE PAD', '2) PLASTER LUKA', '3) WOW/ELASTIC BANDAGE', '4) PITA PELEKAT PERUBATAN',
+  '5) KAPAS', '6) IODINE', '7) GUNTING/PISAU', '8) KAIN ANDUH/TRIANGULAR BANDAGE',
+  '9) WOODEN SPLINT', '10) PIN', '11) SARUNG TANGAN', '12) MUSCLE CREAM',
+  '13) ALCOHOL SWAB', '14) ANTISEPTIC CREAM', '15) PENGEPIT', '16) STERILE EYE PADS',
+  '17) COLD PACK', 'NEXT INSPECTION', 'DESCRIPTION'
+];
 
 interface FirstAidKitPageProps {
   onBackToHome: () => void;
@@ -12,7 +21,7 @@ interface FirstAidKitPageProps {
 
 export const FirstAidKitPage: React.FC<FirstAidKitPageProps> = ({ onBackToHome }) => {
   const [data, setData] = useState<FirstAidKitTableData>({
-    headers: [],
+    headers: DEFAULT_KIT_HEADERS,
     rows: [],
     rawRecords: []
   });
@@ -30,40 +39,66 @@ export const FirstAidKitPage: React.FC<FirstAidKitPageProps> = ({ onBackToHome }
   const [supabaseSearch, setSupabaseSearch] = useState('');
   const [selectedUsageRow, setSelectedUsageRow] = useState<number | null>(null);
 
-  const loadData = (isBackground: boolean = false) => {
-    let isMounted = true;
+  const calculateNextInspectionDate = (lastDateStr: string): string => {
+    if (!lastDateStr || typeof lastDateStr !== 'string') return '-';
+    const trimmed = lastDateStr.trim();
+    if (!trimmed || trimmed === '-' || trimmed === 'NA' || trimmed === 'N/A') return '-';
+    const parts = trimmed.split('/');
+    let d: Date | null = null;
+    if (parts.length === 3) {
+      d = new Date(parseInt(parts[2], 10), parseInt(parts[1], 10) - 1, parseInt(parts[0], 10));
+    } else {
+      d = new Date(trimmed);
+    }
+    if (!d || isNaN(d.getTime())) return '-';
+    d.setMonth(d.getMonth() + 6);
+    return `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()}`;
+  };
+
+  const loadData = async (isBackground: boolean = false) => {
     if (isBackground) {
       setIsRefreshing(true);
     } else {
       setLoading(true);
     }
 
-    fetchFirstAidKitTableData()
-      .then((res) => {
-        if (isMounted && res) {
+    try {
+      const res = await fetchFirstAidKitItemsFromSupabase();
+      if (res && res.rows) {
+        const lastIdx = res.headers.findIndex(h => (h || '').trim().toUpperCase() === 'LAST INSPECTION');
+        const nextIdx = res.headers.findIndex(h => (h || '').trim().toUpperCase() === 'NEXT INSPECTION');
+        if (lastIdx !== -1 && nextIdx !== -1) {
+          const updatedRows = res.rows.map(row => {
+            const copy = [...row];
+            if (row[lastIdx] && row[lastIdx] !== '-' && row[lastIdx] !== 'NA') {
+              copy[nextIdx] = calculateNextInspectionDate(row[lastIdx]);
+            }
+            return copy;
+          });
+          setData({ ...res, rows: updatedRows });
+        } else {
           setData(res);
         }
-      })
-      .catch((err) => {
-        console.warn('Error fetching First Aid Kit data:', err);
-      })
-      .finally(() => {
-        if (isMounted) {
-          setLoading(false);
-          setIsRefreshing(false);
-        }
-      });
-
-    return () => { isMounted = false; };
+      }
+    } catch (err) {
+      console.warn('Error fetching First Aid Kit data from Supabase:', err);
+    } finally {
+      setLoading(false);
+      setIsRefreshing(false);
+    }
   };
 
   useEffect(() => {
-    return loadData(false);
+    loadData(false);
   }, []);
 
-  // AUTO-REFRESH: Automatically poll live First Aid Kit table in background
+  // AUTO-REFRESH: Automatically poll live First Aid Kit table and Usage Records in background
   useAutoRefresh(() => {
-    loadData(true);
+    if (activeView === 'usageRecords') {
+      loadSupabaseRecords();
+    } else {
+      loadData(true);
+    }
   }, { intervalMs: 60000 });
 
   // Filter rows based on search query
@@ -131,8 +166,37 @@ export const FirstAidKitPage: React.FC<FirstAidKitPageProps> = ({ onBackToHome }
     XLSX.writeFile(wb, "First_Aid_Kit_Register.xlsx");
   };
 
-  const getCellBadge = (cellVal: string) => {
+  const isInspectionDateExpired = (dateStr: string): boolean => {
+    if (!dateStr || typeof dateStr !== 'string') return false;
+    const trimmed = dateStr.trim();
+    if (!trimmed || trimmed === '-' || trimmed === 'NA' || trimmed === 'N/A') return false;
+    const parts = trimmed.split('/');
+    let target: Date | null = null;
+    if (parts.length === 3) {
+      target = new Date(parseInt(parts[2], 10), parseInt(parts[1], 10) - 1, parseInt(parts[0], 10));
+    } else {
+      target = new Date(trimmed);
+    }
+    if (!target || isNaN(target.getTime())) return false;
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    target.setHours(0, 0, 0, 0);
+    return target.getTime() < today.getTime();
+  };
+
+  const getCellBadge = (cellVal: string, isNextInspection: boolean = false, isSelected: boolean = false) => {
+    if (isSelected) {
+      return <span className="text-white text-xs font-bold leading-none">{cellVal}</span>;
+    }
     const val = (cellVal || '').trim().toUpperCase();
+    if (isNextInspection && isInspectionDateExpired(cellVal)) {
+      return (
+        <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md text-[10px] font-bold bg-rose-600/30 text-rose-300 border border-rose-500/50 animate-pulse">
+          <span className="material-symbols-outlined text-[11px]">warning</span>
+          <span>{cellVal} (EXPIRED)</span>
+        </span>
+      );
+    }
     if (val === 'OK' || val === 'COMPLIANT' || val === 'YES' || val === 'GOOD' || val === 'INTACT' || val === 'SEALED' || val === 'SUFFICIENT') {
       return (
         <span className="inline-flex items-center px-1.5 py-0.5 rounded-md text-[10px] font-bold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
@@ -241,7 +305,7 @@ export const FirstAidKitPage: React.FC<FirstAidKitPageProps> = ({ onBackToHome }
             }}
             disabled={activeView === 'usageRecords' ? loadingSupabase : isRefreshing}
             className="p-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-white transition-colors border border-cyan-500/20 flex-shrink-0"
-            title={activeView === 'usageRecords' ? "Sync live from Database" : "Sync live from Google Sheets"}
+            title="Sync live from Database"
           >
             <span className={`material-symbols-outlined text-xl ${
               (activeView === 'usageRecords' ? loadingSupabase : isRefreshing) ? 'animate-spin text-cyan-400' : ''
@@ -266,12 +330,9 @@ export const FirstAidKitPage: React.FC<FirstAidKitPageProps> = ({ onBackToHome }
       {/* VIEW 2: RECORDS TABLE (ALL CELLS CENTERED, COMPACT FIT) */}
       {activeView === 'table' && (
         <div className="space-y-4">
-          {/* Search bar & quick info */}
           <div className="glass-card p-3 flex flex-col sm:flex-row items-center justify-between gap-3">
             <div className="relative w-full sm:w-80">
-              <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-base">
-                search
-              </span>
+              <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-base">search</span>
               <input
                 type="text"
                 value={searchQuery}
@@ -279,16 +340,6 @@ export const FirstAidKitPage: React.FC<FirstAidKitPageProps> = ({ onBackToHome }
                 placeholder="SEARCH MODEL, PLATE, LOCATION, CODE..."
                 className="w-full pl-9 pr-9 py-1.5 rounded-xl bg-slate-950 border border-slate-700 text-xs text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-cyan-500"
               />
-              {searchQuery && (
-                <button
-                  type="button"
-                  onClick={() => setSearchQuery('')}
-                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white p-0.5 rounded-full"
-                  title="Clear search"
-                >
-                  <span className="material-symbols-outlined text-sm">close</span>
-                </button>
-              )}
             </div>
 
             {selectedRowIndex !== null && data.rows[selectedRowIndex] && (
@@ -297,7 +348,7 @@ export const FirstAidKitPage: React.FC<FirstAidKitPageProps> = ({ onBackToHome }
                 className="px-3 py-1.5 rounded-xl bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-bold flex items-center gap-1.5 shadow-sm transition-all"
               >
                 <span className="material-symbols-outlined text-base">edit_note</span>
-                <span>Log Item Usage for Selected Kit ({data.rows[selectedRowIndex][1]})</span>
+                <span>Log Usage ({data.rows[selectedRowIndex][1]})</span>
               </button>
             )}
           </div>
@@ -305,66 +356,52 @@ export const FirstAidKitPage: React.FC<FirstAidKitPageProps> = ({ onBackToHome }
           {loading ? (
             <div className="p-12 text-center flex flex-col items-center justify-center glass-card">
               <span className="material-symbols-outlined text-4xl text-cyan-400 animate-spin">sync</span>
-              <span className="text-xs text-slate-400 mt-2">Loading First Aid Kit records...</span>
             </div>
           ) : (
             <div className="glass-card overflow-hidden">
               <div className="overflow-x-auto">
-                {/* Table: All cells center-aligned, fit height & width */}
                 <table className="w-full border-collapse border border-cyan-500/20 text-center text-xs whitespace-nowrap bg-transparent">
                   <thead className="bg-slate-950/95 text-cyan-400 border-b-2 border-cyan-500/40">
                     <tr className="h-8">
                       {data.headers.map((header, idx) => (
-                        <th
-                          key={idx}
-                          className="py-1 px-2.5 font-bold uppercase tracking-wider border border-cyan-500/20 text-center text-xs text-cyan-400"
-                        >
-                          {header || `Column ${idx + 1}`}
-                        </th>
+                        <th key={idx} className="py-1 px-2.5 font-bold uppercase tracking-wider border border-cyan-500/20 text-center text-xs text-cyan-400">{header}</th>
                       ))}
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-cyan-500/10 text-xs text-white">
-                    {filteredRows.length === 0 ? (
-                      <tr className="h-8">
-                        <td
-                          colSpan={data.headers.length || 1}
-                          className="py-6 text-center text-xs text-white border border-cyan-500/20"
+                    {filteredRows.map((row, rIdx) => {
+                      const isSelected = selectedRowIndex === rIdx;
+                      const lastInspectColIdx = data.headers.findIndex(h => (h || '').trim().toUpperCase() === 'LAST INSPECTION');
+                      const nextInspectColIdx = data.headers.findIndex(h => (h || '').trim().toUpperCase() === 'NEXT INSPECTION');
+                      const nextInspectVal = (lastInspectColIdx !== -1 && row[lastInspectColIdx] && row[lastInspectColIdx] !== '-' && row[lastInspectColIdx] !== 'NA')
+                        ? calculateNextInspectionDate(row[lastInspectColIdx])
+                        : (nextInspectColIdx !== -1 ? (row[nextInspectColIdx] || '-') : '-');
+                      const isExpired = nextInspectColIdx !== -1 && isInspectionDateExpired(nextInspectVal);
+                      return (
+                        <tr
+                          key={rIdx}
+                          onClick={() => setSelectedRowIndex(isSelected ? null : rIdx)}
+                          className={`h-8 transition-colors cursor-pointer select-none ${
+                            isSelected
+                              ? '!bg-cyan-600 !text-white font-bold [&>td]:!bg-cyan-600 [&>td]:!text-white [&>td]:!border-cyan-400/40 [&_*]:!text-white shadow-md'
+                              : isExpired
+                              ? '!bg-rose-950/90 hover:!bg-rose-900 text-rose-100 font-medium border-y border-rose-500/60 [&>td]:!bg-rose-950/90 hover:[&>td]:!bg-rose-900/90 [&>td]:!border-rose-500/40 [&>td]:!text-rose-100 shadow-sm'
+                              : rIdx % 2 === 0
+                              ? 'bg-slate-900/40 hover:bg-cyan-950/30'
+                              : 'bg-slate-900/80 hover:bg-cyan-950/40'
+                          }`}
                         >
-                          No records found matching "{searchQuery}"
-                        </td>
-                      </tr>
-                    ) : (
-                      filteredRows.map((row, rIdx) => {
-                        const isSelected = selectedRowIndex === rIdx;
-                        return (
-                          <tr
-                            key={rIdx}
-                            onClick={() => setSelectedRowIndex(isSelected ? null : rIdx)}
-                            className={`h-8 transition-colors cursor-pointer select-none ${
-                              isSelected
-                                ? '!bg-cyan-600 !text-white font-bold [&>td]:!bg-cyan-600 [&>td]:!text-white [&>td]:!border-cyan-400/40 [&_*]:!text-white shadow-md'
-                                : rIdx % 2 === 0
-                                ? 'bg-slate-900/40 hover:bg-cyan-950/30'
-                                : 'bg-slate-900/80 hover:bg-cyan-950/40'
-                            }`}
-                          >
-                            {data.headers.map((_, cIdx) => {
-                              const cellValue = row[cIdx] || '-';
-                              return (
-                                <td
-                                  key={cIdx}
-                                  className="py-1 px-2 border border-cyan-500/20 font-medium text-white text-center leading-none"
-                                  title={cellValue}
-                                >
-                                  {getCellBadge(cellValue)}
-                                </td>
-                              );
-                            })}
-                          </tr>
-                        );
-                      })
-                    )}
+                          {data.headers.map((_, cIdx) => {
+                            const cellValue = cIdx === nextInspectColIdx ? nextInspectVal : (row[cIdx] || '-');
+                            return (
+                              <td key={cIdx} className="py-1 px-2 border border-cyan-500/20 text-center leading-none">
+                                {getCellBadge(cellValue, cIdx === nextInspectColIdx, isSelected)}
+                              </td>
+                            );
+                          })}
+                        </tr>
+                      );
+                    })}
                   </tbody>
                 </table>
               </div>

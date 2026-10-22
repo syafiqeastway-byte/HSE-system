@@ -1,4 +1,5 @@
 import { supabase } from '../lib/supabase';
+import { FirstAidKitTableData } from '../types';
 import {
   MOCK_INCIDENT_RECORDS,
   MOCK_INSPECTION_RECORDS,
@@ -187,5 +188,164 @@ export async function submitFirstAidKitUsageToSupabase(submission: {
   } catch (err: any) {
     console.warn('[Cloud DB Insert Exception]:', err);
     return { success: false, nextNo, error: err?.message || 'Network exception' };
+  }
+}
+
+/**
+ * Fetch Kit Register Table data from Supabase "First Aid Kit Items"
+ */
+export async function fetchFirstAidKitItemsFromSupabase(): Promise<FirstAidKitTableData> {
+  const standardHeaders = [
+    'NO', 'MODELS/PLACE', 'PLATE NO', 'LOCATION', 'CODE', 'LAST INSPECTION',
+    '1) STERILE GAUZE PAD', '2) PLASTER LUKA', '3) WOW/ELASTIC BANDAGE', '4) PITA PELEKAT PERUBATAN',
+    '5) KAPAS', '6) IODINE', '7) GUNTING/PISAU', '8) KAIN ANDUH/TRIANGULAR BANDAGE',
+    '9) WOODEN SPLINT', '10) PIN', '11) SARUNG TANGAN', '12) MUSCLE CREAM',
+    '13) ALCOHOL SWAB', '14) ANTISEPTIC CREAM', '15) PENGEPIT', '16) STERILE EYE PADS',
+    '17) COLD PACK', 'NEXT INSPECTION', 'DESCRIPTION'
+  ];
+
+  const processRecords = (data: any[]): FirstAidKitTableData => {
+    const sorted = [...data].sort((a, b) => {
+      const nA = parseInt(String(a.NO || a.no || '0'), 10);
+      const nB = parseInt(String(b.NO || b.no || '0'), 10);
+      return nA - nB;
+    });
+    const sample = sorted[0];
+    const headers = Object.keys(sample).length > 0 ? Object.keys(sample) : standardHeaders;
+    const rows = sorted.map((item: any) => {
+      return headers.map(h => item[h] !== null && item[h] !== undefined ? String(item[h]) : '');
+    });
+    return {
+      headers,
+      rows,
+      rawRecords: sorted
+    };
+  };
+
+  try {
+    const { data, error } = await supabase.from('First Aid Kit Items').select('*');
+    if (!error && Array.isArray(data) && data.length > 0) {
+      return processRecords(data);
+    }
+  } catch (e) {
+    console.warn('[Cloud DB] Supabase client error:', e);
+  }
+
+  // Direct REST API fallback
+  try {
+    const res = await fetch('https://esmqveagrvugmkhxkvxj.supabase.co/rest/v1/First%20Aid%20Kit%20Items?select=*', {
+      headers: {
+        'apikey': 'sb_publishable_nUotvQxnYnyld2f3xbi1IA_8REEibp8',
+        'Authorization': 'Bearer sb_publishable_nUotvQxnYnyld2f3xbi1IA_8REEibp8'
+      }
+    });
+    if (res.ok) {
+      const directData = await res.json();
+      if (Array.isArray(directData) && directData.length > 0) {
+        return processRecords(directData);
+      }
+    }
+  } catch (err) {
+    console.warn('[Cloud DB] Direct fetch error:', err);
+  }
+
+  return {
+    headers: standardHeaders,
+    rows: [],
+    rawRecords: []
+  };
+}
+
+/**
+ * Automatically deduct used items from Supabase "First Aid Kit Items" when usage form is submitted
+ */
+export async function deductFirstAidKitStockInSupabase(submission: {
+  modelPlace: string;
+  plateNo: string;
+  items: Array<{ item: string; quantity: number }>;
+}) {
+  try {
+    const { data: records, error } = await supabase
+      .from('First Aid Kit Items')
+      .select('*');
+    
+    if (error || !records || records.length === 0) return;
+
+    const targetRow = records.find((r: any) => {
+      const m = String(r['MODELS/PLACE'] || '').trim().toLowerCase();
+      const p = String(r['PLATE NO'] || '').trim().toLowerCase();
+      const sm = (submission.modelPlace || '').trim().toLowerCase();
+      const sp = (submission.plateNo || '').trim().toLowerCase();
+      return m === sm && (sp === '' || p === sp || p.includes(sp) || sp.includes(p));
+    });
+
+    if (!targetRow) return;
+
+    const updatedRow = { ...targetRow };
+    let hasChanges = false;
+
+    submission.items.forEach(u => {
+      const itemName = u.item.trim();
+      for (const colKey of Object.keys(updatedRow)) {
+        if (colKey.toLowerCase() === itemName.toLowerCase() || colKey.toLowerCase().includes(itemName.toLowerCase())) {
+          const currentVal = updatedRow[colKey];
+          const num = parseInt(currentVal, 10);
+          if (!isNaN(num)) {
+            const newVal = Math.max(0, num - Number(u.quantity));
+            updatedRow[colKey] = String(newVal);
+            hasChanges = true;
+          }
+          break;
+        }
+      }
+    });
+
+    if (hasChanges && targetRow.NO !== undefined) {
+      await supabase
+        .from('First Aid Kit Items')
+        .update(updatedRow)
+        .eq('NO', targetRow.NO);
+    }
+  } catch (err) {
+    console.warn('[Cloud DB Stock Deduction Error]:', err);
+  }
+}
+
+// Admin CRUD functions for Kit Items
+export async function updateFirstAidKitItemRow(noVal: any, updatedRecord: Record<string, any>) {
+  try {
+    const { error } = await supabase
+      .from('First Aid Kit Items')
+      .update(updatedRecord)
+      .eq('NO', noVal);
+    if (error) throw error;
+    return { success: true };
+  } catch (err: any) {
+    return { success: false, error: err?.message };
+  }
+}
+
+export async function insertFirstAidKitItemRow(newRecord: Record<string, any>) {
+  try {
+    const { error } = await supabase
+      .from('First Aid Kit Items')
+      .insert([newRecord]);
+    if (error) throw error;
+    return { success: true };
+  } catch (err: any) {
+    return { success: false, error: err?.message };
+  }
+}
+
+export async function deleteFirstAidKitItemRow(noVal: any) {
+  try {
+    const { error } = await supabase
+      .from('First Aid Kit Items')
+      .delete()
+      .eq('NO', noVal);
+    if (error) throw error;
+    return { success: true };
+  } catch (err: any) {
+    return { success: false, error: err?.message };
   }
 }
