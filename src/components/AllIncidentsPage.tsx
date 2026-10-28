@@ -10,9 +10,10 @@ import { useAutoRefresh } from '../hooks/useAutoRefresh';
 interface AllIncidentsPageProps {
   onBackToHome: () => void;
   isDarkMode: boolean;
+  onOpenIncidentReportModal?: () => void;
 }
 
-export const AllIncidentsPage: React.FC<AllIncidentsPageProps> = ({ onBackToHome, isDarkMode }) => {
+export const AllIncidentsPage: React.FC<AllIncidentsPageProps> = ({ onBackToHome, isDarkMode, onOpenIncidentReportModal }) => {
   const [incidents, setIncidents] = useState<IncidentRecord[]>(() => {
     try {
       const cached = localStorage.getItem('HSE_CACHED_INCIDENTS');
@@ -159,6 +160,15 @@ export const AllIncidentsPage: React.FC<AllIncidentsPageProps> = ({ onBackToHome
           </div>
         </div>
         <div className="flex flex-wrap sm:flex-nowrap items-center gap-2 w-full sm:w-auto">
+          {onOpenIncidentReportModal && (
+            <button
+              onClick={onOpenIncidentReportModal}
+              className="flex-1 sm:flex-none justify-center px-3 sm:px-4 py-2 rounded-xl bg-gradient-to-r from-rose-600 via-amber-600 to-indigo-600 hover:opacity-90 text-white font-extrabold text-xs flex items-center gap-1.5 transition-all shadow-md cursor-pointer whitespace-nowrap"
+            >
+              <span className="material-symbols-outlined text-base">add_box</span>
+              <span>INCIDENT REPORT FORM (AI)</span>
+            </button>
+          )}
           <button
             onClick={handleGeneratePdfReport}
             disabled={isGeneratingPdf}

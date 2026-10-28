@@ -19,6 +19,8 @@ import { PWAInstallModal } from './components/PWAInstallModal';
 import { FirstAidKitPage } from './components/FirstAidKitPage';
 import { InspectionPage } from './components/InspectionPage';
 import { SafetyEquipmentPage } from './components/SafetyEquipmentPage';
+import { IncidentReportFormModal } from './components/IncidentReportFormModal';
+import { IncidentRecord } from './types';
 
 import { formatToPreviewUrl } from './utils/formatDriveUrl';
 import { triggerGlobalDataRefresh } from './hooks/useAutoRefresh';
@@ -39,6 +41,22 @@ export default function App() {
   const [inspectionFilterType, setInspectionFilterType] = useState<'Workplace' | 'First Aid Box' | 'Fire Extinguisher' | 'All'>('All');
   const [exportGasModalOpen, setExportGasModalOpen] = useState(false);
   const [supabaseModalOpen, setSupabaseModalOpen] = useState(false);
+  const [incidentReportModalOpen, setIncidentReportModalOpen] = useState(false);
+
+  const handleSaveIncident = (newIncident: IncidentRecord) => {
+    try {
+      const cached = localStorage.getItem('HSE_CACHED_INCIDENTS');
+      let currentList: IncidentRecord[] = [];
+      if (cached) {
+        currentList = JSON.parse(cached);
+      }
+      const updated = [newIncident, ...currentList];
+      localStorage.setItem('HSE_CACHED_INCIDENTS', JSON.stringify(updated));
+      triggerGlobalDataRefresh();
+    } catch (e) {
+      console.error('Error saving new incident:', e);
+    }
+  };
 
   // PWA State
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
@@ -136,6 +154,7 @@ export default function App() {
               onOpenAllIncidentsModal={() => setActivePage('allIncidentsPage')}
               onNavigateSafetyViolation={() => setActivePage('safetyViolationPage')}
               onNavigateSafetyEquipment={() => setActivePage('safetyEquipmentPage')}
+              onOpenIncidentReportModal={() => setIncidentReportModalOpen(true)}
               isDarkMode={isDarkMode}
               onOpenPWAInstall={() => setPwaModalOpen(true)}
               isPwaInstalled={isPwaInstalled}
@@ -216,6 +235,7 @@ export default function App() {
             <AllIncidentsPage
               onBackToHome={() => setActivePage('homePage')}
               isDarkMode={isDarkMode}
+              onOpenIncidentReportModal={() => setIncidentReportModalOpen(true)}
             />
           )}
 
@@ -265,6 +285,12 @@ export default function App() {
         onClose={() => setPwaModalOpen(false)}
         deferredPrompt={deferredPrompt}
         onInstallSuccess={() => setIsPwaInstalled(true)}
+      />
+
+      <IncidentReportFormModal
+        isOpen={incidentReportModalOpen}
+        onClose={() => setIncidentReportModalOpen(false)}
+        onSaveIncident={handleSaveIncident}
       />
 
       

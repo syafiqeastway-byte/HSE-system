@@ -14,6 +14,7 @@ interface HomePageProps {
   onOpenAllIncidentsModal?: () => void;
   onNavigateSafetyViolation: () => void;
   onNavigateSafetyEquipment: () => void;
+  onOpenIncidentReportModal?: () => void;
   isDarkMode: boolean;
   onOpenPWAInstall?: () => void;
   isPwaInstalled?: boolean;
@@ -33,6 +34,7 @@ export const HomePage: React.FC<HomePageProps> = ({
   onOpenAllIncidentsModal,
   onNavigateSafetyViolation,
   onNavigateSafetyEquipment,
+  onOpenIncidentReportModal,
   isDarkMode,
   onOpenPWAInstall,
   isPwaInstalled,
@@ -297,6 +299,22 @@ export const HomePage: React.FC<HomePageProps> = ({
               open_in_new
             </span>
           </a>
+
+          {/* New AI Incident Report Form Button */}
+          {onOpenIncidentReportModal && (
+            <button
+              onClick={onOpenIncidentReportModal}
+              className="w-full px-3 py-2.5 rounded-xl border border-rose-500/40 bg-gradient-to-r from-rose-950/90 via-amber-950/80 to-slate-900 text-white font-bold text-xs flex items-center justify-between hover:border-rose-400 hover:from-rose-900/90 transition-all shadow-md group min-h-[40px] cursor-pointer"
+            >
+              <div className="flex items-center gap-2 truncate">
+                <span className="material-symbols-outlined text-rose-400 text-base animate-pulse">report_problem</span>
+                <span className="truncate">INCIDENT REPORT FORM (AI)</span>
+              </div>
+              <span className="material-symbols-outlined text-amber-400 text-sm group-hover:scale-110 transition-transform">
+                auto_awesome
+              </span>
+            </button>
+          )}
 
         </div>
       </div>

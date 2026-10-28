@@ -65,6 +65,9 @@ export interface IncidentRecord {
   documentUrl?: string;
   status?: string;
   actionPlan?: string;
+  kronologiBm?: string;
+  preliminaryCauses?: string[];
+  preventiveActions?: string[];
 }
 
 export interface DemeritRecord {
