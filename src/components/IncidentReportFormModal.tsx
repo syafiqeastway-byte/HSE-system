@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { downloadIncidentReportPdf } from '../utils/incidentFormPdfGenerator';
+import { downloadIncidentReportPdf, createIncidentReportPdfBlob } from '../utils/incidentFormPdfGenerator';
+import { uploadPdfToGoogleDrive } from '../services/googleDriveService';
 
 interface IncidentReportFormModalProps {
   isOpen: boolean;
@@ -10,6 +11,11 @@ export const IncidentReportFormModal: React.FC<IncidentReportFormModalProps> = (
   isOpen,
   onClose,
 }) => {
+  // FORM NO Section (Auto-generated from Google Sheet: NEW IR, Column A)
+  const [formNo, setFormNo] = useState<string>('');
+  const [lastFormNo, setLastFormNo] = useState<string>('');
+  const [isLoadingFormNo, setIsLoadingFormNo] = useState<boolean>(false);
+
   // Page 1: Report Metadata (Follows Reference Report Page 1)
   const [reportMadeBy, setReportMadeBy] = useState<string>('');
   const [reportMadeByOther, setReportMadeByOther] = useState<string>('');
@@ -63,6 +69,8 @@ export const IncidentReportFormModal: React.FC<IncidentReportFormModalProps> = (
   const [generationError, setGenerationError] = useState<string | null>(null);
   const [copiedSection, setCopiedSection] = useState<string | null>(null);
   const [isExportingPdf, setIsExportingPdf] = useState<boolean>(false);
+  const [isSavingToDrive, setIsSavingToDrive] = useState<boolean>(false);
+  const [driveSaveStatus, setDriveSaveStatus] = useState<{ success: boolean; message: string; link?: string } | null>(null);
 
   // Fetch employees from Supabase MAIN EMPLOYEE ID
   useEffect(() => {
@@ -147,11 +155,78 @@ export const IncidentReportFormModal: React.FC<IncidentReportFormModalProps> = (
     };
   }, [isOpen]);
 
+  // Fetch latest FORM NO from Google Sheet (NEW IR, Column A) and generate next number
+  const fetchFormNo = async () => {
+    setIsLoadingFormNo(true);
+    try {
+      const res = await fetch('/api/latest-form-no');
+      if (res.ok) {
+        const json = await res.json();
+        if (json.success && json.nextFormNo) {
+          setFormNo(json.nextFormNo);
+          setLastFormNo(json.lastFormNo || '');
+          return;
+        }
+      }
+    } catch (err) {
+      console.warn('Failed to fetch FORM NO via server proxy:', err);
+    }
+
+    // Direct Google Sheet fetch fallback
+    try {
+      const sheetId = '1o9P6GnlsAwSJEUYHxITt1Opz973uX37MLBiv0LdFdIs';
+      const sheetName = encodeURIComponent('NEW IR');
+      const url = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv&sheet=${sheetName}`;
+      const res = await fetch(url);
+      if (res.ok) {
+        const text = await res.text();
+        const lines = text.split(/\r?\n/).map((l) => l.trim()).filter(Boolean);
+        const formNumbers: string[] = [];
+        for (const line of lines) {
+          const match = line.match(/^"([^"]*)"/);
+          const val = (match ? match[1] : line.split(',')[0]).trim();
+          if (
+            val &&
+            !val.toUpperCase().includes('INCIDENT REPORT') &&
+            !val.toUpperCase().includes('FORM NO') &&
+            !val.toUpperCase().includes('REPORT NO')
+          ) {
+            formNumbers.push(val);
+          }
+        }
+        const last = formNumbers[formNumbers.length - 1] || 'EE-INC-062';
+        setLastFormNo(last);
+        let next = 'EE-INC-001';
+        const numMatch = last.match(/^(.*?)(\d+)$/);
+        if (numMatch) {
+          const prefix = numMatch[1];
+          const numStr = numMatch[2];
+          const nextNum = parseInt(numStr, 10) + 1;
+          next = `${prefix}${String(nextNum).padStart(numStr.length, '0')}`;
+        }
+        setFormNo(next);
+        return;
+      }
+    } catch (err) {
+      console.warn('Failed to fetch FORM NO directly:', err);
+    }
+
+    setLastFormNo('EE-INC-062');
+    setFormNo('EE-INC-063');
+  };
+
+  useEffect(() => {
+    if (isOpen) {
+      fetchFormNo();
+    }
+  }, [isOpen]);
+
   // Handle Download PDF Function
   const handleDownloadPdf = async () => {
     try {
       setIsExportingPdf(true);
       await downloadIncidentReportPdf({
+        formNo,
         reportMadeBy,
         reportMadeByOther,
         reportType,
@@ -180,6 +255,65 @@ export const IncidentReportFormModal: React.FC<IncidentReportFormModalProps> = (
       console.error('Error generating PDF report:', err);
     } finally {
       setIsExportingPdf(false);
+    }
+  };
+
+  // Handle Save Report to Google Drive (Folder: 1kF6v8G3-2tOuGrNHqiL3DvUq1zu1G40F)
+  const handleSaveReportToDrive = async () => {
+    try {
+      setIsSavingToDrive(true);
+      setDriveSaveStatus(null);
+
+      // Generate the official PDF Blob
+      const { blob, fileName } = await createIncidentReportPdfBlob({
+        formNo,
+        reportMadeBy,
+        reportMadeByOther,
+        reportType,
+        employeeName,
+        employeeId,
+        gender,
+        age,
+        department,
+        jobTitle,
+        partOfBodyAffected,
+        natureOfInjury,
+        natureOfInjuryOther,
+        exactLocation,
+        incidentDate,
+        exactTime,
+        witnessNames,
+        workdayPart,
+        workdayPartOther,
+        chronology,
+        description,
+        preliminaryCauses,
+        preventiveActions,
+        pictures,
+      });
+
+      // Upload directly to Google Drive folder 1kF6v8G3-2tOuGrNHqiL3DvUq1zu1G40F (Incident Report)
+      const res = await uploadPdfToGoogleDrive(blob, fileName, '1kF6v8G3-2tOuGrNHqiL3DvUq1zu1G40F');
+      if (res.success) {
+        setDriveSaveStatus({
+          success: true,
+          message: `Saved ${fileName} to Google Drive (Incident Report folder)!`,
+          link: res.webViewLink,
+        });
+      } else {
+        setDriveSaveStatus({
+          success: false,
+          message: res.error || 'Failed to save to Google Drive.',
+        });
+      }
+    } catch (err: any) {
+      console.error('Error saving to Google Drive:', err);
+      setDriveSaveStatus({
+        success: false,
+        message: err.message || 'Error occurred while saving to Google Drive.',
+      });
+    } finally {
+      setIsSavingToDrive(false);
     }
   };
 
@@ -358,6 +492,7 @@ As an immediate result, medical evaluation was administered${natureOfInjury ? ` 
 
   // Insert Sample from Page 1 & 2 of the Reference PDF Report
   const handleInsertSample = () => {
+    if (!formNo) setFormNo('EE-INC-063');
     setReportMadeBy('Team');
     setReportType('Doc Visit Only');
     setEmployeeName('Haiqal');
@@ -384,6 +519,7 @@ As an immediate result, medical evaluation was administered${natureOfInjury ? ` 
 
   // Clear / Reset All Form Fields
   const handleClearForm = () => {
+    fetchFormNo();
     setReportMadeBy('');
     setReportMadeByOther('');
     setReportType('');
@@ -413,6 +549,8 @@ As an immediate result, medical evaluation was administered${natureOfInjury ? ` 
     setNewCauseText('');
     setNewActionText('');
     setGenerationError(null);
+    setDriveSaveStatus(null);
+    setCopiedSection(null);
   };
 
   return (
@@ -460,9 +598,23 @@ As an immediate result, medical evaluation was administered${natureOfInjury ? ` 
               </h3>
             </div>
 
-            {/* Report Made By & Report Classification Grid (Dropdowns) */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Form No, Report Made By & Report Classification Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5">
               
+              {/* FORM NO */}
+              <div className="space-y-1.5">
+                <label className="block text-[11px] font-bold text-slate-300 uppercase tracking-wide">
+                  FORM NO
+                </label>
+                <input
+                  type="text"
+                  value={formNo}
+                  onChange={(e) => setFormNo(e.target.value)}
+                  placeholder="e.g. EE-INC-063"
+                  className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-cyan-300 font-mono font-extrabold text-xs focus:outline-none focus:border-cyan-400 tracking-wider"
+                />
+              </div>
+
               {/* Report Made By: Dropdown List */}
               <div className="space-y-1.5">
                 <label className="block text-[11px] font-bold text-slate-300 uppercase tracking-wide">
@@ -1165,28 +1317,73 @@ As an immediate result, medical evaluation was administered${natureOfInjury ? ` 
         </div>
 
         {/* Modal Footer Controls */}
-        <div className="p-4 sm:p-5 border-t border-cyan-500/20 bg-slate-950/90 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <button
-            type="button"
-            onClick={handleClearForm}
-            className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-slate-800 hover:bg-rose-500/20 text-slate-300 hover:text-rose-300 font-semibold text-xs border border-slate-700 hover:border-rose-500/40 transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
-            title="Reset and clear all form inputs"
-          >
-            <span className="material-symbols-outlined text-base">restart_alt</span>
-            <span>Clear Form</span>
-          </button>
+        <div className="p-2.5 sm:p-4 border-t border-cyan-500/20 bg-slate-950/90 flex flex-col gap-2">
+          {driveSaveStatus && (
+            <div
+              className={`px-3 py-1.5 rounded-lg text-xs flex items-center justify-between gap-2 transition-all ${
+                driveSaveStatus.success
+                  ? 'bg-emerald-950/80 border border-emerald-500/40 text-emerald-200'
+                  : 'bg-rose-950/80 border border-rose-500/40 text-rose-200'
+              }`}
+            >
+              <div className="flex items-center gap-1.5 truncate">
+                <span className="material-symbols-outlined text-sm flex-shrink-0">
+                  {driveSaveStatus.success ? 'check_circle' : 'error'}
+                </span>
+                <span className="truncate text-[11px] sm:text-xs">{driveSaveStatus.message}</span>
+              </div>
+              {driveSaveStatus.link && (
+                <a
+                  href={driveSaveStatus.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-2 py-0.5 rounded bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 text-[10px] sm:text-[11px] font-bold border border-emerald-500/40 flex items-center gap-1 flex-shrink-0"
+                >
+                  <span>Open in Drive</span>
+                  <span className="material-symbols-outlined text-xs">open_in_new</span>
+                </a>
+              )}
+            </div>
+          )}
 
-          <button
-            type="button"
-            onClick={handleDownloadPdf}
-            disabled={isExportingPdf}
-            className="w-full sm:w-auto px-5 py-2.5 rounded-xl bg-gradient-to-r from-cyan-500 via-blue-600 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-white font-medium text-xs flex items-center justify-center gap-2 shadow-lg shadow-cyan-500/25 transition-all cursor-pointer disabled:opacity-50"
-          >
-            <span className="material-symbols-outlined text-base">
-              {isExportingPdf ? 'hourglass_top' : 'download'}
-            </span>
-            <span>{isExportingPdf ? 'Generating PDF...' : 'Download PDF Report'}</span>
-          </button>
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-2">
+            <button
+              type="button"
+              onClick={handleClearForm}
+              className="w-full sm:w-auto px-2.5 py-1.5 sm:px-3.5 sm:py-2 rounded-lg bg-slate-800 hover:bg-rose-500/20 text-slate-300 hover:text-rose-300 font-semibold text-[11px] sm:text-xs border border-slate-700 hover:border-rose-500/40 transition-colors flex items-center justify-center gap-1 cursor-pointer"
+              title="Reset and clear all form inputs"
+            >
+              <span className="material-symbols-outlined text-sm">restart_alt</span>
+              <span>Clear Form</span>
+            </button>
+
+            <div className="flex items-center gap-2 w-full sm:w-auto">
+              <button
+                type="button"
+                onClick={handleSaveReportToDrive}
+                disabled={isSavingToDrive}
+                className="flex-1 sm:flex-initial px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700 text-white font-bold text-[11px] sm:text-xs flex items-center justify-center gap-1.5 shadow-md shadow-emerald-600/20 transition-all cursor-pointer disabled:opacity-50"
+                title="Automatically save report to Google Drive in Incident Report folder"
+              >
+                <span className={`material-symbols-outlined text-sm sm:text-base ${isSavingToDrive ? 'animate-spin' : ''}`}>
+                  {isSavingToDrive ? 'sync' : 'cloud_upload'}
+                </span>
+                <span>{isSavingToDrive ? 'Saving...' : 'Save Report'}</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={handleDownloadPdf}
+                disabled={isExportingPdf}
+                className="flex-1 sm:flex-initial px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg bg-gradient-to-r from-cyan-500 via-blue-600 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-white font-medium text-[11px] sm:text-xs flex items-center justify-center gap-1.5 shadow-md shadow-cyan-500/20 transition-all cursor-pointer disabled:opacity-50"
+              >
+                <span className="material-symbols-outlined text-sm sm:text-base">
+                  {isExportingPdf ? 'hourglass_top' : 'download'}
+                </span>
+                <span>{isExportingPdf ? 'Generating...' : 'Download PDF Report'}</span>
+              </button>
+            </div>
+          </div>
         </div>
 
       </div>

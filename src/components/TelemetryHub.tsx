@@ -431,15 +431,12 @@ export const TelemetryHub: React.FC<TelemetryHubProps> = ({
             <span className="material-symbols-outlined text-xl sm:text-2xl text-cyan-400">groups</span>
           </div>
           <div className="flex-1 min-w-0 flex flex-col justify-center">
-            <div className="text-xs sm:text-xs font-bold text-cyan-400 uppercase tracking-wider flex items-center justify-between gap-1">
-              <span className="truncate">NEXT JKK MEETING</span>
-            </div>
-            <div className="text-xs sm:text-sm font-bold text-white mt-0.5 tracking-tight font-mono">
-              {displayMeetingDate}
+            <div className="text-[11px] sm:text-xs font-bold text-cyan-400 uppercase tracking-wider flex flex-wrap items-center gap-1">
+              <span>NEXT JKK MEETING:</span>
+              <span className="text-white font-mono">{displayMeetingDate}</span>
             </div>
             {meetingDaysRemaining && (
-              <div className="text-[10px] font-semibold text-slate-300 mt-1 flex items-center gap-1">
-                <span className="material-symbols-outlined text-xs text-cyan-400">event</span>
+              <div className="text-[11px] font-semibold text-slate-300 mt-1">
                 <span>{meetingDaysRemaining}</span>
               </div>
             )}

@@ -88,9 +88,6 @@ export const EmergencyPlanPage: React.FC<EmergencyPlanPageProps> = ({
               <span className="material-symbols-outlined text-red-500 animate-pulse">e911_emergency</span>
               <span>EMERGENCY RESPONSE PLAN & COMMAND CENTER</span>
             </h2>
-            <p className="text-xs text-white">
-              Site evacuation routes, trained emergency response teams, and medical certification tracking
-            </p>
           </div>
         </div>
 
@@ -161,9 +158,6 @@ export const EmergencyPlanPage: React.FC<EmergencyPlanPageProps> = ({
               <span className="material-symbols-outlined text-emerald-400">clinical_notes</span>
               <span>FIRST AID & CPR CERTIFIED PERSONNEL RECORDS</span>
             </h3>
-            <p className="text-xs text-white">
-              Verified first aid & emergency response credentials
-            </p>
           </div>
 
           {/* Search & Refresh Controls */}
@@ -212,7 +206,6 @@ export const EmergencyPlanPage: React.FC<EmergencyPlanPageProps> = ({
             <table className="w-full border-collapse border border-cyan-500/20 text-left text-xs sm:text-sm text-white whitespace-nowrap bg-transparent">
               <thead className="bg-slate-950/95 text-cyan-400 uppercase border-b-2 border-cyan-500/40">
                 <tr className="h-8">
-                  <th className="min-w-[130px] py-1 px-3 border border-cyan-500/20 font-bold uppercase text-xs tracking-wider text-cyan-400">EMPLOYEE ID</th>
                   <th className="min-w-[180px] py-1 px-3 border border-cyan-500/20 font-bold uppercase text-xs tracking-wider text-cyan-400">Name</th>
                   <th className="min-w-[160px] py-1 px-3 border border-cyan-500/20 font-bold uppercase text-xs tracking-wider text-cyan-400">Department</th>
                   <th className="w-36 py-1 px-3 border border-cyan-500/20 font-bold uppercase text-xs tracking-wider text-center text-cyan-400">CERT EXPIRED</th>
@@ -222,7 +215,7 @@ export const EmergencyPlanPage: React.FC<EmergencyPlanPageProps> = ({
               <tbody className="divide-y divide-cyan-500/10 text-xs sm:text-sm text-white">
                 {filteredCerts.length === 0 ? (
                   <tr className="h-9">
-                    <td colSpan={5} className="py-4 text-center text-xs text-white border border-cyan-500/20">
+                    <td colSpan={4} className="py-4 text-center text-xs text-white border border-cyan-500/20">
                       No first aid cert found matching "{searchQuery}"
                     </td>
                   </tr>
@@ -241,16 +234,6 @@ export const EmergencyPlanPage: React.FC<EmergencyPlanPageProps> = ({
                             : 'bg-slate-900/80 hover:bg-cyan-950/40'
                         }`}
                       >
-                        <td className="py-1 px-3 font-mono font-medium text-white border border-cyan-500/20 leading-none">
-                          {(() => {
-                            const rawId = cert.employeeId?.trim();
-                            if (!rawId || rawId === '-') {
-                              return '';
-                            }
-                            if (rawId.startsWith('*')) return rawId;
-                            return rawId.length > 4 ? `***${rawId.slice(-4)}` : `***${rawId}`;
-                          })()}
-                        </td>
                         <td className="py-1 px-3 font-medium text-white border border-cyan-500/20 leading-none">{cert.name}</td>
                         <td className="py-1 px-3 text-white border border-cyan-500/20 leading-none">{cert.department}</td>
                         <td className="py-1 px-3 font-mono font-bold text-emerald-400 border border-cyan-500/20 text-center leading-none">{cert.expiryDate}</td>

@@ -37,6 +37,60 @@ async function startServer() {
     }
   });
 
+  // Endpoint to fetch latest FORM NO from Google Sheet (NEW IR, Column A) and generate next number
+  app.get('/api/latest-form-no', async (req, res) => {
+    try {
+      const sheetId = '1o9P6GnlsAwSJEUYHxITt1Opz973uX37MLBiv0LdFdIs';
+      const sheetName = encodeURIComponent('NEW IR');
+      const url = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv&sheet=${sheetName}`;
+      
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error(`Google Sheet response: ${response.status}`);
+      }
+      const text = await response.text();
+      const lines = text.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+
+      const formNumbers: string[] = [];
+      for (const line of lines) {
+        const match = line.match(/^"([^"]*)"/);
+        const val = (match ? match[1] : line.split(',')[0]).trim();
+        if (
+          val &&
+          !val.toUpperCase().includes('INCIDENT REPORT') &&
+          !val.toUpperCase().includes('FORM NO') &&
+          !val.toUpperCase().includes('REPORT NO')
+        ) {
+          formNumbers.push(val);
+        }
+      }
+
+      const lastFormNo = formNumbers[formNumbers.length - 1] || 'EE-INC-062';
+      let nextFormNo = 'EE-INC-001';
+      const numMatch = lastFormNo.match(/^(.*?)(\d+)$/);
+      if (numMatch) {
+        const prefix = numMatch[1];
+        const numStr = numMatch[2];
+        const nextNum = parseInt(numStr, 10) + 1;
+        nextFormNo = `${prefix}${String(nextNum).padStart(numStr.length, '0')}`;
+      }
+
+      return res.json({
+        success: true,
+        lastFormNo,
+        nextFormNo
+      });
+    } catch (e: any) {
+      console.warn('Error fetching latest FORM NO from Google Sheet:', e);
+      return res.json({
+        success: true,
+        lastFormNo: 'EE-INC-062',
+        nextFormNo: 'EE-INC-063',
+        fallback: true
+      });
+    }
+  });
+
   // API Endpoint for AI Incident Report Generation
   app.post('/api/generate-incident-report', async (req, res) => {
     try {
