@@ -331,41 +331,49 @@ export const TelemetryHub: React.FC<TelemetryHubProps> = ({
       </div>
 
       {/* 2. Live Weather Widget (Kuala Lumpur, Pulau Pinang) */}
-      <div className="bg-cyan-500/10 border border-cyan-500/30 rounded-2xl px-3.5 py-2 sm:px-4 sm:py-2.5 min-h-24 flex items-center justify-between backdrop-blur-md">
-        <div className="flex items-center gap-3 w-full">
-          <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-slate-800/80 text-white flex items-center justify-center flex-shrink-0 border border-slate-700/50">
-            <span className="material-symbols-outlined text-xl sm:text-2xl">thermostat</span>
-          </div>
-          <div className="flex-1 min-w-0">
-            <div className="text-xs font-bold text-cyan-400 uppercase tracking-wider flex items-center gap-1">
-              <span>LIVE SITE WEATHER</span>
-              {loadingWeather && <span className="material-symbols-outlined text-[10px] animate-spin">sync</span>}
-            </div>
-            
-            <div className="flex flex-col gap-0.5 mt-0.5">
-              {/* KUALA LUMPUR Weather */}
-              <div className="flex items-center justify-between text-xs sm:text-sm font-normal text-white">
-                <span className="truncate text-white">KUALA LUMPUR:</span>
-                <span className="flex items-center gap-1 flex-shrink-0 ml-1">
-                  <span>{weather.tempKL}°C</span>
-                  <span className="material-symbols-outlined text-white text-base" title={weather.weatherKL}>
-                    {getWeatherIcon(weather.weatherKL)}
+      <div className="bg-cyan-500/10 border border-cyan-500/30 rounded-2xl p-2.5 sm:p-3 min-h-24 flex flex-col justify-between backdrop-blur-md">
+        <div className="flex items-center justify-between text-xs font-bold text-cyan-400 uppercase tracking-wider mb-1">
+          <span className="flex items-center gap-1.5">
+            <span>LIVE SITE WEATHER</span>
+            {loadingWeather && <span className="material-symbols-outlined text-[10px] animate-spin">sync</span>}
+          </span>
+          <span className="text-[10px] font-normal text-slate-400 normal-case">Live</span>
+        </div>
+
+        {/* Mini Table for Locations & Temperatures */}
+        <div className="w-full overflow-hidden rounded-lg border border-cyan-500/20 bg-slate-900/60">
+          <table className="w-full text-left text-xs">
+            <thead>
+              <tr className="border-b border-cyan-500/20 bg-cyan-950/40 text-[10px] uppercase font-semibold text-cyan-300">
+                <th className="px-2.5 py-0.5">Location</th>
+                <th className="px-2.5 py-0.5 text-right">Current Temp</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-800/60 text-[11px] sm:text-xs">
+              <tr className="hover:bg-cyan-500/5 transition-colors">
+                <td className="px-2.5 py-1 text-slate-200 font-medium">Kuala Lumpur</td>
+                <td className="px-2.5 py-1 text-right text-white font-semibold">
+                  <span className="inline-flex items-center gap-1 justify-end">
+                    <span>{weather.tempKL}°C</span>
+                    <span className="material-symbols-outlined text-sm text-cyan-300" title={weather.weatherKL}>
+                      {getWeatherIcon(weather.weatherKL)}
+                    </span>
                   </span>
-                </span>
-              </div>
-              
-              {/* PULAU PINANG Weather */}
-              <div className="flex items-center justify-between text-xs sm:text-sm font-normal text-white">
-                <span className="truncate text-white">PULAU PINANG:</span>
-                <span className="flex items-center gap-1 flex-shrink-0 ml-1">
-                  <span>{weather.tempPenang}°C</span>
-                  <span className="material-symbols-outlined text-white text-base" title={weather.weatherPenang}>
-                    {getWeatherIcon(weather.weatherPenang)}
+                </td>
+              </tr>
+              <tr className="hover:bg-cyan-500/5 transition-colors">
+                <td className="px-2.5 py-1 text-slate-200 font-medium">Pulau Pinang</td>
+                <td className="px-2.5 py-1 text-right text-white font-semibold">
+                  <span className="inline-flex items-center gap-1 justify-end">
+                    <span>{weather.tempPenang}°C</span>
+                    <span className="material-symbols-outlined text-sm text-cyan-300" title={weather.weatherPenang}>
+                      {getWeatherIcon(weather.weatherPenang)}
+                    </span>
                   </span>
-                </span>
-              </div>
-            </div>
-          </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
 
