@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { downloadIncidentReportPdf, createIncidentReportPdfBlob } from '../utils/incidentFormPdfGenerator';
-import { uploadPdfToGoogleDrive } from '../services/googleDriveService';
+import { uploadPdfToGoogleDrive, appendIncidentReportToGoogleSheet } from '../services/googleDriveService';
 
 interface IncidentReportFormModalProps {
   isOpen: boolean;
@@ -38,6 +38,26 @@ export const IncidentReportFormModal: React.FC<IncidentReportFormModalProps> = (
   const [isLoadingEmployees, setIsLoadingEmployees] = useState<boolean>(false);
   const [isLocked, setIsLocked] = useState<boolean>(false);
   const [isNameDropdownOpen, setIsNameDropdownOpen] = useState<boolean>(false);
+  const nameDropdownRef = useRef<HTMLDivElement>(null);
+
+  // Close NAME dropdown when clicking anywhere outside
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent | TouchEvent) => {
+      if (nameDropdownRef.current && !nameDropdownRef.current.contains(event.target as Node)) {
+        setIsNameDropdownOpen(false);
+      }
+    };
+
+    if (isNameDropdownOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener('touchstart', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('touchstart', handleClickOutside);
+    };
+  }, [isNameDropdownOpen]);
 
   const filteredEmployees = employeeList.filter((emp) =>
     emp.name.toLowerCase().includes((employeeName || '').toLowerCase())
@@ -56,6 +76,8 @@ export const IncidentReportFormModal: React.FC<IncidentReportFormModalProps> = (
 
   // Chronology Input & AI Outputs
   const [chronology, setChronology] = useState<string>('');
+  const [chronologyError, setChronologyError] = useState<string | null>(null);
+  const chronologyInputRef = useRef<HTMLTextAreaElement>(null);
   const [description, setDescription] = useState<string>('');
   const [preliminaryCauses, setPreliminaryCauses] = useState<string[]>([]);
   const [preventiveActions, setPreventiveActions] = useState<string[]>([]);
@@ -223,6 +245,16 @@ export const IncidentReportFormModal: React.FC<IncidentReportFormModalProps> = (
 
   // Handle Download PDF Function
   const handleDownloadPdf = async () => {
+    if (!chronology || !chronology.trim()) {
+      setChronologyError('Incident Chronology & Details is required.');
+      if (chronologyInputRef.current) {
+        chronologyInputRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        chronologyInputRef.current.focus();
+      }
+      return;
+    }
+    setChronologyError(null);
+
     try {
       setIsExportingPdf(true);
       await downloadIncidentReportPdf({
@@ -258,8 +290,23 @@ export const IncidentReportFormModal: React.FC<IncidentReportFormModalProps> = (
     }
   };
 
-  // Handle Save Report to Google Drive (Folder: 1kF6v8G3-2tOuGrNHqiL3DvUq1zu1G40F)
+  // Handle Save Report to Google Drive & Google Sheet ("NEW IR")
   const handleSaveReportToDrive = async () => {
+    // Require INCIDENT CHRONOLOGY & DETAILS
+    if (!chronology || !chronology.trim()) {
+      setChronologyError('Incident Chronology & Details is required.');
+      setDriveSaveStatus({
+        success: false,
+        message: 'INCIDENT CHRONOLOGY & DETAILS is required before saving report.',
+      });
+      if (chronologyInputRef.current) {
+        chronologyInputRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        chronologyInputRef.current.focus();
+      }
+      return;
+    }
+    setChronologyError(null);
+
     try {
       setIsSavingToDrive(true);
       setDriveSaveStatus(null);
@@ -292,25 +339,45 @@ export const IncidentReportFormModal: React.FC<IncidentReportFormModalProps> = (
         pictures,
       });
 
-      // Upload directly to Google Drive folder 1kF6v8G3-2tOuGrNHqiL3DvUq1zu1G40F (Incident Report)
+      // 1. Upload directly to Google Drive folder 1kF6v8G3-2tOuGrNHqiL3DvUq1zu1G40F (Incident Report)
       const res = await uploadPdfToGoogleDrive(blob, fileName, '1kF6v8G3-2tOuGrNHqiL3DvUq1zu1G40F');
-      if (res.success) {
-        setDriveSaveStatus({
-          success: true,
-          message: `Saved ${fileName} to Google Drive (Incident Report folder)!`,
-          link: res.webViewLink,
-        });
-      } else {
+      if (!res.success) {
         setDriveSaveStatus({
           success: false,
           message: res.error || 'Failed to save to Google Drive.',
         });
+        return;
+      }
+
+      const driveLink = res.webViewLink || (res.fileId ? `https://drive.google.com/file/d/${res.fileId}/view` : '');
+
+      // 2. Automatically append data to Google Sheet "NEW IR" (Spreadsheet: 1o9P6GnlsAwSJEUYHxITt1Opz973uX37MLBiv0LdFdIs)
+      // FORM NO to Column A, DATE to Column B, NAME to Column L, PDF Drive link to Column O
+      const sheetRes = await appendIncidentReportToGoogleSheet({
+        formNo,
+        date: incidentDate,
+        name: employeeName,
+        pdfUrl: driveLink,
+      });
+
+      if (sheetRes.success) {
+        setDriveSaveStatus({
+          success: true,
+          message: `Saved ${fileName} to Drive & appended to Google Sheet (NEW IR)!`,
+          link: driveLink,
+        });
+      } else {
+        setDriveSaveStatus({
+          success: true,
+          message: `Saved to Drive, but Sheet update warning: ${sheetRes.error}`,
+          link: driveLink,
+        });
       }
     } catch (err: any) {
-      console.error('Error saving to Google Drive:', err);
+      console.error('Error saving report to Drive or Sheet:', err);
       setDriveSaveStatus({
         success: false,
-        message: err.message || 'Error occurred while saving to Google Drive.',
+        message: err.message || 'Error occurred while saving report.',
       });
     } finally {
       setIsSavingToDrive(false);
@@ -515,6 +582,7 @@ As an immediate result, medical evaluation was administered${natureOfInjury ? ` 
     setChronology(
       'At approximately 8:30 AM, Haiqal was riding his motorcycle on the West Coast Expressway (WCE) Highway while travelling to work in Ijok Warehouse during heavy rain. He intended to stop at a sheltered area to put on his raincoat but overshot the intended stopping point. He then applied the brakes, causing the motorcycle to skid and fall. As a result of the accident, Haiqal suffered a sprained shoulder, and the motorcycle sustained scratches. After the incident, he went to a clinic for medical treatment and was issued a medical certificate (MC).'
     );
+    setChronologyError(null);
   };
 
   // Clear / Reset All Form Fields
@@ -543,6 +611,7 @@ As an immediate result, medical evaluation was administered${natureOfInjury ? ` 
     setWorkdayPartOther('');
     setPictures([]);
     setChronology('');
+    setChronologyError(null);
     setDescription('');
     setPreliminaryCauses([]);
     setPreventiveActions([]);
@@ -677,7 +746,7 @@ As an immediate result, medical evaluation was administered${natureOfInjury ? ` 
             {/* Employee Basic Info Grid (Ordered: Name -> Gender -> Age -> Employee ID -> Department -> Job Title) */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
               {/* 1. NAME */}
-              <div className="sm:col-span-2 lg:col-span-2 space-y-1.5 relative">
+              <div ref={nameDropdownRef} className="sm:col-span-2 lg:col-span-2 space-y-1.5 relative">
                 <label className="block text-[11px] font-bold text-slate-300 uppercase">
                   NAME
                 </label>
@@ -938,15 +1007,21 @@ As an immediate result, medical evaluation was administered${natureOfInjury ? ` 
               </div>
 
               <div>
-                <label className="block text-[11px] font-bold text-slate-300 uppercase mb-1">
-                  Date
+                <label className="block text-[11px] font-bold text-slate-300 uppercase mb-1 flex items-center gap-1.5">
+                  <span className="material-symbols-outlined text-sm text-orange-400">calendar_month</span>
+                  <span>Date</span>
                 </label>
-                <input
-                  type="date"
-                  value={incidentDate}
-                  onChange={(e) => setIncidentDate(e.target.value)}
-                  className="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-white text-xs focus:outline-none focus:border-cyan-400"
-                />
+                <div className="relative">
+                  <input
+                    type="date"
+                    value={incidentDate}
+                    onChange={(e) => setIncidentDate(e.target.value)}
+                    className="w-full px-3 py-2 pl-9 rounded-lg bg-slate-900 border border-slate-700 text-white text-xs focus:outline-none focus:border-orange-400 focus:ring-1 focus:ring-orange-400/50 [color-scheme:dark]"
+                  />
+                  <span className="material-symbols-outlined absolute left-2.5 top-1/2 -translate-y-1/2 text-base text-orange-400 pointer-events-none">
+                    calendar_today
+                  </span>
+                </div>
               </div>
 
               <div>
@@ -1008,14 +1083,20 @@ As an immediate result, medical evaluation was administered${natureOfInjury ? ` 
           </div>
 
           {/* SECTION: INCIDENT CHRONOLOGY & DETAILS WITH GENERATE BUTTON */}
-          <div className="space-y-3 p-4 rounded-2xl bg-slate-950/80 border border-amber-500/30">
+          <div className={`space-y-3 p-4 rounded-2xl bg-slate-950/80 border transition-colors ${
+            chronologyError ? 'border-rose-500/70 shadow-lg shadow-rose-950/40 ring-1 ring-rose-500/30' : 'border-amber-500/30'
+          }`}>
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
               <div className="flex items-center gap-2">
                 <span className="w-6 h-6 rounded-full bg-amber-500/20 text-amber-400 font-bold text-xs flex items-center justify-center border border-amber-500/40">
                   ⚡
                 </span>
-                <h3 className="font-extrabold text-white text-sm uppercase tracking-wide">
-                  INCIDENT CHRONOLOGY &amp; DETAILS
+                <h3 className="font-extrabold text-white text-sm uppercase tracking-wide flex items-center gap-1.5">
+                  <span>INCIDENT CHRONOLOGY &amp; DETAILS</span>
+                  <span className="text-rose-400 font-bold text-base leading-none">*</span>
+                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-rose-500/20 text-rose-300 border border-rose-500/30 font-semibold normal-case">
+                    Required
+                  </span>
                 </h3>
               </div>
 
@@ -1030,12 +1111,30 @@ As an immediate result, medical evaluation was administered${natureOfInjury ? ` 
             </div>
 
             <textarea
+              ref={chronologyInputRef}
               rows={7}
               value={chronology}
-              onChange={(e) => setChronology(e.target.value)}
-              placeholder="Type or paste the incident chronology details here..."
-              className="w-full min-h-[160px] p-4 sm:p-5 rounded-xl bg-slate-900 border border-slate-700 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-amber-500/50 leading-relaxed text-xs sm:text-sm"
+              onChange={(e) => {
+                setChronology(e.target.value);
+                if (chronologyError && e.target.value.trim()) {
+                  setChronologyError(null);
+                }
+              }}
+              required
+              placeholder="Type or paste the incident chronology details here (Required before saving report)..."
+              className={`w-full min-h-[160px] p-4 sm:p-5 rounded-xl bg-slate-900 border ${
+                chronologyError
+                  ? 'border-rose-500 ring-2 ring-rose-500/40 text-rose-100 placeholder-rose-300/40'
+                  : 'border-slate-700 text-white placeholder-slate-500'
+              } focus:outline-none focus:ring-2 focus:ring-amber-500/50 leading-relaxed text-xs sm:text-sm`}
             />
+
+            {chronologyError && (
+              <div className="p-2.5 rounded-xl bg-rose-500/15 border border-rose-500/40 text-rose-300 text-xs flex items-center gap-2">
+                <span className="material-symbols-outlined text-base text-rose-400">error</span>
+                <span className="font-semibold">{chronologyError}</span>
+              </div>
+            )}
 
             {generationError && (
               <div className="p-3 rounded-xl bg-rose-500/20 border border-rose-500/40 text-rose-200 text-xs flex items-center gap-2">
@@ -1362,25 +1461,13 @@ As an immediate result, medical evaluation was administered${natureOfInjury ? ` 
                 type="button"
                 onClick={handleSaveReportToDrive}
                 disabled={isSavingToDrive}
-                className="flex-1 sm:flex-initial px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700 text-white font-bold text-[11px] sm:text-xs flex items-center justify-center gap-1.5 shadow-md shadow-emerald-600/20 transition-all cursor-pointer disabled:opacity-50"
+                className="w-full sm:w-auto px-4 py-2 rounded-lg bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700 text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-md shadow-emerald-600/20 transition-all cursor-pointer disabled:opacity-50"
                 title="Automatically save report to Google Drive in Incident Report folder"
               >
-                <span className={`material-symbols-outlined text-sm sm:text-base ${isSavingToDrive ? 'animate-spin' : ''}`}>
+                <span className={`material-symbols-outlined text-base ${isSavingToDrive ? 'animate-spin' : ''}`}>
                   {isSavingToDrive ? 'sync' : 'cloud_upload'}
                 </span>
                 <span>{isSavingToDrive ? 'Saving...' : 'Save Report'}</span>
-              </button>
-
-              <button
-                type="button"
-                onClick={handleDownloadPdf}
-                disabled={isExportingPdf}
-                className="flex-1 sm:flex-initial px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg bg-gradient-to-r from-cyan-500 via-blue-600 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-white font-medium text-[11px] sm:text-xs flex items-center justify-center gap-1.5 shadow-md shadow-cyan-500/20 transition-all cursor-pointer disabled:opacity-50"
-              >
-                <span className="material-symbols-outlined text-sm sm:text-base">
-                  {isExportingPdf ? 'hourglass_top' : 'download'}
-                </span>
-                <span>{isExportingPdf ? 'Generating...' : 'Download PDF Report'}</span>
               </button>
             </div>
           </div>

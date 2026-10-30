@@ -15,6 +15,12 @@
     letter-spacing: -0.01em;
   }
 
+  /* Date picker calendar icon orange accent */
+  input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(60%) sepia(85%) saturate(1800%) hue-rotate(360deg) brightness(102%) contrast(102%);
+    cursor: pointer;
+  }
+
   /* Table styling to blend with the background */
   table {
     background-color: transparent !important;
