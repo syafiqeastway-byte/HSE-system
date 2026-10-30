@@ -314,23 +314,7 @@ export const TelemetryHub: React.FC<TelemetryHubProps> = ({
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4 mb-6">
       
-      {/* 1. Days Without Incident Card (Replaces DATE/TIME) */}
-      <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-2xl px-3.5 py-2.5 sm:px-4 sm:py-3 min-h-24 flex items-center justify-between backdrop-blur-md shadow-sm">
-        <div className="flex-1 min-w-0 pr-2">
-          <div className="flex items-center gap-1.5 text-xs font-bold text-emerald-400 uppercase tracking-wider">
-            <span>DAYS WITHOUT INCIDENT</span>
-          </div>
-          <div className="text-2xl sm:text-3xl font-extrabold text-white font-mono mt-0.5 tracking-tight flex items-baseline gap-1.5">
-            <span>{safeDays}</span>
-            <span className="text-xs sm:text-sm font-bold text-emerald-400/80 uppercase">DAYS</span>
-          </div>
-        </div>
-        <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center flex-shrink-0 border border-emerald-500/30 shadow-sm">
-          <span className="material-symbols-outlined text-2xl sm:text-3xl">check_circle</span>
-        </div>
-      </div>
-
-      {/* 2. Live Weather Widget (Kuala Lumpur, Pulau Pinang) */}
+      {/* 1. Live Weather Widget (Kuala Lumpur, Pulau Pinang) */}
       <div className="bg-cyan-500/10 border border-cyan-500/30 rounded-2xl p-2.5 sm:p-3 min-h-24 flex flex-col justify-between backdrop-blur-md">
         <div className="flex items-center justify-between text-xs font-bold text-cyan-400 uppercase tracking-wider mb-1">
           <span className="flex items-center gap-1.5">
@@ -377,7 +361,7 @@ export const TelemetryHub: React.FC<TelemetryHubProps> = ({
         </div>
       </div>
 
-      {/* 3. Incidents Breakdown by Year Mini Chart (Replacing old DAYS WITHOUT INCIDENT box) */}
+      {/* 2. Incidents Breakdown by Year Mini Chart */}
       <div 
         onClick={onNavigateAnalytics}
         className={`bg-slate-900/80 border border-cyan-500/30 rounded-2xl p-2.5 sm:p-3 min-h-24 flex flex-col justify-between backdrop-blur-md transition-all ${
@@ -390,12 +374,13 @@ export const TelemetryHub: React.FC<TelemetryHubProps> = ({
             <span className="material-symbols-outlined text-sm text-cyan-400">bar_chart</span>
             <span className="truncate">INCIDENTS BREAKDOWN BY YEAR</span>
           </div>
+          <span className="text-[10px] font-normal text-slate-400">Total: {totalIncidents}</span>
         </div>
 
-        {/* Mini Bar Chart with prominent numbers displayed on the chart */}
-        <div className="flex items-end justify-between gap-1.5 sm:gap-2 h-14 pt-1 px-1">
+        {/* Mini Bar Chart with revised height to fit seamlessly inside the box */}
+        <div className="flex-1 w-full flex items-end justify-between gap-1.5 sm:gap-2 pt-1 pb-0.5 px-1 min-h-[64px]">
           {yearStats.map((item, idx) => {
-            const barHeightPx = Math.max(10, Math.round((item.count / maxYearCount) * 32));
+            const barHeightPx = Math.max(10, Math.round((item.count / maxYearCount) * 44));
             return (
               <div 
                 key={`${item.year}-${idx}`} 
@@ -423,6 +408,22 @@ export const TelemetryHub: React.FC<TelemetryHubProps> = ({
               </div>
             );
           })}
+        </div>
+      </div>
+
+      {/* 3. Days Without Incident Card (Placed to the right of Incidents Breakdown) */}
+      <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-2xl px-3.5 py-2.5 sm:px-4 sm:py-3 min-h-24 flex items-center justify-between backdrop-blur-md shadow-sm">
+        <div className="flex-1 min-w-0 pr-2">
+          <div className="flex items-center gap-1.5 text-xs font-bold text-emerald-400 uppercase tracking-wider">
+            <span>DAYS WITHOUT INCIDENT</span>
+          </div>
+          <div className="text-2xl sm:text-3xl font-extrabold text-white font-mono mt-0.5 tracking-tight flex items-baseline gap-1.5">
+            <span>{safeDays}</span>
+            <span className="text-xs sm:text-sm font-bold text-emerald-400/80 uppercase">DAYS</span>
+          </div>
+        </div>
+        <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center flex-shrink-0 border border-emerald-500/30 shadow-sm">
+          <span className="material-symbols-outlined text-2xl sm:text-3xl">check_circle</span>
         </div>
       </div>
 
