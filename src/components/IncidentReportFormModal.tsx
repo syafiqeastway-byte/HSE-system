@@ -21,6 +21,19 @@ export const IncidentReportFormModal: React.FC<IncidentReportFormModalProps> = (
   const [reportMadeByOther, setReportMadeByOther] = useState<string>('');
   const [reportType, setReportType] = useState<string>('');
 
+  // Validation states for required fields (Report Made By, Report Type, Step 2)
+  const [reportMadeByError, setReportMadeByError] = useState<boolean>(false);
+  const [reportTypeError, setReportTypeError] = useState<boolean>(false);
+  const [step2Error, setStep2Error] = useState<boolean>(false);
+  const [step2FieldErrors, setStep2FieldErrors] = useState<{
+    exactLocation?: boolean;
+    incidentDate?: boolean;
+    exactTime?: boolean;
+    workdayPart?: boolean;
+  }>({});
+  const classificationRef = useRef<HTMLDivElement>(null);
+  const step2Ref = useRef<HTMLDivElement>(null);
+
   // Step 1: Injured Employee
   const [employeeName, setEmployeeName] = useState<string>('');
   const [employeeId, setEmployeeId] = useState<string>('');
@@ -243,17 +256,85 @@ export const IncidentReportFormModal: React.FC<IncidentReportFormModalProps> = (
     }
   }, [isOpen]);
 
-  // Handle Download PDF Function
-  const handleDownloadPdf = async () => {
+  // Validate required fields (Report Made By, Report Type, Step 2, Chronology)
+  const validateForm = (): boolean => {
+    // 1. REPORT MADE BY:
+    const isReportMadeByValid = Boolean(reportMadeBy && (reportMadeBy !== 'Other' || reportMadeByOther.trim()));
+    if (!isReportMadeByValid) {
+      setReportMadeByError(true);
+      setDriveSaveStatus({
+        success: false,
+        message: 'REPORT MADE BY: is required before saving report.',
+      });
+      if (classificationRef.current) {
+        classificationRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+      return false;
+    }
+    setReportMadeByError(false);
+
+    // 2. THIS IS A REPORT OF A:
+    const isReportTypeValid = Boolean(reportType && reportType.trim());
+    if (!isReportTypeValid) {
+      setReportTypeError(true);
+      setDriveSaveStatus({
+        success: false,
+        message: 'THIS IS A REPORT OF A: is required before saving report.',
+      });
+      if (classificationRef.current) {
+        classificationRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+      return false;
+    }
+    setReportTypeError(false);
+
+    // 3. STEP 2: Incident Context (Location, Date, Time, Workday Period)
+    const hasLocation = Boolean(exactLocation && exactLocation.trim());
+    const hasDate = Boolean(incidentDate && incidentDate.trim());
+    const hasTime = Boolean(exactTime && exactTime.trim());
+    const hasWorkday = Boolean(workdayPart && (workdayPart !== 'Others' || workdayPartOther.trim()));
+
+    if (!hasLocation || !hasDate || !hasTime || !hasWorkday) {
+      setStep2Error(true);
+      setStep2FieldErrors({
+        exactLocation: !hasLocation,
+        incidentDate: !hasDate,
+        exactTime: !hasTime,
+        workdayPart: !hasWorkday,
+      });
+      setDriveSaveStatus({
+        success: false,
+        message: 'STEP 2 is required: Please provide Location, Date, Time, and Workday Period.',
+      });
+      if (step2Ref.current) {
+        step2Ref.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+      return false;
+    }
+    setStep2Error(false);
+    setStep2FieldErrors({});
+
+    // 4. INCIDENT CHRONOLOGY & DETAILS
     if (!chronology || !chronology.trim()) {
       setChronologyError('Incident Chronology & Details is required.');
+      setDriveSaveStatus({
+        success: false,
+        message: 'INCIDENT CHRONOLOGY & DETAILS is required before saving report.',
+      });
       if (chronologyInputRef.current) {
         chronologyInputRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
         chronologyInputRef.current.focus();
       }
-      return;
+      return false;
     }
     setChronologyError(null);
+
+    return true;
+  };
+
+  // Handle Download PDF Function
+  const handleDownloadPdf = async () => {
+    if (!validateForm()) return;
 
     try {
       setIsExportingPdf(true);
@@ -292,20 +373,7 @@ export const IncidentReportFormModal: React.FC<IncidentReportFormModalProps> = (
 
   // Handle Save Report to Google Drive & Google Sheet ("NEW IR")
   const handleSaveReportToDrive = async () => {
-    // Require INCIDENT CHRONOLOGY & DETAILS
-    if (!chronology || !chronology.trim()) {
-      setChronologyError('Incident Chronology & Details is required.');
-      setDriveSaveStatus({
-        success: false,
-        message: 'INCIDENT CHRONOLOGY & DETAILS is required before saving report.',
-      });
-      if (chronologyInputRef.current) {
-        chronologyInputRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        chronologyInputRef.current.focus();
-      }
-      return;
-    }
-    setChronologyError(null);
+    if (!validateForm()) return;
 
     try {
       setIsSavingToDrive(true);
@@ -583,6 +651,10 @@ As an immediate result, medical evaluation was administered${natureOfInjury ? ` 
       'At approximately 8:30 AM, Haiqal was riding his motorcycle on the West Coast Expressway (WCE) Highway while travelling to work in Ijok Warehouse during heavy rain. He intended to stop at a sheltered area to put on his raincoat but overshot the intended stopping point. He then applied the brakes, causing the motorcycle to skid and fall. As a result of the accident, Haiqal suffered a sprained shoulder, and the motorcycle sustained scratches. After the incident, he went to a clinic for medical treatment and was issued a medical certificate (MC).'
     );
     setChronologyError(null);
+    setReportMadeByError(false);
+    setReportTypeError(false);
+    setStep2Error(false);
+    setStep2FieldErrors({});
   };
 
   // Clear / Reset All Form Fields
@@ -612,6 +684,10 @@ As an immediate result, medical evaluation was administered${natureOfInjury ? ` 
     setPictures([]);
     setChronology('');
     setChronologyError(null);
+    setReportMadeByError(false);
+    setReportTypeError(false);
+    setStep2Error(false);
+    setStep2FieldErrors({});
     setDescription('');
     setPreliminaryCauses([]);
     setPreventiveActions([]);
@@ -659,7 +735,12 @@ As an immediate result, medical evaluation was administered${natureOfInjury ? ` 
         <div className="p-3.5 sm:p-4 overflow-y-auto space-y-3 flex-1 text-xs sm:text-sm">
           
           {/* REFERENCE REPORT SECTION 1: HEADER & CLASSIFICATION (PAGE 1) */}
-          <div className="space-y-3 p-3.5 sm:p-4 rounded-xl bg-slate-950/90 border border-slate-700/60 shadow-inner">
+          <div 
+            ref={classificationRef}
+            className={`space-y-3 p-3.5 sm:p-4 rounded-xl bg-slate-950/90 border transition-colors shadow-inner ${
+              reportMadeByError || reportTypeError ? 'border-rose-500/70 ring-1 ring-rose-500/30' : 'border-slate-700/60'
+            }`}
+          >
             <div className="border-b border-slate-800 pb-2.5 flex items-center justify-between gap-2">
               <h3 className="text-xs sm:text-sm font-extrabold text-cyan-400 uppercase tracking-wider flex items-center gap-2">
                 <span className="material-symbols-outlined text-base text-cyan-400">badge</span>
@@ -670,29 +751,55 @@ As an immediate result, medical evaluation was administered${natureOfInjury ? ` 
             {/* Form No, Report Made By & Report Classification Grid */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5">
               
-              {/* FORM NO */}
+              {/* FORM NO (Locked) */}
               <div className="space-y-1.5">
-                <label className="block text-[11px] font-bold text-slate-300 uppercase tracking-wide">
-                  FORM NO
-                </label>
-                <input
-                  type="text"
-                  value={formNo}
-                  onChange={(e) => setFormNo(e.target.value)}
-                  placeholder="e.g. EE-INC-063"
-                  className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-cyan-300 font-mono font-extrabold text-xs focus:outline-none focus:border-cyan-400 tracking-wider"
-                />
+                <div className="flex items-center justify-between">
+                  <label className="block text-[11px] font-bold text-slate-300 uppercase tracking-wide flex items-center gap-1">
+                    <span>FORM NO</span>
+                    <span className="material-symbols-outlined text-xs text-amber-400">lock</span>
+                  </label>
+                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-amber-500/15 border border-amber-500/30 text-amber-300 font-semibold flex items-center gap-1">
+                    <span className="material-symbols-outlined text-[11px]">lock</span>
+                    <span>Locked</span>
+                  </span>
+                </div>
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={formNo}
+                    readOnly
+                    placeholder={isLoadingFormNo ? 'Fetching Form No...' : 'e.g. EE-INC-063'}
+                    className="w-full px-3 py-2 pr-8 rounded-xl bg-slate-950/80 border border-slate-700/80 text-cyan-300 font-mono font-extrabold text-xs focus:outline-none cursor-not-allowed select-none tracking-wider shadow-inner"
+                    title="Form No is locked and auto-generated"
+                  />
+                  <span className="material-symbols-outlined absolute right-2.5 top-1/2 -translate-y-1/2 text-sm text-slate-500 pointer-events-none">
+                    lock
+                  </span>
+                </div>
               </div>
 
               {/* Report Made By: Dropdown List */}
               <div className="space-y-1.5">
-                <label className="block text-[11px] font-bold text-slate-300 uppercase tracking-wide">
-                  REPORT MADE BY:
-                </label>
+                <div className="flex items-center justify-between">
+                  <label className="block text-[11px] font-bold text-slate-300 uppercase tracking-wide flex items-center gap-1">
+                    <span>REPORT MADE BY:</span>
+                    <span className="text-rose-400 font-bold">*</span>
+                  </label>
+                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-rose-500/20 text-rose-300 border border-rose-500/30 font-semibold leading-none">
+                    Required
+                  </span>
+                </div>
                 <select
                   value={reportMadeBy}
-                  onChange={(e) => setReportMadeBy(e.target.value)}
-                  className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs focus:outline-none focus:border-cyan-400 cursor-pointer"
+                  onChange={(e) => {
+                    setReportMadeBy(e.target.value);
+                    if (reportMadeByError) setReportMadeByError(false);
+                  }}
+                  className={`w-full px-3 py-2 rounded-xl bg-slate-900 border text-white text-xs focus:outline-none cursor-pointer transition-colors ${
+                    reportMadeByError
+                      ? 'border-rose-500 ring-1 ring-rose-500/40'
+                      : 'border-slate-700 focus:border-cyan-400'
+                  }`}
                 >
                   <option value="">Select Reporter...</option>
                   <option value="Asst. Manager">Asst. Manager</option>
@@ -704,22 +811,45 @@ As an immediate result, medical evaluation was administered${natureOfInjury ? ` 
                   <input
                     type="text"
                     value={reportMadeByOther}
-                    onChange={(e) => setReportMadeByOther(e.target.value)}
+                    onChange={(e) => {
+                      setReportMadeByOther(e.target.value);
+                      if (reportMadeByError) setReportMadeByError(false);
+                    }}
                     placeholder="Specify other reporter title..."
-                    className="w-full mt-1.5 px-3 py-1.5 rounded-lg bg-slate-900 border border-slate-700 text-white placeholder-slate-500 text-xs focus:outline-none focus:border-cyan-400"
+                    className={`w-full mt-1.5 px-3 py-1.5 rounded-lg bg-slate-900 border text-white placeholder-slate-500 text-xs focus:outline-none ${
+                      reportMadeByError && !reportMadeByOther.trim()
+                        ? 'border-rose-500 ring-1 ring-rose-500/40'
+                        : 'border-slate-700 focus:border-cyan-400'
+                    }`}
                   />
+                )}
+                {reportMadeByError && (
+                  <p className="text-[10px] font-semibold text-rose-400 mt-1">REPORT MADE BY is required.</p>
                 )}
               </div>
 
               {/* THIS IS A REPORT OF A: Dropdown List */}
               <div className="space-y-1.5">
-                <label className="block text-[11px] font-bold text-slate-300 uppercase tracking-wide">
-                  THIS IS A REPORT OF A:
-                </label>
+                <div className="flex items-center justify-between">
+                  <label className="block text-[11px] font-bold text-slate-300 uppercase tracking-wide flex items-center gap-1">
+                    <span>THIS IS A REPORT OF A:</span>
+                    <span className="text-rose-400 font-bold">*</span>
+                  </label>
+                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-rose-500/20 text-rose-300 border border-rose-500/30 font-semibold leading-none">
+                    Required
+                  </span>
+                </div>
                 <select
                   value={reportType}
-                  onChange={(e) => setReportType(e.target.value)}
-                  className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs focus:outline-none focus:border-rose-400 cursor-pointer"
+                  onChange={(e) => {
+                    setReportType(e.target.value);
+                    if (reportTypeError) setReportTypeError(false);
+                  }}
+                  className={`w-full px-3 py-2 rounded-xl bg-slate-900 border text-white text-xs focus:outline-none cursor-pointer transition-colors ${
+                    reportTypeError
+                      ? 'border-rose-500 ring-1 ring-rose-500/40'
+                      : 'border-slate-700 focus:border-rose-400'
+                  }`}
                 >
                   <option value="">Select Report Type...</option>
                   <option value="Death">Death</option>
@@ -728,6 +858,9 @@ As an immediate result, medical evaluation was administered${natureOfInjury ? ` 
                   <option value="First Aid Only">First Aid Only</option>
                   <option value="Near Miss">Near Miss</option>
                 </select>
+                {reportTypeError && (
+                  <p className="text-[10px] font-semibold text-rose-400 mt-1">THIS IS A REPORT OF A is required.</p>
+                )}
               </div>
 
             </div>
@@ -984,57 +1117,105 @@ As an immediate result, medical evaluation was administered${natureOfInjury ? ` 
           </div>
 
           {/* REFERENCE REPORT STEP 2: DESCRIBE THE INCIDENT CONTEXT (PAGE 1) */}
-          <div className="space-y-4 p-4 rounded-2xl bg-slate-950/90 border border-slate-700/60 shadow-inner">
+          <div 
+            ref={step2Ref}
+            className={`space-y-4 p-4 rounded-2xl bg-slate-950/90 border transition-colors shadow-inner ${
+              step2Error ? 'border-rose-500/70 shadow-lg shadow-rose-950/40 ring-1 ring-rose-500/30' : 'border-slate-700/60'
+            }`}
+          >
             <div className="border-b border-slate-800 pb-2.5 flex items-center justify-between gap-2">
               <h3 className="text-xs sm:text-sm font-extrabold text-amber-400 uppercase tracking-wider flex items-center gap-2">
                 <span className="material-symbols-outlined text-base text-amber-400">pin_drop</span>
                 <span>Step 2: Incident Location &amp; Workday Details</span>
+                <span className="text-rose-400 font-bold text-base leading-none">*</span>
               </h3>
+              <span className="text-[10px] px-1.5 py-0.5 rounded bg-rose-500/20 text-rose-300 border border-rose-500/30 font-semibold normal-case">
+                Required
+              </span>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <div className="sm:col-span-2">
-                <label className="block text-[11px] font-bold text-slate-300 uppercase mb-1">
-                  Exact location of the incident
+                <label className="block text-[11px] font-bold text-slate-300 uppercase mb-1 flex items-center gap-1">
+                  <span>Exact location of the incident</span>
+                  <span className="text-rose-400 font-bold">*</span>
                 </label>
                 <input
                   type="text"
                   value={exactLocation}
-                  onChange={(e) => setExactLocation(e.target.value)}
+                  onChange={(e) => {
+                    setExactLocation(e.target.value);
+                    if (step2FieldErrors.exactLocation) {
+                      setStep2FieldErrors((prev) => ({ ...prev, exactLocation: false }));
+                    }
+                  }}
                   placeholder="e.g. West Coast Expressway (WCE) Highway"
-                  className="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-white placeholder-slate-500 text-xs focus:outline-none focus:border-cyan-400"
+                  className={`w-full px-3 py-2 rounded-lg bg-slate-900 border text-white placeholder-slate-500 text-xs focus:outline-none transition-colors ${
+                    step2FieldErrors.exactLocation
+                      ? 'border-rose-500 ring-1 ring-rose-500/40'
+                      : 'border-slate-700 focus:border-cyan-400'
+                  }`}
                 />
+                {step2FieldErrors.exactLocation && (
+                  <p className="text-[10px] font-semibold text-rose-400 mt-1">Exact location is required.</p>
+                )}
               </div>
 
               <div>
                 <label className="block text-[11px] font-bold text-slate-300 uppercase mb-1 flex items-center gap-1.5">
                   <span className="material-symbols-outlined text-sm text-orange-400">calendar_month</span>
                   <span>Date</span>
+                  <span className="text-rose-400 font-bold">*</span>
                 </label>
                 <div className="relative">
                   <input
                     type="date"
                     value={incidentDate}
-                    onChange={(e) => setIncidentDate(e.target.value)}
-                    className="w-full px-3 py-2 pl-9 rounded-lg bg-slate-900 border border-slate-700 text-white text-xs focus:outline-none focus:border-orange-400 focus:ring-1 focus:ring-orange-400/50 [color-scheme:dark]"
+                    onChange={(e) => {
+                      setIncidentDate(e.target.value);
+                      if (step2FieldErrors.incidentDate) {
+                        setStep2FieldErrors((prev) => ({ ...prev, incidentDate: false }));
+                      }
+                    }}
+                    className={`w-full px-3 py-2 pl-9 rounded-lg bg-slate-900 border text-white text-xs focus:outline-none transition-colors [color-scheme:dark] ${
+                      step2FieldErrors.incidentDate
+                        ? 'border-rose-500 ring-1 ring-rose-500/40'
+                        : 'border-slate-700 focus:border-orange-400 focus:ring-1 focus:ring-orange-400/50'
+                    }`}
                   />
                   <span className="material-symbols-outlined absolute left-2.5 top-1/2 -translate-y-1/2 text-base text-orange-400 pointer-events-none">
                     calendar_today
                   </span>
                 </div>
+                {step2FieldErrors.incidentDate && (
+                  <p className="text-[10px] font-semibold text-rose-400 mt-1">Incident date is required.</p>
+                )}
               </div>
 
               <div>
-                <label className="block text-[11px] font-bold text-slate-300 uppercase mb-1">
-                  Exact time
+                <label className="block text-[11px] font-bold text-slate-300 uppercase mb-1 flex items-center gap-1">
+                  <span>Exact time</span>
+                  <span className="text-rose-400 font-bold">*</span>
                 </label>
                 <input
                   type="text"
                   value={exactTime}
-                  onChange={(e) => setExactTime(e.target.value)}
+                  onChange={(e) => {
+                    setExactTime(e.target.value);
+                    if (step2FieldErrors.exactTime) {
+                      setStep2FieldErrors((prev) => ({ ...prev, exactTime: false }));
+                    }
+                  }}
                   placeholder="e.g. 0830 (approx.)"
-                  className="w-full px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-white placeholder-slate-500 text-xs focus:outline-none focus:border-cyan-400"
+                  className={`w-full px-3 py-2 rounded-lg bg-slate-900 border text-white placeholder-slate-500 text-xs focus:outline-none transition-colors ${
+                    step2FieldErrors.exactTime
+                      ? 'border-rose-500 ring-1 ring-rose-500/40'
+                      : 'border-slate-700 focus:border-cyan-400'
+                  }`}
                 />
+                {step2FieldErrors.exactTime && (
+                  <p className="text-[10px] font-semibold text-rose-400 mt-1">Exact time is required.</p>
+                )}
               </div>
 
               <div className="sm:col-span-2">
@@ -1053,13 +1234,28 @@ As an immediate result, medical evaluation was administered${natureOfInjury ? ` 
 
             {/* What part of employee's workday?: Dropdown List */}
             <div className="space-y-1.5 pt-1 border-t border-slate-800">
-              <label className="block text-[11px] font-bold text-slate-300 uppercase tracking-wide">
-                WHAT PART OF EMPLOYEE&apos;S WORKDAY?:
-              </label>
+              <div className="flex items-center justify-between">
+                <label className="block text-[11px] font-bold text-slate-300 uppercase tracking-wide flex items-center gap-1">
+                  <span>WHAT PART OF EMPLOYEE&apos;S WORKDAY?:</span>
+                  <span className="text-rose-400 font-bold">*</span>
+                </label>
+                <span className="text-[10px] px-1.5 py-0.5 rounded bg-rose-500/20 text-rose-300 border border-rose-500/30 font-semibold leading-none">
+                  Required
+                </span>
+              </div>
               <select
                 value={workdayPart}
-                onChange={(e) => setWorkdayPart(e.target.value)}
-                className="w-full px-3 py-2 rounded-xl bg-slate-900 border border-slate-700 text-white text-xs focus:outline-none focus:border-amber-400 cursor-pointer"
+                onChange={(e) => {
+                  setWorkdayPart(e.target.value);
+                  if (step2FieldErrors.workdayPart) {
+                    setStep2FieldErrors((prev) => ({ ...prev, workdayPart: false }));
+                  }
+                }}
+                className={`w-full px-3 py-2 rounded-xl bg-slate-900 border text-white text-xs focus:outline-none cursor-pointer transition-colors ${
+                  step2FieldErrors.workdayPart
+                    ? 'border-rose-500 ring-1 ring-rose-500/40'
+                    : 'border-slate-700 focus:border-amber-400'
+                }`}
               >
                 <option value="">Select Workday Period...</option>
                 <option value="Entering work">Entering work</option>
@@ -1074,12 +1270,31 @@ As an immediate result, medical evaluation was administered${natureOfInjury ? ` 
                 <input
                   type="text"
                   value={workdayPartOther}
-                  onChange={(e) => setWorkdayPartOther(e.target.value)}
+                  onChange={(e) => {
+                    setWorkdayPartOther(e.target.value);
+                    if (step2FieldErrors.workdayPart) {
+                      setStep2FieldErrors((prev) => ({ ...prev, workdayPart: false }));
+                    }
+                  }}
                   placeholder="Specify other workday period..."
-                  className="w-full mt-2 px-3 py-2 rounded-lg bg-slate-900 border border-slate-700 text-white placeholder-slate-500 text-xs focus:outline-none focus:border-cyan-400"
+                  className={`w-full mt-2 px-3 py-2 rounded-lg bg-slate-900 border text-white placeholder-slate-500 text-xs focus:outline-none ${
+                    step2FieldErrors.workdayPart && !workdayPartOther.trim()
+                      ? 'border-rose-500 ring-1 ring-rose-500/40'
+                      : 'border-slate-700 focus:border-cyan-400'
+                  }`}
                 />
               )}
+              {step2FieldErrors.workdayPart && (
+                <p className="text-[10px] font-semibold text-rose-400 mt-1">Workday period is required.</p>
+              )}
             </div>
+
+            {step2Error && (
+              <div className="p-2 rounded-lg bg-rose-500/10 border border-rose-500/30 text-rose-300 text-xs flex items-center gap-1.5">
+                <span className="material-symbols-outlined text-sm text-rose-400 flex-shrink-0">warning</span>
+                <span>STEP 2 is required: Please provide Location, Date, Time, and Workday Period.</span>
+              </div>
+            )}
           </div>
 
           {/* SECTION: INCIDENT CHRONOLOGY & DETAILS WITH GENERATE BUTTON */}
