@@ -11,7 +11,6 @@ interface DatabaseConnectionItem {
   range?: string;
   url?: string;
   codeReference: string;
-  description: string;
 }
 
 const DATABASE_CONNECTIONS: DatabaseConnectionItem[] = [
@@ -25,8 +24,7 @@ const DATABASE_CONNECTIONS: DatabaseConnectionItem[] = [
     gid: '1996690139',
     range: 'B:K',
     url: 'https://docs.google.com/spreadsheets/d/1o9P6GnlsAwSJEUYHxITt1Opz973uX37MLBiv0LdFdIs/gviz/tq?tqx=out:csv&sheet=FIRE%20EXTINGUISHER&gid=1996690139&range=B:K',
-    codeReference: 'src/utils/gasBridge.ts -> fetchFireExtinguisherData()',
-    description: 'Stores Fire Extinguisher inspection records, locations (IJOK, OFFICE, PROJECT, LORRY, PENANG), ABC/CO2 types, brands, serial numbers, manufacture year, and BOM/cert expiry dates.'
+    codeReference: 'src/utils/gasBridge.ts -> fetchFireExtinguisherData()'
   },
   {
     id: 'inspection-records',
@@ -38,8 +36,7 @@ const DATABASE_CONNECTIONS: DatabaseConnectionItem[] = [
     gid: '582761149',
     range: 'B:I & Records Sheet A5:BF',
     url: 'https://docs.google.com/spreadsheets/d/1HLebePp1L31C-nZk6HgTxDwy6kXktNHDdbEdGcMvbbA/gviz/tq?tqx=out:csv&sheet=Records',
-    codeReference: 'src/utils/gasBridge.ts -> fetchInspectionData()',
-    description: 'Combines legacy inspection records from main sheet with new live records from the Records sheet (No, Date, Location, Inspector, Remarks, PDF URL).'
+    codeReference: 'src/utils/gasBridge.ts -> fetchInspectionData()'
   },
   {
     id: 'days-without-incident',
@@ -50,8 +47,7 @@ const DATABASE_CONNECTIONS: DatabaseConnectionItem[] = [
     sheetName: 'HSE FILE',
     range: 'I2:I2',
     url: 'https://docs.google.com/spreadsheets/d/1o9P6GnlsAwSJEUYHxITt1Opz973uX37MLBiv0LdFdIs/gviz/tq?tqx=out:csv&sheet=HSE%20FILE&range=I2:I2',
-    codeReference: 'src/utils/gasBridge.ts -> fetchDaysWithoutIncident()',
-    description: 'Fetches the real-time calculated counter of consecutive safe working days without recordable lost-time incidents.'
+    codeReference: 'src/utils/gasBridge.ts -> fetchDaysWithoutIncident()'
   },
   {
     id: 'incident-records',
@@ -63,8 +59,7 @@ const DATABASE_CONNECTIONS: DatabaseConnectionItem[] = [
     gid: '88563672',
     range: 'A4:O',
     url: 'https://docs.google.com/spreadsheets/d/1o9P6GnlsAwSJEUYHxITt1Opz973uX37MLBiv0LdFdIs/gviz/tq?tqx=out:csv&gid=88563672&range=A4:O',
-    codeReference: 'src/utils/gasBridge.ts -> fetchLiveIncidentRecords()',
-    description: 'Primary incident log table holding date, location, category, classification, injury type, person involved, work experience, reporter, and PDF document links.'
+    codeReference: 'src/utils/gasBridge.ts -> fetchLiveIncidentRecords()'
   },
   {
     id: 'first-aid-certs',
@@ -75,8 +70,7 @@ const DATABASE_CONNECTIONS: DatabaseConnectionItem[] = [
     sheetName: 'FIRST AID KIT INSPECTION',
     range: 'AA5:AE',
     url: 'https://docs.google.com/spreadsheets/d/1o9P6GnlsAwSJEUYHxITt1Opz973uX37MLBiv0LdFdIs/gviz/tq?tqx=out:csv&sheet=FIRST%20AID%20KIT%20INSPECTION&range=AA5:AE',
-    codeReference: 'src/utils/gasBridge.ts -> fetchFirstAidCertData()',
-    description: 'Employee First Aid certified personnel list, masked Employee IDs, departments, certification expiry dates, and PDF certificate links.'
+    codeReference: 'src/utils/gasBridge.ts -> fetchFirstAidCertData()'
   },
   {
     id: 'jkk-meetings',
@@ -88,8 +82,7 @@ const DATABASE_CONNECTIONS: DatabaseConnectionItem[] = [
     gid: '1985060946',
     range: 'A:D (Summary) & A4:E (Meetings list)',
     url: 'https://docs.google.com/spreadsheets/d/1o9P6GnlsAwSJEUYHxITt1Opz973uX37MLBiv0LdFdIs/gviz/tq?tqx=out:csv&sheet=JKK%20MEETING&range=A:D',
-    codeReference: 'src/utils/gasBridge.ts -> fetchLatestJkkMeeting(), fetchDynamicMinuteMeetings()',
-    description: 'Quarterly Joint Safety Committee (JKK) meeting minutes logs, meeting numbers, dates, locations, and PDF document attachments.'
+    codeReference: 'src/utils/gasBridge.ts -> fetchLatestJkkMeeting(), fetchDynamicMinuteMeetings()'
   },
   {
     id: 'demerit-system',
@@ -101,8 +94,7 @@ const DATABASE_CONNECTIONS: DatabaseConnectionItem[] = [
     gid: '817838002',
     range: 'K3:O37 (Matrix) & A3:I (Scoring Log)',
     url: 'https://docs.google.com/spreadsheets/d/1o9P6GnlsAwSJEUYHxITt1Opz973uX37MLBiv0LdFdIs/gviz/tq?tqx=out:csv&sheet=DEMERIT&range=K3:O37',
-    codeReference: 'src/utils/gasBridge.ts -> fetchSafetyViolationSummaryTable(), fetchSafetyViolationScoring()',
-    description: 'Demerit penalty matrices (Minor, Moderate, Serious, Critical), violation codes, demerit points, and employee violation log histories.'
+    codeReference: 'src/utils/gasBridge.ts -> fetchSafetyViolationSummaryTable(), fetchSafetyViolationScoring()'
   },
   {
     id: 'hirarc-sop',
@@ -114,8 +106,7 @@ const DATABASE_CONNECTIONS: DatabaseConnectionItem[] = [
     gid: '1423932800',
     range: 'B57:F (HIRARC) & B24:F54 (SOP)',
     url: 'https://docs.google.com/spreadsheets/d/1o9P6GnlsAwSJEUYHxITt1Opz973uX37MLBiv0LdFdIs/gviz/tq?tqx=out:csv&gid=1423932800&range=B57:F',
-    codeReference: 'src/utils/gasBridge.ts -> fetchDynamicHIRARC(), fetchDynamicSOP()',
-    description: 'Hazard Identification, Risk Assessment and Risk Control (HIRARC) registers and Standard Operating Procedures (SOPs).'
+    codeReference: 'src/utils/gasBridge.ts -> fetchDynamicHIRARC(), fetchDynamicSOP()'
   },
   {
     id: 'supabase-db',
@@ -123,32 +114,28 @@ const DATABASE_CONNECTIONS: DatabaseConnectionItem[] = [
     category: 'Cloud DB',
     connector: '@supabase/supabase-js (v2.112.2)',
     url: 'https://esmqveagrvugmkhxkvxj.supabase.co',
-    codeReference: 'src/utils/supabaseService.ts & src/components/SupabaseModal.tsx',
-    description: 'Relational Cloud PostgreSQL database for storing user records, incident logs, inspections, and audit trails with RLS security policies.'
+    codeReference: 'src/utils/supabaseService.ts & src/components/SupabaseModal.tsx'
   },
   {
     id: 'firebase-db',
     tableName: 'FIREBASE FIRESTORE & AUTH',
     category: 'Cloud DB',
     connector: 'firebase (v13.1.0) SDK',
-    codeReference: 'package.json & firebase-applet-config.json',
-    description: 'Google Firebase Firestore document storage and authentication engine for user role management and real-time state sync.'
+    codeReference: 'package.json & firebase-applet-config.json'
   },
   {
     id: 'gas-rpc',
     tableName: 'GOOGLE APPS SCRIPT RPC BRIDGE',
     category: 'GAS Bridge',
     connector: 'window.google.script.run (callGasFunction)',
-    codeReference: 'src/utils/gasBridge.ts -> callGasFunction()',
-    description: 'Remote procedure call bridge for executing backend Apps Script functions when the app runs embedded inside Google Apps Script web app iframe.'
+    codeReference: 'src/utils/gasBridge.ts -> callGasFunction()'
   },
   {
     id: 'local-cache',
     tableName: 'BROWSER LOCALSTORAGE CACHE',
     category: 'Local Cache',
     connector: 'Native HTML5 localStorage Web API',
-    codeReference: 'src/utils/gasBridge.ts (HSE_CACHED_*) & src/App.tsx',
-    description: 'Client-side offline storage for fast UI hydration of Days Without Incident, JKK Meeting Summary, and local incident submissions.'
+    codeReference: 'src/utils/gasBridge.ts (HSE_CACHED_*) & src/App.tsx'
   }
 ];
 
@@ -299,11 +286,11 @@ export const DatabaseInfoModal: React.FC<DatabaseInfoModalProps> = ({ isOpen, on
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-slate-950/80 backdrop-blur-md animate-in fade-in duration-200">
-      <div className="glass-card max-w-5xl w-full max-h-[92vh] overflow-hidden flex flex-col shadow-2xl border border-cyan-500/40 rounded-2xl bg-slate-900 text-slate-100">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-slate-950/85 backdrop-blur-md animate-in fade-in duration-200">
+      <div className="glass-card w-full max-w-[96vw] xl:max-w-7xl max-h-[92vh] overflow-hidden flex flex-col shadow-2xl border border-cyan-500/40 rounded-2xl bg-slate-900 text-slate-100">
         
         {/* Modal Header */}
-        <div className="p-4 sm:p-5 border-b border-slate-800 flex items-center justify-between bg-slate-900/90">
+        <div className="p-4 sm:p-5 border-b border-slate-800 flex items-center justify-between bg-slate-900/90 shrink-0">
           <div className="flex items-center gap-3">
             <div className="p-2.5 rounded-xl bg-blue-600 text-white shadow-lg shadow-blue-600/30">
               <span className="material-symbols-outlined text-2xl">database</span>
@@ -312,9 +299,6 @@ export const DatabaseInfoModal: React.FC<DatabaseInfoModalProps> = ({ isOpen, on
               <h2 className="text-base sm:text-xl font-black text-white uppercase tracking-wide flex items-center gap-2">
                 DATABASE CONNECTIONS & CONNECTORS
               </h2>
-              <p className="text-xs text-cyan-400/90 font-medium">
-                Complete Architecture, Live Google Sheets, Cloud DBs & API Data Sources
-              </p>
             </div>
           </div>
           <button
@@ -326,7 +310,7 @@ export const DatabaseInfoModal: React.FC<DatabaseInfoModalProps> = ({ isOpen, on
         </div>
 
         {/* Filter Bar */}
-        <div className="p-4 border-b border-slate-800 bg-slate-900/60 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+        <div className="p-4 border-b border-slate-800 bg-slate-900/60 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 shrink-0">
           {/* Category Tabs */}
           <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0 scrollbar-none">
             {categories.map((cat) => (
@@ -360,10 +344,13 @@ export const DatabaseInfoModal: React.FC<DatabaseInfoModalProps> = ({ isOpen, on
         </div>
 
         {/* Connections Table Container */}
-        <div className="p-4 sm:p-6 overflow-x-auto overflow-y-auto flex-1 scrollbar-thin scrollbar-thumb-slate-700">
-          <div className="text-xs text-slate-400 font-semibold mb-3 flex items-center justify-between">
+        <div className="p-3 sm:p-5 overflow-y-auto flex-1 min-h-0 flex flex-col">
+          <div className="text-xs text-slate-400 font-semibold mb-2.5 flex flex-wrap items-center justify-between gap-2 shrink-0">
             <span>Showing <strong className="text-cyan-400">{filteredConnections.length}</strong> Active Data Connections</span>
-            <span className="text-[11px] text-slate-400">Total System Integrations: <strong className="text-white">{DATABASE_CONNECTIONS.length}</strong></span>
+            <div className="flex items-center gap-3 text-[11px]">
+              <span className="hidden sm:inline text-slate-500 italic">Scroll table right to view all columns</span>
+              <span className="text-slate-400">Total Integrations: <strong className="text-white">{DATABASE_CONNECTIONS.length}</strong></span>
+            </div>
           </div>
 
           {filteredConnections.length === 0 ? (
@@ -373,26 +360,26 @@ export const DatabaseInfoModal: React.FC<DatabaseInfoModalProps> = ({ isOpen, on
               <p className="text-xs text-slate-500 mt-1">Try adjusting your search criteria or selecting "All" category.</p>
             </div>
           ) : (
-            <div className="border border-slate-800 rounded-xl overflow-hidden bg-slate-950/60 shadow-inner">
-              <table className="w-full text-left border-collapse text-xs">
-                <thead>
-                  <tr className="bg-slate-900/90 border-b border-slate-800 text-[11px] font-bold text-slate-300 uppercase tracking-wider">
-                    <th className="p-3.5 min-w-[240px]">Data Source & Description</th>
-                    <th className="p-3.5 min-w-[140px]">Category / Status</th>
-                    <th className="p-3.5 min-w-[180px]">Connector Tech</th>
-                    <th className="p-3.5 min-w-[220px]">Spreadsheet ID / Endpoint</th>
-                    <th className="p-3.5 min-w-[160px]">Sheet & Range</th>
-                    <th className="p-3.5 min-w-[220px]">Code File Reference & Actions</th>
+            <div className="border border-slate-800 rounded-xl overflow-x-auto bg-slate-950/60 shadow-inner flex-1 max-h-full">
+              <table className="w-full text-left border-collapse text-xs min-w-[1050px]">
+                <thead className="sticky top-0 z-10 bg-slate-900 border-b border-slate-800 text-[11px] font-bold text-slate-300 uppercase tracking-wider">
+                  <tr>
+                    <th className="p-3 min-w-[200px] max-w-[240px]">Data Source Name</th>
+                    <th className="p-3 min-w-[130px] max-w-[150px]">Category / Status</th>
+                    <th className="p-3 min-w-[160px] max-w-[190px]">Connector Tech</th>
+                    <th className="p-3 min-w-[200px] max-w-[260px]">Spreadsheet ID / Endpoint</th>
+                    <th className="p-3 min-w-[160px] max-w-[200px]">Sheet & Range</th>
+                    <th className="p-3 min-w-[200px] max-w-[260px]">Code File Reference & Actions</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-800/80">
                   {filteredConnections.map((conn) => (
                     <tr key={conn.id} className="hover:bg-slate-800/40 transition-colors group">
                       
-                      {/* Column 1: Table Name & Description */}
-                      <td className="p-3.5 align-top">
-                        <div className="flex items-start gap-2.5">
-                          <span className="material-symbols-outlined text-cyan-400 text-lg mt-0.5 shrink-0">
+                      {/* Column 1: Table Name */}
+                      <td className="p-3 align-top">
+                        <div className="flex items-start gap-2">
+                          <span className="material-symbols-outlined text-cyan-400 text-base mt-0.5 shrink-0">
                             {conn.category === 'Google Sheets'
                               ? 'table_chart'
                               : conn.category === 'Cloud DB'
@@ -402,23 +389,20 @@ export const DatabaseInfoModal: React.FC<DatabaseInfoModalProps> = ({ isOpen, on
                               : 'storage'}
                           </span>
                           <div>
-                            <div className="font-bold text-white text-xs leading-snug group-hover:text-cyan-300 transition-colors">
+                            <div className="font-bold text-white text-xs leading-snug group-hover:text-cyan-300 transition-colors break-words">
                               {conn.tableName}
                             </div>
-                            <p className="text-[11px] text-slate-400 leading-relaxed mt-1">
-                              {conn.description}
-                            </p>
                           </div>
                         </div>
                       </td>
 
                       {/* Column 2: Category & Status Badges */}
-                      <td className="p-3.5 align-top">
+                      <td className="p-3 align-top">
                         <div className="flex flex-col gap-1.5 items-start">
-                          <span className="px-2 py-0.5 rounded-md bg-blue-500/10 border border-blue-500/30 text-blue-400 text-[10px] font-bold uppercase tracking-wider">
+                          <span className="px-2 py-0.5 rounded-md bg-blue-500/10 border border-blue-500/30 text-blue-400 text-[10px] font-bold uppercase tracking-wider whitespace-nowrap">
                             {conn.category}
                           </span>
-                          <span className="px-2 py-0.5 rounded-md bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-[10px] font-bold flex items-center gap-1">
+                          <span className="px-2 py-0.5 rounded-md bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-[10px] font-bold flex items-center gap-1 whitespace-nowrap">
                             <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
                             CONNECTED
                           </span>
@@ -426,17 +410,17 @@ export const DatabaseInfoModal: React.FC<DatabaseInfoModalProps> = ({ isOpen, on
                       </td>
 
                       {/* Column 3: Connector Technology */}
-                      <td className="p-3.5 align-top">
-                        <span className="font-mono text-cyan-300 font-semibold text-[11px] block leading-tight">
+                      <td className="p-3 align-top">
+                        <span className="font-mono text-cyan-300 font-semibold text-[11px] block leading-tight break-words">
                           {conn.connector}
                         </span>
                       </td>
 
                       {/* Column 4: Spreadsheet ID or Endpoint URL */}
-                      <td className="p-3.5 align-top font-mono text-[11px]">
+                      <td className="p-3 align-top font-mono text-[11px]">
                         {conn.spreadsheetId ? (
                           <div className="space-y-1">
-                            <span className="text-yellow-400 font-medium break-all block">
+                            <span className="text-yellow-400 font-medium break-all block text-[10px]">
                               {conn.spreadsheetId}
                             </span>
                             {conn.gid && (
@@ -455,16 +439,16 @@ export const DatabaseInfoModal: React.FC<DatabaseInfoModalProps> = ({ isOpen, on
                       </td>
 
                       {/* Column 5: Sheet Name & Range */}
-                      <td className="p-3.5 align-top font-mono text-[11px]">
+                      <td className="p-3 align-top font-mono text-[11px]">
                         {conn.sheetName || conn.range ? (
                           <div className="space-y-1">
                             {conn.sheetName && (
-                              <div className="text-slate-200 font-semibold text-[11px]">
+                              <div className="text-slate-200 font-semibold text-[11px] break-words">
                                 {conn.sheetName}
                               </div>
                             )}
                             {conn.range && (
-                              <div className="inline-block px-1.5 py-0.5 rounded bg-cyan-950/80 border border-cyan-800/60 text-cyan-400 font-bold text-[10px]">
+                              <div className="inline-block px-1.5 py-0.5 rounded bg-cyan-950/80 border border-cyan-800/60 text-cyan-400 font-bold text-[10px] break-words">
                                 Range: {conn.range}
                               </div>
                             )}
@@ -475,9 +459,9 @@ export const DatabaseInfoModal: React.FC<DatabaseInfoModalProps> = ({ isOpen, on
                       </td>
 
                       {/* Column 6: Code File Reference & Actions */}
-                      <td className="p-3.5 align-top">
+                      <td className="p-3 align-top">
                         <div className="space-y-2">
-                          <span className="font-mono text-emerald-400 font-semibold text-[11px] block leading-snug">
+                          <span className="font-mono text-emerald-400 font-semibold text-[11px] block leading-snug break-words">
                             {conn.codeReference}
                           </span>
                           
@@ -485,7 +469,7 @@ export const DatabaseInfoModal: React.FC<DatabaseInfoModalProps> = ({ isOpen, on
                             {conn.spreadsheetId && (
                               <button
                                 onClick={() => copyToClipboard(conn.spreadsheetId!, `id-${conn.id}`)}
-                                className="px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-cyan-400 text-[10px] font-bold border border-slate-700 hover:border-cyan-500/50 transition-all flex items-center gap-1"
+                                className="px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-cyan-400 text-[10px] font-bold border border-slate-700 hover:border-cyan-500/50 transition-all flex items-center gap-1 whitespace-nowrap cursor-pointer"
                                 title="Copy Spreadsheet ID"
                               >
                                 <span className="material-symbols-outlined text-xs">
@@ -498,7 +482,7 @@ export const DatabaseInfoModal: React.FC<DatabaseInfoModalProps> = ({ isOpen, on
                             {conn.url && (
                               <button
                                 onClick={() => copyToClipboard(conn.url!, `url-${conn.id}`)}
-                                className="px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-cyan-400 text-[10px] font-bold border border-slate-700 hover:border-cyan-500/50 transition-all flex items-center gap-1"
+                                className="px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 text-cyan-400 text-[10px] font-bold border border-slate-700 hover:border-cyan-500/50 transition-all flex items-center gap-1 whitespace-nowrap cursor-pointer"
                                 title="Copy Endpoint URL"
                               >
                                 <span className="material-symbols-outlined text-xs">
@@ -520,13 +504,13 @@ export const DatabaseInfoModal: React.FC<DatabaseInfoModalProps> = ({ isOpen, on
         </div>
 
         {/* Modal Footer */}
-        <div className="p-4 border-t border-slate-800 bg-slate-900/90 flex flex-col sm:flex-row items-center justify-between gap-3">
+        <div className="p-4 border-t border-slate-800 bg-slate-900/90 flex flex-col sm:flex-row items-center justify-between gap-3 shrink-0">
           <p className="text-xs text-slate-400">
             System Architecture: <span className="text-white font-bold">Multi-Connector Integrated Pipeline</span>
           </p>
           <button
             onClick={onClose}
-            className="px-5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs transition-colors border border-slate-700"
+            className="px-5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-bold text-xs transition-colors border border-slate-700 cursor-pointer"
           >
             Close
           </button>
