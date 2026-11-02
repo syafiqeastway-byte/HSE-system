@@ -20,6 +20,7 @@ import { FirstAidKitPage } from './components/FirstAidKitPage';
 import { InspectionPage } from './components/InspectionPage';
 import { SafetyEquipmentPage } from './components/SafetyEquipmentPage';
 import { IncidentReportFormModal } from './components/IncidentReportFormModal';
+import { DatabaseInfoModal } from './components/DatabaseInfoModal';
 import { IncidentRecord } from './types';
 
 import { formatToPreviewUrl } from './utils/formatDriveUrl';
@@ -42,6 +43,7 @@ export default function App() {
   const [exportGasModalOpen, setExportGasModalOpen] = useState(false);
   const [supabaseModalOpen, setSupabaseModalOpen] = useState(false);
   const [incidentReportModalOpen, setIncidentReportModalOpen] = useState(false);
+  const [databaseModalOpen, setDatabaseModalOpen] = useState(false);
 
   const handleSaveIncident = (newIncident: IncidentRecord) => {
     try {
@@ -159,6 +161,7 @@ export default function App() {
               onOpenPWAInstall={() => setPwaModalOpen(true)}
               isPwaInstalled={isPwaInstalled}
               canInstallPwa={!!deferredPrompt}
+              onOpenDatabaseModal={() => setDatabaseModalOpen(true)}
             />
           )}
 
@@ -293,7 +296,10 @@ export default function App() {
         onSaveIncident={handleSaveIncident}
       />
 
-      
+      <DatabaseInfoModal
+        isOpen={databaseModalOpen}
+        onClose={() => setDatabaseModalOpen(false)}
+      />
 
     </div>
   );

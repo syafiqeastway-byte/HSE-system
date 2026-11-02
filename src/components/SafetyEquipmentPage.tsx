@@ -53,7 +53,7 @@ export const SafetyEquipmentPage: React.FC<SafetyEquipmentPageProps> = ({ onBack
   }, { intervalMs: 60000 });
 
   const filteredData = fireExtinguishers.filter((item) => {
-    if (item.isHeader) return true;
+    if (item.isHeader) return false;
     const query = searchQuery.toLowerCase().trim();
     if (!query) return true;
     return (
@@ -69,34 +69,18 @@ export const SafetyEquipmentPage: React.FC<SafetyEquipmentPageProps> = ({ onBack
 
   const handleExportExcel = () => {
     if (filteredData.length === 0) return;
-    const exportData = filteredData.map((item) => {
-      if (item.isHeader) {
-        return {
-          'No': item.no || '—',
-          'Location': item.location || 'LOCATION',
-          'Type ABC': item.typeABC || 'TYPE ABC',
-          'Type CO2': item.typeCO2 || 'TYPE CO2',
-          'Brand': item.brand || 'BRAND',
-          'Serial Number': item.serialNumber || 'SERIAL NUMBER',
-          'Month': item.month || 'MONTH',
-          'Year': item.year || 'YEAR',
-          'Cert Expiry Date': item.certExpiryDate || 'CERT EXPIRY DATE',
-          'Remarks 2026': item.remarks || 'REMARKS 2026'
-        };
-      }
-      return {
-        'No': item.no || '',
-        'Location': item.location || '',
-        'Type ABC': item.typeABC || '',
-        'Type CO2': item.typeCO2 || '',
-        'Brand': item.brand || '',
-        'Serial Number': item.serialNumber || '',
-        'Month': item.month || '',
-        'Year': item.year || '',
-        'Cert Expiry Date': item.certExpiryDate || '',
-        'Remarks 2026': item.remarks || ''
-      };
-    });
+    const exportData = filteredData.map((item) => ({
+      'No': item.no || '',
+      'Location': item.location || '',
+      'Type ABC': item.typeABC || '',
+      'Type CO2': item.typeCO2 || '',
+      'Brand': item.brand || '',
+      'Serial Number': item.serialNumber || '',
+      'Month': item.month || '',
+      'Year': item.year || '',
+      'Cert Expiry Date': item.certExpiryDate || '',
+      'Remarks 2026': item.remarks || ''
+    }));
     const ws = XLSX.utils.json_to_sheet(exportData);
     const wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, ws, "Fire Extinguishers");
@@ -202,94 +186,60 @@ export const SafetyEquipmentPage: React.FC<SafetyEquipmentPageProps> = ({ onBack
                 </tr>
               </thead>
               <tbody className="divide-y divide-cyan-500/10 text-xs text-white">
-                {filteredData.filter((item, idx) => !(item.isHeader && (idx === 0 || item.rowNumber === 2 || (item.location || '').toUpperCase() === 'LOCATION'))).length === 0 ? (
+                {filteredData.length === 0 ? (
                   <tr className="h-8">
                     <td colSpan={10} className="py-6 text-center text-xs text-white border border-cyan-500/20">
                       No fire extinguisher records found matching "{searchQuery}"
                     </td>
                   </tr>
                 ) : (
-                  filteredData
-                    .filter((item, idx) => !(item.isHeader && (idx === 0 || item.rowNumber === 2 || (item.location || '').toUpperCase() === 'LOCATION')))
-                    .map((item, rIdx) => {
-                      if (item.isHeader) {
-                        return (
-                          <tr 
-                            key={`fe-hdr-${item.id}-${rIdx}`} 
-                            className="h-8 bg-slate-950 text-cyan-400 font-bold uppercase tracking-wider text-xs border-y-2 border-cyan-500/40"
-                          >
-                            <td className="py-1 px-2 text-center font-bold border border-cyan-500/20 text-cyan-400 leading-none">{item.no || '—'}</td>
-                            <td className="py-1 px-2 text-center font-bold border border-cyan-500/20 text-cyan-400 leading-none">{item.location || 'LOCATION'}</td>
-                            <td className="py-1 px-2 text-center font-bold border border-cyan-500/20 text-cyan-400 leading-none">{item.typeABC || 'TYPE ABC'}</td>
-                            <td className="py-1 px-2 text-center font-bold border border-cyan-500/20 text-cyan-400 leading-none">{item.typeCO2 || 'TYPE CO2'}</td>
-                            <td className="py-1 px-2 text-center font-bold border border-cyan-500/20 text-cyan-400 leading-none">{item.brand || 'BRAND'}</td>
-                            <td className="py-1 px-2 text-center font-bold border border-cyan-500/20 text-cyan-400 leading-none">{item.serialNumber || 'SERIAL NUMBER'}</td>
-                            <td className="py-1 px-2 text-center font-bold border border-cyan-500/20 text-cyan-400 leading-none">{item.month || 'MONTH'}</td>
-                            <td className="py-1 px-2 text-center font-bold border border-cyan-500/20 text-cyan-400 leading-none">{item.year || 'YEAR'}</td>
-                            <td className="py-1 px-2 text-center font-bold border border-cyan-500/20 text-cyan-400 leading-none">{item.certExpiryDate || 'CERT EXPIRY DATE'}</td>
-                            <td className="py-1 px-2 text-center font-bold border border-cyan-500/20 text-cyan-400 leading-none">{item.remarks || 'REMARKS 2026'}</td>
-                          </tr>
-                        );
-                      }
-
-                      const isSelected = selectedFEId === item.id;
-                      return (
-                        <tr
-                          key={`fe-row-${item.id}-${rIdx}`} 
-                          onClick={() => setSelectedFEId(isSelected ? null : item.id)}
-                          className={`h-8 transition-colors cursor-pointer select-none ${
-                            isSelected
-                              ? '!bg-cyan-600 !text-white font-bold [&>td]:!bg-cyan-600 [&>td]:!text-white [&>td]:!border-cyan-400/40 [&_*]:!text-white shadow-md'
-                              : rIdx % 2 === 0
-                              ? 'bg-slate-900/40 hover:bg-cyan-950/30'
-                              : 'bg-slate-900/80 hover:bg-cyan-950/40'
-                          }`}
-                        >
-                          <td className="py-1 px-2 text-center font-mono font-medium text-white border border-cyan-500/20 leading-none">
-                            {item.no || '-'}
-                          </td>
-                          <td className="py-1 px-2 text-center font-medium text-white border border-cyan-500/20 leading-none">
-                            {item.location || '-'}
-                          </td>
-                          <td className="py-1 px-2 text-center border border-cyan-500/20 text-white leading-none">
-                            {item.typeABC && item.typeABC.trim() !== '' ? (
-                              <span className="inline-flex items-center justify-center font-bold text-xs text-cyan-400">
-                                ✓
-                              </span>
-                            ) : (
-                              <span className="text-slate-500 font-mono">-</span>
-                            )}
-                          </td>
-                          <td className="py-1 px-2 text-center border border-cyan-500/20 text-white leading-none">
-                            {item.typeCO2 && item.typeCO2.trim() !== '' ? (
-                              <span className="inline-flex items-center justify-center font-bold text-xs text-cyan-400">
-                                ✓
-                              </span>
-                            ) : (
-                              <span className="text-slate-500 font-mono">-</span>
-                            )}
-                          </td>
-                          <td className="py-1 px-2 text-center font-medium text-white border border-cyan-500/20 leading-none">
-                            {item.brand || '-'}
-                          </td>
-                          <td className="py-1 px-2 text-center font-mono text-white border border-cyan-500/20 leading-none">
-                            {item.serialNumber || '-'}
-                          </td>
-                          <td className="py-1 px-2 text-center font-mono text-white border border-cyan-500/20 leading-none">
-                            {item.month || '-'}
-                          </td>
-                          <td className="py-1 px-2 text-center font-mono font-medium text-white border border-cyan-500/20 leading-none">
-                            {item.year || '-'}
-                          </td>
-                          <td className="py-1 px-2 whitespace-nowrap font-mono font-bold text-white border border-cyan-500/20 text-center leading-none">
-                            {item.certExpiryDate || '-'}
-                          </td>
-                          <td className="py-1 px-2 text-center text-white border border-cyan-500/20 leading-none">
-                            {item.remarks || '-'}
-                          </td>
-                        </tr>
-                      );
-                    })
+                  filteredData.map((item, rIdx) => {
+                    const isSelected = selectedFEId === item.id;
+                    return (
+                      <tr
+                        key={`fe-row-${item.id}-${rIdx}`} 
+                        onClick={() => setSelectedFEId(isSelected ? null : item.id)}
+                        className={`h-8 transition-colors cursor-pointer select-none ${
+                          isSelected
+                            ? '!bg-cyan-600 !text-white font-bold [&>td]:!bg-cyan-600 [&>td]:!text-white [&>td]:!border-cyan-400/40 [&_*]:!text-white shadow-md'
+                            : rIdx % 2 === 0
+                            ? 'bg-slate-900/40 hover:bg-cyan-950/30'
+                            : 'bg-slate-900/80 hover:bg-cyan-950/40'
+                        }`}
+                      >
+                        <td className="py-1 px-2 text-center font-mono font-medium text-white border border-cyan-500/20 leading-none">
+                          {item.no || '-'}
+                        </td>
+                        <td className="py-1 px-2 text-center font-medium text-white border border-cyan-500/20 leading-none">
+                          {item.location || '-'}
+                        </td>
+                        <td className="py-1 px-2 text-center border border-cyan-500/20 text-white leading-none font-bold text-xs text-cyan-400">
+                          {item.typeABC || '-'}
+                        </td>
+                        <td className="py-1 px-2 text-center border border-cyan-500/20 text-white leading-none font-bold text-xs text-cyan-400">
+                          {item.typeCO2 || '-'}
+                        </td>
+                        <td className="py-1 px-2 text-center font-medium text-white border border-cyan-500/20 leading-none">
+                          {item.brand || '-'}
+                        </td>
+                        <td className="py-1 px-2 text-center font-mono text-white border border-cyan-500/20 leading-none">
+                          {item.serialNumber || '-'}
+                        </td>
+                        <td className="py-1 px-2 text-center font-mono text-white border border-cyan-500/20 leading-none">
+                          {item.month || '-'}
+                        </td>
+                        <td className="py-1 px-2 text-center font-mono font-medium text-white border border-cyan-500/20 leading-none">
+                          {item.year || '-'}
+                        </td>
+                        <td className="py-1 px-2 whitespace-nowrap font-mono font-bold text-white border border-cyan-500/20 text-center leading-none">
+                          {item.certExpiryDate || '-'}
+                        </td>
+                        <td className="py-1 px-2 text-center text-white border border-cyan-500/20 leading-none">
+                          {item.remarks || '-'}
+                        </td>
+                      </tr>
+                    );
+                  })
                 )}
               </tbody>
             </table>

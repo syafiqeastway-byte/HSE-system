@@ -184,7 +184,7 @@ export function fetchDemeritData(): Promise<{ logs: typeof MOCK_DEMERIT_LOGS; ma
 export async function fetchInspectionData(): Promise<InspectionRecord[]> {
   const SPREADSHEET_ID_ORIGINAL = '1o9P6GnlsAwSJEUYHxITt1Opz973uX37MLBiv0LdFdIs';
   const GID_ORIGINAL = '582761149';
-  const urlOriginal = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID_ORIGINAL}/gviz/tq?tqx=out:csv&gid=${GID_ORIGINAL}&range=B3:I`;
+  const urlOriginal = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID_ORIGINAL}/gviz/tq?tqx=out:csv&gid=${GID_ORIGINAL}&range=B:I`;
 
   // New Google Sheet requested:
   // spreadsheet_id: 1HLebePp1L31C-nZk6HgTxDwy6kXktNHDdbEdGcMvbbA
@@ -216,10 +216,8 @@ export async function fetchInspectionData(): Promise<InspectionRecord[]> {
             skipEmptyLines: true,
             complete: (results) => {
               const parsed: InspectionRecord[] = [];
-              if (results.data && results.data.length > 1) {
-                // Row 3 is the header row, so we slice it out to only parse real records
-                const dataRows = results.data.slice(1);
-                dataRows.forEach((row: any, index: number) => {
+              if (results.data && results.data.length > 0) {
+                results.data.forEach((row: any, index: number) => {
                   if (row.length > 0 && (row[1]?.trim() !== '' || row[0]?.trim() !== '')) {
                     const sheetNo = (row[0] || '').trim();
                     const date = (row[1] || '').trim();
@@ -230,25 +228,34 @@ export async function fetchInspectionData(): Promise<InspectionRecord[]> {
                     const remark = (row[6] || '').trim();
                     const documentUrl = (row[7] || '').trim();
 
-                    parsed.push({
-                      id: `INSP-ORIG-${index}-${sheetNo || index}`,
-                      date,
-                      day,
-                      location,
-                      typeOfInspection,
-                      inspector,
-                      remark,
-                      documentUrl,
+                    const isHeaderRow =
+                      sheetNo.toUpperCase() === 'NO' ||
+                      sheetNo.toUpperCase() === 'NO.' ||
+                      date.toUpperCase() === 'DATE' ||
+                      date.toUpperCase() === 'TARIKH' ||
+                      typeOfInspection.toUpperCase() === 'TYPE OF INSPECTION';
 
-                      // Compatibility fallbacks
-                      locationFacility: location,
-                      inspectorName: inspector,
-                      type: typeOfInspection,
-                      totalChecked: 0,
-                      compliantCount: 0,
-                      complianceRate: '-',
-                      status: 'Passed'
-                    });
+                    if (!isHeaderRow && (date !== '' || location !== '' || inspector !== '' || sheetNo !== '')) {
+                      parsed.push({
+                        id: `INSP-ORIG-${index}-${sheetNo || index}`,
+                        date,
+                        day,
+                        location,
+                        typeOfInspection,
+                        inspector,
+                        remark,
+                        documentUrl,
+
+                        // Compatibility fallbacks
+                        locationFacility: location,
+                        inspectorName: inspector,
+                        type: typeOfInspection,
+                        totalChecked: 0,
+                        compliantCount: 0,
+                        complianceRate: '-',
+                        status: 'Passed'
+                      });
+                    }
                   }
                 });
               }
@@ -407,11 +414,40 @@ export async function fetchInspectionData(): Promise<InspectionRecord[]> {
   return [...originalRecords, ...newRecords];
 }
 
-// 9b. Fire Extinguisher Inspection Data
+// 9b. Fire Extinguisher Inspection Data Fallback Data from Google Sheets
+export const FALLBACK_FIRE_EXTINGUISHER_RECORDS: FireExtinguisherRecord[] = [
+  { id: 'FE-ROW-3-1', rowNumber: 3, isHeader: false, no: '1', location: 'IJOK', typeABC: '✓', typeCO2: '', brand: 'UQ (NEW)', serialNumber: '988275', month: '2', year: '2026', certExpiryDate: '16/02/2027', remarks: '' },
+  { id: 'FE-ROW-4-2', rowNumber: 4, isHeader: false, no: '2', location: 'IJOK', typeABC: '✓', typeCO2: '', brand: 'UQ (NEW)', serialNumber: '989807', month: '2', year: '2026', certExpiryDate: '16/02/2027', remarks: '' },
+  { id: 'FE-ROW-5-3', rowNumber: 5, isHeader: false, no: '3', location: 'IJOK', typeABC: '✓', typeCO2: '', brand: 'UQ (NEW)', serialNumber: '986899', month: '2', year: '2026', certExpiryDate: '16/02/2027', remarks: '' },
+  { id: 'FE-ROW-6-4', rowNumber: 6, isHeader: false, no: '4', location: 'IJOK', typeABC: '✓', typeCO2: '', brand: 'UQ (NEW)', serialNumber: '986602', month: '2', year: '2026', certExpiryDate: '16/02/2027', remarks: '' },
+  { id: 'FE-ROW-7-5', rowNumber: 7, isHeader: false, no: '5', location: 'IJOK', typeABC: '✓', typeCO2: '', brand: 'UF', serialNumber: '906276', month: '1', year: '2018', certExpiryDate: '16/02/2027', remarks: 'CHANGE METAL HANDLE, HOSE BELT, REFILL' },
+  { id: 'FE-ROW-8-6', rowNumber: 8, isHeader: false, no: '6', location: 'IJOK', typeABC: '✓', typeCO2: '', brand: 'EE', serialNumber: '819375', month: '10', year: '2022', certExpiryDate: '16/02/2027', remarks: 'REFILL' },
+  { id: 'FE-ROW-9-7', rowNumber: 9, isHeader: false, no: '7', location: 'IJOK', typeABC: '✓', typeCO2: '', brand: 'UF', serialNumber: '905482', month: '1', year: '2018', certExpiryDate: '16/02/2027', remarks: '' },
+  { id: 'FE-ROW-10-8', rowNumber: 10, isHeader: false, no: '8', location: 'IJOK', typeABC: '✓', typeCO2: '', brand: 'EE', serialNumber: '37642', month: '3', year: '2019', certExpiryDate: '16/02/2027', remarks: 'REFILL' },
+  { id: 'FE-ROW-11-9', rowNumber: 11, isHeader: false, no: '9', location: 'OFFICE', typeABC: '', typeCO2: '✓', brand: 'UF', serialNumber: '500187', month: '1', year: '2018', certExpiryDate: '16/02/2027', remarks: '' },
+  { id: 'FE-ROW-12-10', rowNumber: 12, isHeader: false, no: '10', location: 'OFFICE', typeABC: '✓', typeCO2: '', brand: 'UF', serialNumber: '907392', month: '1', year: '2018', certExpiryDate: '16/02/2027', remarks: '' },
+  { id: 'FE-ROW-13-11', rowNumber: 13, isHeader: false, no: '11', location: 'OFFICE', typeABC: '✓', typeCO2: '', brand: 'EE', serialNumber: '271442', month: '9', year: '2022', certExpiryDate: '16/02/2027', remarks: '' },
+  { id: 'FE-ROW-14-12', rowNumber: 14, isHeader: false, no: '12', location: 'PROJECT', typeABC: '✓', typeCO2: '', brand: 'EE', serialNumber: '718139', month: '10', year: '2022', certExpiryDate: '16/02/2027', remarks: '' },
+  { id: 'FE-ROW-15-13', rowNumber: 15, isHeader: false, no: '13', location: 'PROJECT', typeABC: '✓', typeCO2: '', brand: 'EE', serialNumber: '170991', month: '9', year: '2022', certExpiryDate: '16/02/2027', remarks: 'HOSE BELT' },
+  { id: 'FE-ROW-16-14', rowNumber: 16, isHeader: false, no: '14', location: 'LORRY NDS', typeABC: '', typeCO2: '✓', brand: 'EE', serialNumber: '566', month: '3', year: '2019', certExpiryDate: '16/02/2027', remarks: 'REFILL' },
+  { id: 'FE-ROW-17-15', rowNumber: 17, isHeader: false, no: '15', location: 'LORRY WVS', typeABC: '✓', typeCO2: '', brand: '???', serialNumber: '', month: '', year: '', certExpiryDate: '', remarks: 'GUNA EXP UNIT' },
+  { id: 'FE-ROW-18-16', rowNumber: 18, isHeader: false, no: '16', location: 'LORRY WMP', typeABC: '', typeCO2: '', brand: '???', serialNumber: '', month: '9', year: '2015', certExpiryDate: '', remarks: 'EXP, TONG KECIL' },
+  { id: 'FE-ROW-19-17', rowNumber: 19, isHeader: true, no: '—', location: 'LOCATION', typeABC: 'TYPE ABC', typeCO2: 'TYPE CO2', brand: 'BRAND', serialNumber: 'SERIAL NUMBER', month: 'MONTH', year: 'YEAR', certExpiryDate: 'CERT EXPIRY DATE', remarks: 'REMARKS 2026' },
+  { id: 'FE-ROW-20-18', rowNumber: 20, isHeader: false, no: '1', location: 'PENANG', typeABC: '✓', typeCO2: '', brand: 'UF', serialNumber: 'UF 09 2023 Y 998312', month: '9', year: '2023', certExpiryDate: '01/12/2026', remarks: '' },
+  { id: 'FE-ROW-21-19', rowNumber: 21, isHeader: false, no: '2', location: 'PENANG', typeABC: '✓', typeCO2: '', brand: 'UF', serialNumber: 'UF 09 2023 Y 998313', month: '9', year: '2023', certExpiryDate: '01/12/2026', remarks: '' },
+  { id: 'FE-ROW-22-20', rowNumber: 22, isHeader: false, no: '3', location: 'PENANG', typeABC: '✓', typeCO2: '', brand: 'UF', serialNumber: 'UF 09 2023 Y 998314', month: '9', year: '2023', certExpiryDate: '01/12/2026', remarks: '' },
+  { id: 'FE-ROW-23-21', rowNumber: 23, isHeader: false, no: '4', location: 'PENANG', typeABC: '✓', typeCO2: '', brand: 'UF', serialNumber: 'UF 09 2023 Y 998315', month: '9', year: '2023', certExpiryDate: '01/12/2026', remarks: '' },
+  { id: 'FE-ROW-24-22', rowNumber: 24, isHeader: false, no: '5', location: 'PENANG', typeABC: '✓', typeCO2: '', brand: 'UF', serialNumber: 'UF 09 2023 Y 998316', month: '9', year: '2023', certExpiryDate: '01/12/2026', remarks: '' },
+  { id: 'FE-ROW-25-23', rowNumber: 25, isHeader: false, no: '6', location: 'PENANG', typeABC: '✓', typeCO2: '', brand: 'UF', serialNumber: 'UF 09 2023 Y 998317', month: '9', year: '2023', certExpiryDate: '01/12/2026', remarks: '' },
+  { id: 'FE-ROW-26-24', rowNumber: 26, isHeader: false, no: '7', location: 'PENANG', typeABC: '✓', typeCO2: '', brand: 'UF', serialNumber: 'UF 09 2023 Y 998318', month: '9', year: '2023', certExpiryDate: '01/12/2026', remarks: '' },
+  { id: 'FE-ROW-27-25', rowNumber: 27, isHeader: false, no: '8', location: 'PENANG', typeABC: '✓', typeCO2: '', brand: 'UF', serialNumber: 'UF 09 2023 Y 998319', month: '9', year: '2023', certExpiryDate: '01/12/2026', remarks: '' }
+];
+
 export async function fetchFireExtinguisherData(): Promise<FireExtinguisherRecord[]> {
   const SPREADSHEET_ID = '1o9P6GnlsAwSJEUYHxITt1Opz973uX37MLBiv0LdFdIs';
+  const SHEET_NAME = 'FIRE EXTINGUISHER';
   const GID = '1996690139';
-  const url = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:csv&gid=${GID}&range=B2:K`;
+  const url = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(SHEET_NAME)}&gid=${GID}&range=B:K`;
 
   try {
     const res = await fetch(url);
@@ -430,41 +466,42 @@ export async function fetchFireExtinguisherData(): Promise<FireExtinguisherRecor
           const records: FireExtinguisherRecord[] = [];
           if (results.data && results.data.length > 0) {
             results.data.forEach((row: any, index: number) => {
-              const sheetRowNumber = index + 2; // Range B2:K begins at row 2
+              const sheetRowNumber = index + 1; // Range B:K starts at row 1
               
-              // Skip completely blank rows
+              // Skip completely empty rows
               if (!row || row.every((c: any) => !c || String(c).trim() === '')) {
                 return;
               }
 
-              // Row 2 and Row 19 are headers and bold
-              const isHeader = sheetRowNumber === 2 || sheetRowNumber === 19;
+              const rowNo = (row[0] ?? '').toString().trim();
+              const locationVal = (row[1] ?? '').toString().trim();
+              const isHeader = (rowNo.toUpperCase() === 'NO' && locationVal.toUpperCase() === 'LOCATION') || (locationVal.toUpperCase() === 'LOCATION');
 
               records.push({
                 id: `FE-ROW-${sheetRowNumber}-${index}`,
                 rowNumber: sheetRowNumber,
                 isHeader,
-                no: (row[0] || '').trim(),
-                location: (row[1] || '').trim(),
-                typeABC: (row[2] || '').trim(),
-                typeCO2: (row[3] || '').trim(),
-                brand: (row[4] || '').trim(),
-                serialNumber: (row[5] || '').trim(),
-                month: (row[6] || '').trim(),
-                year: (row[7] || '').trim(),
-                certExpiryDate: (row[8] || '').trim(),
-                remarks: (row[9] || '').trim(),
+                no: rowNo,
+                location: locationVal,
+                typeABC: (row[2] ?? '').toString().trim(),
+                typeCO2: (row[3] ?? '').toString().trim(),
+                brand: (row[4] ?? '').toString().trim(),
+                serialNumber: (row[5] ?? '').toString().trim(),
+                month: (row[6] ?? '').toString().trim(),
+                year: (row[7] ?? '').toString().trim(),
+                certExpiryDate: (row[8] ?? '').toString().trim(),
+                remarks: (row[9] ?? '').toString().trim(),
               });
             });
           }
-          resolve(records);
+          resolve(records.length > 0 ? records : FALLBACK_FIRE_EXTINGUISHER_RECORDS);
         },
-        error: () => resolve([])
+        error: () => resolve(FALLBACK_FIRE_EXTINGUISHER_RECORDS)
       });
     });
   } catch (err) {
     console.warn(`Error fetching Fire Extinguisher data with GID: ${GID}`, err);
-    return [];
+    return FALLBACK_FIRE_EXTINGUISHER_RECORDS;
   }
 }
 

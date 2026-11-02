@@ -19,6 +19,7 @@ interface HomePageProps {
   onOpenPWAInstall?: () => void;
   isPwaInstalled?: boolean;
   canInstallPwa?: boolean;
+  onOpenDatabaseModal?: () => void;
 }
 
 export const HomePage: React.FC<HomePageProps> = ({
@@ -39,6 +40,7 @@ export const HomePage: React.FC<HomePageProps> = ({
   onOpenPWAInstall,
   isPwaInstalled,
   canInstallPwa,
+  onOpenDatabaseModal,
 }) => {
   return (
     <div className="space-y-6">
@@ -398,22 +400,34 @@ export const HomePage: React.FC<HomePageProps> = ({
         </div>
       </div>
 
-      {/* PWA INSTALLATION SECTION AT THE BOTTOM OF THE PAGE */}
-      {onOpenPWAInstall && !isPwaInstalled && (
-        <div className="flex justify-center items-center py-2 mt-1">
-          <button
-            onClick={onOpenPWAInstall}
-            className="w-12 h-12 rounded-full bg-blue-600 hover:bg-blue-700 text-white flex items-center justify-center shadow-lg shadow-blue-500/30 hover:scale-110 active:scale-95 transition-all cursor-pointer relative"
-            title="Install App"
-          >
-            <span className="material-symbols-outlined text-2xl">download</span>
-            {canInstallPwa && (
-              <span className="absolute top-0.5 right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-400 border-2 border-slate-900 animate-ping"></span>
-            )}
-            {canInstallPwa && (
-              <span className="absolute top-0.5 right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-400 border-2 border-slate-900"></span>
-            )}
-          </button>
+      {/* BOTTOM ACTION BUTTONS: PWA INSTALLATION & DATABASE BUTTON */}
+      {(onOpenPWAInstall || onOpenDatabaseModal) && (
+        <div className="flex justify-center items-center gap-4 py-3 mt-2">
+          {onOpenPWAInstall && !isPwaInstalled && (
+            <button
+              onClick={onOpenPWAInstall}
+              className="w-12 h-12 rounded-full bg-blue-600 hover:bg-blue-700 text-white flex items-center justify-center shadow-lg shadow-blue-500/30 hover:scale-110 active:scale-95 transition-all cursor-pointer relative"
+              title="Install App"
+            >
+              <span className="material-symbols-outlined text-2xl">download</span>
+              {canInstallPwa && (
+                <span className="absolute top-0.5 right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-400 border-2 border-slate-900 animate-ping"></span>
+              )}
+              {canInstallPwa && (
+                <span className="absolute top-0.5 right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-400 border-2 border-slate-900"></span>
+              )}
+            </button>
+          )}
+
+          {onOpenDatabaseModal && (
+            <button
+              onClick={onOpenDatabaseModal}
+              className="w-12 h-12 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white flex items-center justify-center shadow-lg shadow-emerald-600/30 hover:scale-110 active:scale-95 transition-all cursor-pointer border border-emerald-400/40"
+              title="Database Connections & Connectors"
+            >
+              <span className="material-symbols-outlined text-2xl">database</span>
+            </button>
+          )}
         </div>
       )}
 
