@@ -242,32 +242,32 @@ export const HomePage: React.FC<HomePageProps> = ({
           </div>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2.5 items-center">
+        <div className="flex flex-col sm:grid sm:grid-cols-2 lg:grid-cols-5 gap-2 items-stretch">
           
-          {/* SOP Dropdown */}
+          {/* SOP Button */}
           <button
             onClick={onNavigateSOP}
-            className="w-full px-3 py-2.5 rounded-xl border border-cyan-500/20 bg-slate-900/80 text-slate-100 font-semibold text-xs flex items-center justify-between hover:border-cyan-400 hover:bg-cyan-950/40 transition-all shadow-sm group min-h-[40px]"
+            className="w-full px-3 py-2 rounded-xl border border-cyan-500/20 bg-slate-900/80 text-slate-100 font-semibold text-xs flex items-center justify-between hover:border-cyan-400 hover:bg-cyan-950/40 transition-all shadow-sm group min-h-[36px]"
           >
-            <div className="flex items-center gap-2 truncate">
-              <span className="material-symbols-outlined text-cyan-400 text-base">description</span>
-              <span className="truncate">SOP</span>
+            <div className="flex items-center gap-2 min-w-0">
+              <span className="material-symbols-outlined text-cyan-400 text-base shrink-0">description</span>
+              <span className="text-left leading-tight">SOP</span>
             </div>
-            <span className="material-symbols-outlined text-slate-400 text-sm group-hover:text-white group-hover:translate-x-0.5 transition-transform">
+            <span className="material-symbols-outlined text-slate-400 text-sm group-hover:text-white group-hover:translate-x-0.5 transition-transform shrink-0 ml-1">
               arrow_forward
             </span>
           </button>
 
-          {/* HIRARC Dropdown */}
+          {/* HIRARC Button */}
           <button
             onClick={onNavigateHIRARC}
-            className="w-full px-3 py-2.5 rounded-xl border border-cyan-500/20 bg-slate-900/80 text-slate-100 font-semibold text-xs flex items-center justify-between hover:border-cyan-400 hover:bg-cyan-950/40 transition-all shadow-sm group min-h-[40px]"
+            className="w-full px-3 py-2 rounded-xl border border-cyan-500/20 bg-slate-900/80 text-slate-100 font-semibold text-xs flex items-center justify-between hover:border-cyan-400 hover:bg-cyan-950/40 transition-all shadow-sm group min-h-[36px]"
           >
-            <div className="flex items-center gap-2 truncate">
-              <span className="material-symbols-outlined text-indigo-400 text-base">assignment_turned_in</span>
-              <span className="truncate">HIRARC</span>
+            <div className="flex items-center gap-2 min-w-0">
+              <span className="material-symbols-outlined text-indigo-400 text-base shrink-0">assignment_turned_in</span>
+              <span className="text-left leading-tight">HIRARC</span>
             </div>
-            <span className="material-symbols-outlined text-slate-400 text-sm group-hover:text-white group-hover:translate-x-0.5 transition-transform">
+            <span className="material-symbols-outlined text-slate-400 text-sm group-hover:text-white group-hover:translate-x-0.5 transition-transform shrink-0 ml-1">
               arrow_forward
             </span>
           </button>
@@ -275,13 +275,13 @@ export const HomePage: React.FC<HomePageProps> = ({
           {/* Inspection Records Button */}
           <button
             onClick={onNavigateInspection}
-            className="w-full px-3 py-2.5 rounded-xl border border-cyan-500/20 bg-slate-900/80 text-slate-100 font-semibold text-xs flex items-center justify-between hover:border-cyan-400 hover:bg-cyan-950/40 transition-all shadow-sm group min-h-[40px]"
+            className="w-full px-3 py-2 rounded-xl border border-cyan-500/20 bg-slate-900/80 text-slate-100 font-semibold text-xs flex items-center justify-between hover:border-cyan-400 hover:bg-cyan-950/40 transition-all shadow-sm group min-h-[36px]"
           >
-            <div className="flex items-center gap-2 truncate">
-              <span className="material-symbols-outlined text-amber-400 text-base">fact_check</span>
-              <span className="truncate">WORKPLACE INSPECTION</span>
+            <div className="flex items-center gap-2 min-w-0">
+              <span className="material-symbols-outlined text-amber-400 text-base shrink-0">fact_check</span>
+              <span className="text-left leading-tight">WORKPLACE INSPECTION</span>
             </div>
-            <span className="material-symbols-outlined text-slate-400 text-sm group-hover:text-white group-hover:translate-x-0.5 transition-transform">
+            <span className="material-symbols-outlined text-slate-400 text-sm group-hover:text-white group-hover:translate-x-0.5 transition-transform shrink-0 ml-1">
               arrow_forward
             </span>
           </button>
@@ -291,13 +291,13 @@ export const HomePage: React.FC<HomePageProps> = ({
             href="https://script.google.com/macros/s/AKfycbxhrI7F4_Tbg2wPSky9i0cBK8xc2OQDMpUHlE2ZAxDLZxqvb5iBkO5a6P6UoJRo04CdaA/exec"
             target="_blank"
             rel="noopener noreferrer"
-            className="w-full px-3 py-2.5 rounded-xl border border-cyan-500/20 bg-slate-900/80 text-slate-100 font-semibold text-xs flex items-center justify-between hover:border-cyan-400 hover:bg-cyan-950/40 transition-all shadow-sm group min-h-[40px]"
+            className="w-full px-3 py-2 rounded-xl border border-cyan-500/20 bg-slate-900/80 text-slate-100 font-semibold text-xs flex items-center justify-between hover:border-cyan-400 hover:bg-cyan-950/40 transition-all shadow-sm group min-h-[36px]"
           >
-            <div className="flex items-center gap-2 truncate">
-              <span className="material-symbols-outlined text-emerald-400 text-base">edit_note</span>
-              <span className="truncate">INSPECTION FORM</span>
+            <div className="flex items-center gap-2 min-w-0">
+              <span className="material-symbols-outlined text-emerald-400 text-base shrink-0">edit_note</span>
+              <span className="text-left leading-tight">INSPECTION FORM</span>
             </div>
-            <span className="material-symbols-outlined text-slate-400 text-sm group-hover:text-white group-hover:translate-x-0.5 transition-transform">
+            <span className="material-symbols-outlined text-slate-400 text-sm group-hover:text-white group-hover:translate-x-0.5 transition-transform shrink-0 ml-1">
               open_in_new
             </span>
           </a>
@@ -306,13 +306,13 @@ export const HomePage: React.FC<HomePageProps> = ({
           {onOpenIncidentReportModal && (
             <button
               onClick={onOpenIncidentReportModal}
-              className="w-full px-3 py-2.5 rounded-xl border border-rose-500/40 bg-gradient-to-r from-rose-950/90 via-amber-950/80 to-slate-900 text-white font-bold text-xs flex items-center justify-between hover:border-rose-400 hover:from-rose-900/90 transition-all shadow-md group min-h-[40px] cursor-pointer"
+              className="w-full px-3 py-2 rounded-xl border border-rose-500/40 bg-gradient-to-r from-rose-950/90 via-amber-950/80 to-slate-900 text-white font-bold text-xs flex items-center justify-between hover:border-rose-400 hover:from-rose-900/90 transition-all shadow-md group min-h-[36px] cursor-pointer"
             >
-              <div className="flex items-center gap-2 truncate">
-                <span className="material-symbols-outlined text-rose-400 text-base animate-pulse">report_problem</span>
-                <span className="truncate">INCIDENT REPORT FORM (AI)</span>
+              <div className="flex items-center gap-2 min-w-0">
+                <span className="material-symbols-outlined text-rose-400 text-base animate-pulse shrink-0">report_problem</span>
+                <span className="text-left leading-tight">INCIDENT REPORT FORM (AI)</span>
               </div>
-              <span className="material-symbols-outlined text-amber-400 text-sm group-hover:scale-110 transition-transform">
+              <span className="material-symbols-outlined text-amber-400 text-sm group-hover:scale-110 transition-transform shrink-0 ml-1">
                 auto_awesome
               </span>
             </button>
