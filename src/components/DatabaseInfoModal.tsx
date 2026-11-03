@@ -104,8 +104,8 @@ const DATABASE_CONNECTIONS: DatabaseConnectionItem[] = [
     spreadsheetId: '1o9P6GnlsAwSJEUYHxITt1Opz973uX37MLBiv0LdFdIs',
     sheetName: 'GID 1423932800',
     gid: '1423932800',
-    range: 'B57:F (HIRARC) & B24:F54 (SOP)',
-    url: 'https://docs.google.com/spreadsheets/d/1o9P6GnlsAwSJEUYHxITt1Opz973uX37MLBiv0LdFdIs/gviz/tq?tqx=out:csv&gid=1423932800&range=B57:F',
+    range: 'B58:F86 (HIRARC) & B24:F57 (SOP)',
+    url: 'https://docs.google.com/spreadsheets/d/1o9P6GnlsAwSJEUYHxITt1Opz973uX37MLBiv0LdFdIs/gviz/tq?tqx=out:csv&gid=1423932800&range=B24:F57',
     codeReference: 'src/utils/gasBridge.ts -> fetchDynamicHIRARC(), fetchDynamicSOP()'
   },
   {

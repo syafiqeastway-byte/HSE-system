@@ -771,7 +771,7 @@ export async function fetchDynamicMinuteMeetings(): Promise<any[]> {
 
 export async function fetchDynamicHIRARC(): Promise<any[]> {
   const SPREADSHEET_ID = '1o9P6GnlsAwSJEUYHxITt1Opz973uX37MLBiv0LdFdIs';
-  const url = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:csv&gid=1423932800&range=B57:F`;
+  const url = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:csv&gid=1423932800&range=B58:F86`;
 
   const fallbackHirarc = MOCK_HIRARCS.map((h, index) => ({
     id: h.code || `HIRARC-${index + 1}`,
@@ -823,7 +823,7 @@ export async function fetchDynamicHIRARC(): Promise<any[]> {
 
 export async function fetchDynamicSOP(): Promise<any[]> {
   const SPREADSHEET_ID = '1o9P6GnlsAwSJEUYHxITt1Opz973uX37MLBiv0LdFdIs';
-  const url = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:csv&gid=1423932800&range=B24:F54`;
+  const url = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:csv&gid=1423932800&range=B24:F57`;
 
   const fallbackSop = MOCK_SOPS.map((s, index) => ({
     id: s.code || `SOP-${index + 1}`,
