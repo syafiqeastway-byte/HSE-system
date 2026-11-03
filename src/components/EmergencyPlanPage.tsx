@@ -59,6 +59,38 @@ export const EmergencyPlanPage: React.FC<EmergencyPlanPageProps> = ({
       .catch(() => {});
   }, { intervalMs: 60000 });
 
+  const isDateExpired = (rawDate?: string): boolean => {
+    if (!rawDate || !rawDate.trim() || rawDate.trim() === '-') return false;
+    const clean = rawDate.trim();
+
+    let targetDate: Date | null = null;
+    const dmyMatch = clean.match(/^(\d{1,2})[/-](\d{1,2})[/-](\d{4})$/);
+    if (dmyMatch) {
+      const day = parseInt(dmyMatch[1], 10);
+      const month = parseInt(dmyMatch[2], 10) - 1;
+      const year = parseInt(dmyMatch[3], 10);
+      targetDate = new Date(year, month, day, 23, 59, 59);
+    } else {
+      const ymdMatch = clean.match(/^(\d{4})[/-](\d{1,2})[/-](\d{1,2})$/);
+      if (ymdMatch) {
+        const year = parseInt(ymdMatch[1], 10);
+        const month = parseInt(ymdMatch[2], 10) - 1;
+        const day = parseInt(ymdMatch[3], 10);
+        targetDate = new Date(year, month, day, 23, 59, 59);
+      } else {
+        const parsed = Date.parse(clean);
+        if (!isNaN(parsed)) {
+          targetDate = new Date(parsed);
+        }
+      }
+    }
+
+    if (!targetDate || isNaN(targetDate.getTime())) return false;
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return targetDate.getTime() < today.getTime();
+  };
+
   const filteredCerts = certs.filter((c) => {
     const q = searchQuery.trim().toLowerCase();
     if (!q) return true;
@@ -236,7 +268,18 @@ export const EmergencyPlanPage: React.FC<EmergencyPlanPageProps> = ({
                       >
                         <td className="py-1 px-3 font-medium text-white border border-cyan-500/20 leading-none">{cert.name}</td>
                         <td className="py-1 px-3 text-white border border-cyan-500/20 leading-none">{cert.department}</td>
-                        <td className="py-1 px-3 font-mono font-bold text-emerald-400 border border-cyan-500/20 text-center leading-none">{cert.expiryDate}</td>
+                        <td className="py-1 px-3 font-mono font-bold border border-cyan-500/20 text-center leading-none">
+                          {isDateExpired(cert.expiryDate) ? (
+                            <span className="inline-flex items-center gap-1.5 text-rose-400 font-extrabold">
+                              <span>{cert.expiryDate}</span>
+                              <span className="px-1.5 py-0.5 rounded bg-rose-600 text-white text-[10px] uppercase font-sans tracking-wide">
+                                EXPIRED
+                              </span>
+                            </span>
+                          ) : (
+                            <span className="text-emerald-400">{cert.expiryDate}</span>
+                          )}
+                        </td>
                         <td className="py-1 px-3 border border-cyan-500/20 text-center leading-none">
                           <div className="flex justify-center">
                             {cert.certLink ? (

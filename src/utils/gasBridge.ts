@@ -509,7 +509,8 @@ export async function fetchFireExtinguisherData(): Promise<FireExtinguisherRecor
 // 10. First Aid Certifications
 export async function fetchFirstAidCertData(requireAuth: boolean = false): Promise<FirstAidCert[]> {
   const SPREADSHEET_ID = '1o9P6GnlsAwSJEUYHxITt1Opz973uX37MLBiv0LdFdIs';
-  const url = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:csv&sheet=FIRST%20AID%20KIT%20INSPECTION&range=AA5:AE`;
+  // Range AB5:AE fetches NAME, DEPARTMENT, CERT EXPIRED, CERT PDF starting from row 5 down dynamically
+  const url = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:csv&sheet=FIRST%20AID%20KIT%20INSPECTION&range=AB5:AE`;
 
   try {
     const res = await fetch(url);
@@ -527,31 +528,28 @@ export async function fetchFirstAidCertData(requireAuth: boolean = false): Promi
         complete: (results) => {
           const certs: FirstAidCert[] = [];
           if (results.data && results.data.length > 0) {
-            // Row 5 in sheet is index 0 in CSV (header row: EMPLOYEE ID, NAME, DEPARTMENT, CERT EXPIRED, CERT PDF)
+            // Row 5 is header (NAME, DEPARTMENT, CERT EXPIRED, CERT PDF)
             const firstRow = results.data[0] as any;
             const isFirstRowHeader = Array.isArray(firstRow) && firstRow.some((c: any) => 
-              String(c || '').toUpperCase().includes('EMPLOYEE') || 
-              String(c || '').toUpperCase().includes('NAME') ||
+              String(c || '').toUpperCase().includes('NAME') || 
+              String(c || '').toUpperCase().includes('DEPARTMENT') ||
               String(c || '').toUpperCase().includes('CERT')
             );
             const dataRows = isFirstRowHeader ? results.data.slice(1) : results.data;
 
             dataRows.forEach((row: any, index: number) => {
-              if (Array.isArray(row) && row.length >= 2 && row.some((c: any) => c && String(c).trim() !== '')) {
-                const rawEmpId = (row[0] || '').trim();
-                let maskedEmpId = '';
-                if (rawEmpId && rawEmpId !== '-') {
-                  maskedEmpId = rawEmpId.startsWith('*') ? rawEmpId : (rawEmpId.length > 4 ? '***' + rawEmpId.slice(-4) : '***' + rawEmpId);
+              // Range AB:AE -> Col 0: NAME, Col 1: DEPARTMENT, Col 2: CERT EXPIRED, Col 3: CERT PDF
+              if (Array.isArray(row) && row.length >= 1 && row.some((c: any) => c && String(c).trim() !== '')) {
+                const name = (row[0] || '').trim();
+                if (name && name !== '-' && name.toUpperCase() !== 'NAME') {
+                  certs.push({
+                    id: `FA-${index + 1}`,
+                    name,
+                    department: (row[1] || '-').trim(),
+                    expiryDate: (row[2] || '-').trim(),
+                    certLink: (row[3] || '').trim()
+                  });
                 }
-
-                certs.push({
-                  id: `FA-${index + 1}`,
-                  employeeId: maskedEmpId,
-                  name: (row[1] || '').trim(),
-                  department: (row[2] || '-').trim(),
-                  expiryDate: (row[3] || '-').trim(),
-                  certLink: (row[4] || '').trim()
-                });
               }
             });
           }

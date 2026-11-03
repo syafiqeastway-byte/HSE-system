@@ -9,6 +9,60 @@ interface SafetyEquipmentPageProps {
   onBackToHome: () => void;
 }
 
+/**
+ * Evaluates CERT EXPIRY DATE status:
+ * - 'expired': expiry date is earlier than today (< 0 days left / already passed) -> Red
+ * - 'warning': expiry date is within 1 month before/at current date (0 to 30 days left) -> Orange
+ * - 'valid': more than 1 month remaining -> Normal
+ * - 'none': empty or unparseable date
+ */
+function getExpiryStatus(rawDate?: string): 'expired' | 'warning' | 'valid' | 'none' {
+  if (!rawDate || !rawDate.trim() || rawDate.trim() === '-') return 'none';
+  const clean = rawDate.trim();
+
+  let targetDate: Date | null = null;
+
+  // Format 1: DD/MM/YYYY or DD-MM-YYYY
+  const dmyMatch = clean.match(/^(\d{1,2})[/-](\d{1,2})[/-](\d{4})$/);
+  if (dmyMatch) {
+    const day = parseInt(dmyMatch[1], 10);
+    const month = parseInt(dmyMatch[2], 10) - 1;
+    const year = parseInt(dmyMatch[3], 10);
+    targetDate = new Date(year, month, day, 23, 59, 59);
+  } else {
+    // Format 2: YYYY-MM-DD
+    const ymdMatch = clean.match(/^(\d{4})[/-](\d{1,2})[/-](\d{1,2})$/);
+    if (ymdMatch) {
+      const year = parseInt(ymdMatch[1], 10);
+      const month = parseInt(ymdMatch[2], 10) - 1;
+      const day = parseInt(ymdMatch[3], 10);
+      targetDate = new Date(year, month, day, 23, 59, 59);
+    } else {
+      // Fallback native parse
+      const parsed = Date.parse(clean);
+      if (!isNaN(parsed)) {
+        targetDate = new Date(parsed);
+      }
+    }
+  }
+
+  if (!targetDate || isNaN(targetDate.getTime())) return 'none';
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const diffMs = targetDate.getTime() - today.getTime();
+  const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+
+  if (diffDays < 0) {
+    return 'expired'; // More than expired / passed expiry date -> Red
+  } else if (diffDays <= 30) {
+    return 'warning'; // 1 month or less before current date -> Orange
+  } else {
+    return 'valid';
+  }
+}
+
 export const SafetyEquipmentPage: React.FC<SafetyEquipmentPageProps> = ({ onBackToHome }) => {
   const [fireExtinguishers, setFireExtinguishers] = useState<FireExtinguisherRecord[]>([]);
   const [loading, setLoading] = useState(true);
@@ -162,6 +216,24 @@ export const SafetyEquipmentPage: React.FC<SafetyEquipmentPageProps> = ({ onBack
         </button>
       </div>
 
+      {/* Expiry Status Legend */}
+      <div className="flex flex-wrap items-center justify-between gap-2 px-1 text-xs">
+        <div className="flex items-center gap-3 flex-wrap">
+          <span className="text-slate-400 font-semibold">CERT STATUS:</span>
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-red-950/80 border border-red-500/50 text-red-200 font-bold">
+            <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
+            Expired / Overdue (Red)
+          </span>
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-amber-950/80 border border-amber-500/50 text-amber-200 font-bold">
+            <span className="w-2 h-2 rounded-full bg-amber-500"></span>
+            Expiring Within 1 Month (Orange)
+          </span>
+        </div>
+        <div className="text-slate-400 text-[11px]">
+          Total Units: <strong className="text-white">{filteredData.length}</strong>
+        </div>
+      </div>
+
       {loading ? (
         <div className="p-12 text-center flex flex-col items-center justify-center glass-card">
           <span className="material-symbols-outlined text-4xl text-cyan-400 animate-spin">sync</span>
@@ -195,6 +267,8 @@ export const SafetyEquipmentPage: React.FC<SafetyEquipmentPageProps> = ({ onBack
                 ) : (
                   filteredData.map((item, rIdx) => {
                     const isSelected = selectedFEId === item.id;
+                    const expiryStatus = getExpiryStatus(item.certExpiryDate);
+
                     return (
                       <tr
                         key={`fe-row-${item.id}-${rIdx}`} 
@@ -207,34 +281,44 @@ export const SafetyEquipmentPage: React.FC<SafetyEquipmentPageProps> = ({ onBack
                             : 'bg-slate-900/80 hover:bg-cyan-950/40'
                         }`}
                       >
-                        <td className="py-1 px-2 text-center font-mono font-medium text-white border border-cyan-500/20 leading-none">
+                        <td className="py-1 px-2 text-center font-mono font-medium border border-cyan-500/20 leading-none">
                           {item.no || '-'}
                         </td>
-                        <td className="py-1 px-2 text-center font-medium text-white border border-cyan-500/20 leading-none">
+                        <td className="py-1 px-2 text-center font-medium border border-cyan-500/20 leading-none">
                           {item.location || '-'}
                         </td>
-                        <td className="py-1 px-2 text-center border border-cyan-500/20 text-white leading-none font-bold text-xs text-cyan-400">
+                        <td className="py-1 px-2 text-center border border-cyan-500/20 leading-none font-bold text-xs text-cyan-400">
                           {item.typeABC || '-'}
                         </td>
-                        <td className="py-1 px-2 text-center border border-cyan-500/20 text-white leading-none font-bold text-xs text-cyan-400">
+                        <td className="py-1 px-2 text-center border border-cyan-500/20 leading-none font-bold text-xs text-cyan-400">
                           {item.typeCO2 || '-'}
                         </td>
-                        <td className="py-1 px-2 text-center font-medium text-white border border-cyan-500/20 leading-none">
+                        <td className="py-1 px-2 text-center font-medium border border-cyan-500/20 leading-none">
                           {item.brand || '-'}
                         </td>
-                        <td className="py-1 px-2 text-center font-mono text-white border border-cyan-500/20 leading-none">
+                        <td className="py-1 px-2 text-center font-mono border border-cyan-500/20 leading-none">
                           {item.serialNumber || '-'}
                         </td>
-                        <td className="py-1 px-2 text-center font-mono text-white border border-cyan-500/20 leading-none">
+                        <td className="py-1 px-2 text-center font-mono border border-cyan-500/20 leading-none">
                           {item.month || '-'}
                         </td>
-                        <td className="py-1 px-2 text-center font-mono font-medium text-white border border-cyan-500/20 leading-none">
+                        <td className="py-1 px-2 text-center font-mono font-medium border border-cyan-500/20 leading-none">
                           {item.year || '-'}
                         </td>
-                        <td className="py-1 px-2 whitespace-nowrap font-mono font-bold text-white border border-cyan-500/20 text-center leading-none">
-                          {item.certExpiryDate || '-'}
+                        <td className="py-1 px-2 whitespace-nowrap font-mono font-bold border border-cyan-500/20 text-center leading-none">
+                          <span className={
+                            expiryStatus === 'expired'
+                              ? 'inline-flex items-center gap-1 text-red-300 font-extrabold'
+                              : expiryStatus === 'warning'
+                              ? 'inline-flex items-center gap-1 text-amber-300 font-extrabold'
+                              : 'text-white'
+                          }>
+                            {item.certExpiryDate || '-'}
+                            {expiryStatus === 'expired' && <span className="text-[10px] px-1 py-0.2 rounded bg-red-600 text-white font-sans uppercase">EXPIRED</span>}
+                            {expiryStatus === 'warning' && <span className="text-[10px] px-1 py-0.2 rounded bg-amber-500 text-black font-sans uppercase font-bold">&lt;1 MO</span>}
+                          </span>
                         </td>
-                        <td className="py-1 px-2 text-center text-white border border-cyan-500/20 leading-none">
+                        <td className="py-1 px-2 text-center border border-cyan-500/20 leading-none">
                           {item.remarks || '-'}
                         </td>
                       </tr>
