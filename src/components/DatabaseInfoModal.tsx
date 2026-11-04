@@ -151,7 +151,6 @@ export const DatabaseInfoModal: React.FC<DatabaseInfoModalProps> = ({ isOpen, on
   const [passwordError, setPasswordError] = useState<string>('');
 
   const [selectedCategory, setSelectedCategory] = useState<string>('All');
-  const [searchQuery, setSearchQuery] = useState<string>('');
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
   // Reset state when modal is opened/closed
@@ -269,14 +268,7 @@ export const DatabaseInfoModal: React.FC<DatabaseInfoModalProps> = ({ isOpen, on
   const categories = ['All', 'Google Sheets', 'Cloud DB', 'GAS Bridge', 'Local Cache'];
 
   const filteredConnections = DATABASE_CONNECTIONS.filter((item) => {
-    const matchesCategory = selectedCategory === 'All' || item.category === selectedCategory;
-    const matchesSearch =
-      item.tableName.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      item.connector.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (item.spreadsheetId && item.spreadsheetId.toLowerCase().includes(searchQuery.toLowerCase())) ||
-      (item.sheetName && item.sheetName.toLowerCase().includes(searchQuery.toLowerCase())) ||
-      item.codeReference.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesCategory && matchesSearch;
+    return selectedCategory === 'All' || item.category === selectedCategory;
   });
 
   const copyToClipboard = (text: string, id: string) => {
@@ -310,7 +302,7 @@ export const DatabaseInfoModal: React.FC<DatabaseInfoModalProps> = ({ isOpen, on
         </div>
 
         {/* Filter Bar */}
-        <div className="p-4 border-b border-slate-800 bg-slate-900/60 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 shrink-0">
+        <div className="p-4 border-b border-slate-800 bg-slate-900/60 flex items-center justify-between gap-3 shrink-0">
           {/* Category Tabs */}
           <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0 scrollbar-none">
             {categories.map((cat) => (
@@ -327,20 +319,6 @@ export const DatabaseInfoModal: React.FC<DatabaseInfoModalProps> = ({ isOpen, on
               </button>
             ))}
           </div>
-
-          {/* Search Box */}
-          <div className="relative flex-1 max-w-xs">
-            <span className="material-symbols-outlined absolute left-3 top-2.5 text-slate-400 text-lg">
-              search
-            </span>
-            <input
-              type="text"
-              placeholder="Search database, sheet or range..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-3 py-1.5 rounded-xl bg-slate-950 border border-slate-700 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-cyan-500"
-            />
-          </div>
         </div>
 
         {/* Connections Table Container */}
@@ -355,9 +333,9 @@ export const DatabaseInfoModal: React.FC<DatabaseInfoModalProps> = ({ isOpen, on
 
           {filteredConnections.length === 0 ? (
             <div className="p-8 text-center rounded-xl bg-slate-950/50 border border-slate-800">
-              <span className="material-symbols-outlined text-4xl text-slate-500 mb-2">search_off</span>
+              <span className="material-symbols-outlined text-4xl text-slate-500 mb-2">storage</span>
               <p className="text-sm font-bold text-slate-300">No database connections found</p>
-              <p className="text-xs text-slate-500 mt-1">Try adjusting your search criteria or selecting "All" category.</p>
+              <p className="text-xs text-slate-500 mt-1">Select "All" category to view all data integrations.</p>
             </div>
           ) : (
             <div className="border border-slate-800 rounded-xl overflow-x-auto bg-slate-950/60 shadow-inner flex-1 max-h-full">
