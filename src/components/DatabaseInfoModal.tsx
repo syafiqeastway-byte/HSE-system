@@ -73,6 +73,17 @@ const DATABASE_CONNECTIONS: DatabaseConnectionItem[] = [
     codeReference: 'src/utils/gasBridge.ts -> fetchFirstAidCertData()'
   },
   {
+    id: 'first-aid-kit-register',
+    tableName: 'FIRST AID KIT REGISTER TABLE',
+    category: 'Google Sheets',
+    connector: 'PapaParse (v5.5.4) + HTTP Fetch API (GViz CSV)',
+    spreadsheetId: '1o9P6GnlsAwSJEUYHxITt1Opz973uX37MLBiv0LdFdIs',
+    sheetName: 'FIRST AID KIT INSPECTION',
+    range: 'A4:Y22',
+    url: 'https://docs.google.com/spreadsheets/d/1o9P6GnlsAwSJEUYHxITt1Opz973uX37MLBiv0LdFdIs/gviz/tq?tqx=out:csv&sheet=FIRST%20AID%20KIT%20INSPECTION&range=A4:Y22',
+    codeReference: 'src/utils/gasBridge.ts -> fetchFirstAidKitRegisterData()'
+  },
+  {
     id: 'jkk-meetings',
     tableName: 'JKK COMMITTEE MEETING MINUTES',
     category: 'Google Sheets',

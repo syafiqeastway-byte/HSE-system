@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import * as XLSX from 'xlsx';
 import { FirstAidKitTableData } from '../types';
 import { supabase } from '../lib/supabase';
-import { fetchFirstAidKitItemsFromSupabase } from '../utils/supabaseService';
+import { fetchFirstAidKitRegisterData } from '../utils/gasBridge';
 import { useAutoRefresh } from '../hooks/useAutoRefresh';
 import { FirstAidKitFormModal } from './FirstAidKitFormModal';
 
@@ -31,7 +31,7 @@ export const FirstAidKitPage: React.FC<FirstAidKitPageProps> = ({ onBackToHome }
   const [selectedRowIndex, setSelectedRowIndex] = useState<number | null>(null);
   
   // Active view: 'form' | 'table' | 'usageRecords'
-  const [activeView, setActiveView] = useState<'form' | 'table' | 'usageRecords'>('form');
+  const [activeView, setActiveView] = useState<'form' | 'table' | 'usageRecords'>('table');
 
   // Supabase Usage Records State
   const [supabaseRecords, setSupabaseRecords] = useState<any[]>([]);
@@ -63,7 +63,7 @@ export const FirstAidKitPage: React.FC<FirstAidKitPageProps> = ({ onBackToHome }
     }
 
     try {
-      const res = await fetchFirstAidKitItemsFromSupabase();
+      const res = await fetchFirstAidKitRegisterData();
       if (res && res.rows) {
         const lastIdx = res.headers.findIndex(h => (h || '').trim().toUpperCase() === 'LAST INSPECTION');
         const nextIdx = res.headers.findIndex(h => (h || '').trim().toUpperCase() === 'NEXT INSPECTION');
@@ -81,7 +81,7 @@ export const FirstAidKitPage: React.FC<FirstAidKitPageProps> = ({ onBackToHome }
         }
       }
     } catch (err) {
-      console.warn('Error fetching First Aid Kit data from Supabase:', err);
+      console.warn('Error fetching First Aid Kit data from Google Sheet:', err);
     } finally {
       setLoading(false);
       setIsRefreshing(false);
@@ -234,25 +234,33 @@ export const FirstAidKitPage: React.FC<FirstAidKitPageProps> = ({ onBackToHome }
               <span className="material-symbols-outlined text-rose-400">medical_services</span>
               <span>FIRST AID KIT</span>
             </h2>
-            <p className="text-xs text-slate-300">
-              Post-Usage Log Form & First Aid Kit Inventory Register
-            </p>
           </div>
         </div>
 
         {/* Top Tab Switcher & Quick Actions */}
-        <div className="flex items-center gap-2 w-full sm:w-auto flex-wrap sm:flex-nowrap">
-          {/* View Mode Toggle: Form vs Table vs Usage Records */}
-          <div className="flex items-center p-1 bg-slate-950/80 rounded-xl border border-cyan-500/30 shadow-inner">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto">
+          {/* View Mode Toggle: Kit Register Table vs Usage Form vs Usage Records */}
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center p-1 bg-slate-950/80 rounded-xl border border-cyan-500/30 shadow-inner gap-1 sm:gap-0.5 w-full sm:w-auto">
+            <button
+              onClick={() => setActiveView('table')}
+              className={`w-full sm:w-auto px-2.5 py-1 rounded-lg text-xs font-bold flex items-center justify-center sm:justify-start gap-1.5 transition-all ${
+                activeView === 'table'
+                  ? 'bg-cyan-600 text-white shadow-md'
+                  : 'text-slate-300 hover:text-white hover:bg-slate-800/60'
+              }`}
+            >
+              <span className="material-symbols-outlined text-sm">table_chart</span>
+              <span>Kit Register Table</span>
+            </button>
             <button
               onClick={() => setActiveView('form')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-all ${
+              className={`w-full sm:w-auto px-2.5 py-1 rounded-lg text-xs font-bold flex items-center justify-center sm:justify-start gap-1.5 transition-all ${
                 activeView === 'form'
                   ? 'bg-cyan-600 text-white shadow-md'
                   : 'text-slate-300 hover:text-white hover:bg-slate-800/60'
               }`}
             >
-              <span className="material-symbols-outlined text-base">edit_note</span>
+              <span className="material-symbols-outlined text-sm">edit_note</span>
               <span>Usage Form</span>
             </button>
             <button
@@ -260,42 +268,32 @@ export const FirstAidKitPage: React.FC<FirstAidKitPageProps> = ({ onBackToHome }
                 setActiveView('usageRecords');
                 loadSupabaseRecords();
               }}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-all ${
+              className={`w-full sm:w-auto px-2.5 py-1 rounded-lg text-xs font-bold flex items-center justify-center sm:justify-start gap-1.5 transition-all ${
                 activeView === 'usageRecords'
                   ? 'bg-cyan-600 text-white shadow-md'
                   : 'text-slate-300 hover:text-white hover:bg-slate-800/60'
               }`}
             >
-              <span className="material-symbols-outlined text-base">history</span>
+              <span className="material-symbols-outlined text-sm">history</span>
               <span>Usage Records</span>
-            </button>
-            <button
-              onClick={() => setActiveView('table')}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1.5 transition-all ${
-                activeView === 'table'
-                  ? 'bg-cyan-600 text-white shadow-md'
-                  : 'text-slate-300 hover:text-white hover:bg-slate-800/60'
-              }`}
-            >
-              <span className="material-symbols-outlined text-base">table_chart</span>
-              <span>Kit Register Table</span>
             </button>
           </div>
 
-          {/* Download Excel */}
-          <button
-            onClick={handleExportExcel}
-            disabled={activeView === 'usageRecords' ? supabaseRecords.length === 0 : (loading || data.rows.length === 0)}
-            className="px-3 py-1.5 rounded-xl bg-emerald-600/90 hover:bg-emerald-600 text-white text-xs font-bold flex items-center gap-1 border border-emerald-500/40 shadow-sm transition-all disabled:opacity-50 flex-shrink-0"
-            title="Download Excel Spreadsheet"
-          >
-            <span className="material-symbols-outlined text-base">download</span>
-            <span className="hidden md:inline">Export Excel</span>
-            <span className="md:hidden">Excel</span>
-          </button>
+          <div className="flex items-center gap-2 justify-end">
+            {/* Download Excel */}
+            <button
+              onClick={handleExportExcel}
+              disabled={activeView === 'usageRecords' ? supabaseRecords.length === 0 : (loading || data.rows.length === 0)}
+              className="px-3 py-1 rounded-xl bg-emerald-600/90 hover:bg-emerald-600 text-white text-xs font-bold flex items-center gap-1 border border-emerald-500/40 shadow-sm transition-all disabled:opacity-50 flex-1 sm:flex-none justify-center"
+              title="Download Excel Spreadsheet"
+            >
+              <span className="material-symbols-outlined text-sm">download</span>
+              <span className="hidden md:inline">Export Excel</span>
+              <span className="md:hidden">Excel</span>
+            </button>
 
-          {/* Refresh Button */}
-          <button
+            {/* Refresh Button */}
+            <button
             onClick={() => {
               if (activeView === 'usageRecords') {
                 loadSupabaseRecords();
@@ -315,6 +313,7 @@ export const FirstAidKitPage: React.FC<FirstAidKitPageProps> = ({ onBackToHome }
           </button>
         </div>
       </div>
+    </div>
 
       {/* VIEW 1: POST-USAGE LOG FORM (DEFAULT ACTIVE) */}
       {activeView === 'form' && (
@@ -369,7 +368,14 @@ export const FirstAidKitPage: React.FC<FirstAidKitPageProps> = ({ onBackToHome }
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-cyan-500/10 text-xs text-white">
-                    {filteredRows.map((row, rIdx) => {
+                    {filteredRows.length === 0 ? (
+                      <tr className="h-10">
+                        <td colSpan={data.headers.length || 25} className="py-6 text-center text-xs text-slate-300 border border-cyan-500/20">
+                          {searchQuery ? `No kit items matching "${searchQuery}"` : 'No first aid kit items found.'}
+                        </td>
+                      </tr>
+                    ) : (
+                      filteredRows.map((row, rIdx) => {
                       const isSelected = selectedRowIndex === rIdx;
                       const lastInspectColIdx = data.headers.findIndex(h => (h || '').trim().toUpperCase() === 'LAST INSPECTION');
                       const nextInspectColIdx = data.headers.findIndex(h => (h || '').trim().toUpperCase() === 'NEXT INSPECTION');
@@ -401,7 +407,7 @@ export const FirstAidKitPage: React.FC<FirstAidKitPageProps> = ({ onBackToHome }
                           })}
                         </tr>
                       );
-                    })}
+                    }))}
                   </tbody>
                 </table>
               </div>

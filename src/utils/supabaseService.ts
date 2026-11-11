@@ -249,6 +249,66 @@ export async function fetchFirstAidKitItemsFromSupabase(): Promise<FirstAidKitTa
     console.warn('[Cloud DB] Direct fetch error:', err);
   }
 
+  // Live Google Sheets Fallback (FIRST AID KIT INSPECTION range A3:Y)
+  try {
+    const sheetUrl = 'https://docs.google.com/spreadsheets/d/1o9P6GnlsAwSJEUYHxITt1Opz973uX37MLBiv0LdFdIs/gviz/tq?tqx=out:csv&sheet=FIRST%20AID%20KIT%20INSPECTION&range=A3:Y';
+    const sheetRes = await fetch(sheetUrl);
+    if (sheetRes.ok) {
+      const csvText = await sheetRes.text();
+      if (!csvText.includes('<!DOCTYPE html>') && !csvText.includes('google-signin-button')) {
+        const Papa = (await import('papaparse')).default;
+        const parsed = await new Promise<FirstAidKitTableData>((resolve) => {
+          Papa.parse(csvText, {
+            header: false,
+            skipEmptyLines: true,
+            complete: (results) => {
+              if (results.data && results.data.length > 0) {
+                const rawHeaders = (results.data[0] as string[]).map(h => String(h || '').trim());
+                const dataRows = results.data.slice(1) as string[][];
+                const validRows = dataRows.filter(r => r && r.some(cell => String(cell || '').trim() !== ''));
+                const rawObjects: Record<string, string>[] = validRows.map(r => {
+                  const obj: Record<string, string> = {};
+                  rawHeaders.forEach((h, i) => {
+                    obj[h || `Col_${i}`] = String(r[i] ?? '').trim();
+                  });
+                  return obj;
+                });
+                resolve({
+                  headers: rawHeaders.length > 0 ? rawHeaders : standardHeaders,
+                  rows: validRows.map(r => r.map(c => String(c ?? '').trim())),
+                  rawRecords: rawObjects
+                });
+              } else {
+                resolve({ headers: standardHeaders, rows: [], rawRecords: [] });
+              }
+            },
+            error: () => resolve({ headers: standardHeaders, rows: [], rawRecords: [] })
+          });
+        });
+
+        if (parsed.rows.length > 0) {
+          try {
+            localStorage.setItem('HSE_CACHED_KIT_REGISTER', JSON.stringify(parsed));
+          } catch {}
+          return parsed;
+        }
+      }
+    }
+  } catch (sheetErr) {
+    console.warn('[Sheet Fallback] Error fetching Kit Register from Google Sheet:', sheetErr);
+  }
+
+  // LocalStorage cached fallback
+  try {
+    const cached = localStorage.getItem('HSE_CACHED_KIT_REGISTER');
+    if (cached) {
+      const parsed = JSON.parse(cached);
+      if (parsed && Array.isArray(parsed.rows) && parsed.rows.length > 0) {
+        return parsed;
+      }
+    }
+  } catch {}
+
   return {
     headers: standardHeaders,
     rows: [],

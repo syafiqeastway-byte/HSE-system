@@ -566,9 +566,84 @@ export async function fetchFirstAidCertData(requireAuth: boolean = false): Promi
   }
 }
 
+// 10b. First Aid Kit Register Table Data (Google Sheet range A4:Y22)
+export async function fetchFirstAidKitRegisterData(): Promise<FirstAidKitTableData> {
+  const SPREADSHEET_ID = '1o9P6GnlsAwSJEUYHxITt1Opz973uX37MLBiv0LdFdIs';
+  const SHEET_NAME = 'FIRST AID KIT INSPECTION';
+  const url = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(SHEET_NAME)}&range=A4:Y22`;
 
+  const standardHeaders = [
+    'NO', 'MODELS/PLACE', 'PLATE NO', 'LOCATION', 'CODE', 'LAST INSPECTION',
+    '1) STERILE GAUZE PAD', '2) PLASTER LUKA', '3) WOW/ELASTIC BANDAGE', '4) PITA PELEKAT PERUBATAN',
+    '5) KAPAS', '6) IODINE', '7) GUNTING/PISAU', '8) KAIN ANDUH/TRIANGULAR BANDAGE',
+    '9) WOODEN SPLINT', '10) PIN', '11) SARUNG TANGAN', '12) MUSCLE CREAM',
+    '13) ALCOHOL SWAB', '14) ANTISEPTIC CREAM', '15) PENGEPIT', '16) STERILE EYE PADS',
+    '17) COLD PACK', 'NEXT INSPECTION', 'DESCRIPTION'
+  ];
 
+  try {
+    const res = await fetch(url);
+    if (!res.ok) throw new Error('Failed to fetch from sheets');
+    const csvText = await res.text();
 
+    if (csvText.includes('<!DOCTYPE html>') || csvText.includes('google-signin-button')) {
+      throw new Error('Returned HTML instead of CSV data');
+    }
+
+    return new Promise((resolve) => {
+      Papa.parse(csvText, {
+        header: false,
+        skipEmptyLines: true,
+        complete: (results) => {
+          if (results.data && results.data.length > 0) {
+            const dataRows = results.data as string[][];
+            const validRows = dataRows.filter(r => r && r.some(c => String(c || '').trim() !== ''));
+
+            const rawObjects: Record<string, string>[] = validRows.map(r => {
+              const obj: Record<string, string> = {};
+              standardHeaders.forEach((h, i) => {
+                obj[h || `Col_${i}`] = String(r[i] ?? '').trim();
+              });
+              return obj;
+            });
+
+            const parsedData: FirstAidKitTableData = {
+              headers: standardHeaders,
+              rows: validRows.map(r => r.map(c => String(c ?? '').trim())),
+              rawRecords: rawObjects
+            };
+
+            try {
+              localStorage.setItem('HSE_CACHED_KIT_REGISTER', JSON.stringify(parsedData));
+            } catch {}
+
+            resolve(parsedData);
+          } else {
+            resolve({ headers: standardHeaders, rows: [], rawRecords: [] });
+          }
+        },
+        error: () => resolve({ headers: standardHeaders, rows: [], rawRecords: [] })
+      });
+    });
+  } catch (err) {
+    console.warn('Error fetching First Aid Kit Register from Google Sheet:', err);
+    try {
+      const cached = localStorage.getItem('HSE_CACHED_KIT_REGISTER');
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (parsed && Array.isArray(parsed.rows) && parsed.rows.length > 0) {
+          return parsed;
+        }
+      }
+    } catch {}
+
+    return {
+      headers: standardHeaders,
+      rows: [],
+      rawRecords: []
+    };
+  }
+}
 
 // 11. Live Incident Records
 export async function fetchLiveIncidentRecords(requireAuth: boolean = false): Promise<any[]> {

@@ -144,32 +144,29 @@ export const SafetyEquipmentPage: React.FC<SafetyEquipmentPageProps> = ({ onBack
   return (
     <div className="space-y-6">
       {/* Page Header */}
-      <div className="glass-card p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div className="glass-card p-4 sm:p-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
           <button
             onClick={onBackToHome}
-            className="p-2 rounded-xl bg-slate-800 text-white hover:bg-slate-700 transition-colors border border-cyan-500/20"
+            className="p-1.5 sm:p-2 rounded-xl bg-slate-800 text-white hover:bg-slate-700 transition-colors border border-cyan-500/20"
             title="Back to Dashboard"
           >
-            <span className="material-symbols-outlined text-xl">arrow_back</span>
+            <span className="material-symbols-outlined text-lg sm:text-xl">arrow_back</span>
           </button>
           <div>
-            <h2 className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
-              <span className="material-symbols-outlined text-red-400">local_fire_department</span>
+            <h2 className="text-sm sm:text-lg font-bold text-white flex items-center gap-2">
+              <span className="material-symbols-outlined text-red-400 text-lg sm:text-2xl">local_fire_department</span>
               <span>SAFETY EQUIPMENT - FIRE EXTINGUISHER INSPECTIONS</span>
             </h2>
-            <p className="text-xs text-slate-300">
-              Fire extinguisher asset register, inspection records & statutory certification tracking
-            </p>
           </div>
         </div>
       </div>
 
       {/* Action Controls */}
-      <div className="glass-card p-4 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+      <div className="glass-card p-3 sm:p-4 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2.5 sm:gap-3">
         {/* Search Bar */}
         <div className="relative flex-1">
-          <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-lg">
+          <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-base sm:text-lg">
             search
           </span>
           <input
@@ -177,7 +174,7 @@ export const SafetyEquipmentPage: React.FC<SafetyEquipmentPageProps> = ({ onBack
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="SEARCH FIRE EXTINGUISHER BY LOCATION, BRAND, SERIAL NO..."
-            className="w-full pl-9 pr-9 py-2 rounded-xl bg-slate-950 border border-slate-700 text-xs sm:text-sm text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-red-500"
+            className="w-full pl-8 sm:pl-9 pr-8 sm:pr-9 py-1.5 sm:py-2 rounded-xl bg-slate-950 border border-slate-700 text-xs sm:text-sm text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-red-500"
           />
           {searchQuery && (
             <button
@@ -191,45 +188,50 @@ export const SafetyEquipmentPage: React.FC<SafetyEquipmentPageProps> = ({ onBack
           )}
         </div>
 
-        {/* Download Excel Button */}
-        <button
-          onClick={handleExportExcel}
-          disabled={loading || filteredData.length === 0}
-          className="px-3.5 py-2 rounded-xl bg-emerald-600/90 hover:bg-emerald-600 text-white text-xs sm:text-sm font-bold flex items-center justify-center gap-1.5 border border-emerald-500/40 shadow-sm transition-all disabled:opacity-50 flex-shrink-0"
-          title="Download Fire Extinguisher Records to Excel (.xlsx)"
-        >
-          <span className="material-symbols-outlined text-base">download</span>
-          <span className="hidden md:inline">Download Excel</span>
-          <span className="md:hidden">Excel</span>
-        </button>
+        {/* Action Buttons row for compact fit on mobile */}
+        <div className="flex items-center gap-2">
+          {/* Download Excel Button */}
+          <button
+            onClick={handleExportExcel}
+            disabled={loading || filteredData.length === 0}
+            className="flex-1 sm:flex-none px-2.5 py-1.5 sm:px-3.5 sm:py-2 rounded-xl bg-emerald-600/90 hover:bg-emerald-600 text-white text-xs sm:text-sm font-bold flex items-center justify-center gap-1 border border-emerald-500/40 shadow-sm transition-all disabled:opacity-50 flex-shrink-0"
+            title="Download Fire Extinguisher Records to Excel (.xlsx)"
+          >
+            <span className="material-symbols-outlined text-base">download</span>
+            <span className="hidden md:inline">Download Excel</span>
+            <span className="md:hidden">Excel</span>
+          </button>
 
-        {/* Refresh Button */}
-        <button
-          onClick={() => loadData(true)}
-          disabled={isRefreshing}
-          className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white transition-colors border border-cyan-500/20 flex-shrink-0"
-          title="Refresh from Google Sheets"
-        >
-          <span className={`material-symbols-outlined text-xl ${isRefreshing ? 'animate-spin text-cyan-400' : ''}`}>
-            sync
-          </span>
-        </button>
+          {/* Refresh Button */}
+          <button
+            onClick={() => loadData(true)}
+            disabled={isRefreshing}
+            className="p-1.5 sm:p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white transition-colors border border-cyan-500/20 flex-shrink-0 flex items-center justify-center"
+            title="Refresh from Google Sheets"
+          >
+            <span className={`material-symbols-outlined text-lg sm:text-xl ${isRefreshing ? 'animate-spin text-cyan-400' : ''}`}>
+              sync
+            </span>
+          </button>
+        </div>
       </div>
 
       {/* Expiry Status Legend */}
-      <div className="flex flex-wrap items-center justify-between gap-2 px-1 text-xs">
-        <div className="flex items-center gap-3 flex-wrap">
-          <span className="text-slate-400 font-semibold">CERT STATUS:</span>
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-red-950/80 border border-red-500/50 text-red-200 font-bold">
-            <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
-            Expired / Overdue (Red)
-          </span>
-          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-amber-950/80 border border-amber-500/50 text-amber-200 font-bold">
-            <span className="w-2 h-2 rounded-full bg-amber-500"></span>
-            Expiring Within 1 Month (Orange)
-          </span>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 px-1 text-xs">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-1.5 sm:gap-3">
+          <span className="text-slate-400 font-semibold text-xs">CERT STATUS:</span>
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-1.5">
+            <span className="inline-flex items-center justify-center sm:justify-start gap-1.5 px-2.5 py-1 rounded-lg bg-red-950/80 border border-red-500/50 text-red-200 text-xs font-bold">
+              <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
+              Expired / Overdue (Red)
+            </span>
+            <span className="inline-flex items-center justify-center sm:justify-start gap-1.5 px-2.5 py-1 rounded-lg bg-amber-950/80 border border-amber-500/50 text-amber-200 text-xs font-bold">
+              <span className="w-2 h-2 rounded-full bg-amber-500"></span>
+              Expiring Within 1 Month (Orange)
+            </span>
+          </div>
         </div>
-        <div className="text-slate-400 text-[11px]">
+        <div className="text-slate-400 text-[11px] self-end sm:self-auto">
           Total Units: <strong className="text-white">{filteredData.length}</strong>
         </div>
       </div>
@@ -244,22 +246,22 @@ export const SafetyEquipmentPage: React.FC<SafetyEquipmentPageProps> = ({ onBack
           <div className="overflow-x-auto">
             <table className="w-full border-collapse border border-cyan-500/20 text-center text-xs whitespace-nowrap bg-transparent">
               <thead className="bg-slate-950/95 text-cyan-400 border-b-2 border-cyan-500/40">
-                <tr className="h-8">
-                  <th className="py-1 px-2.5 text-center font-bold border border-cyan-500/20 text-xs text-cyan-400">NO</th>
-                  <th className="py-1 px-2.5 text-center font-bold border border-cyan-500/20 text-xs text-cyan-400">LOCATION</th>
-                  <th className="py-1 px-2.5 text-center font-bold border border-cyan-500/20 text-xs text-cyan-400">TYPE ABC</th>
-                  <th className="py-1 px-2.5 text-center font-bold border border-cyan-500/20 text-xs text-cyan-400">TYPE CO2</th>
-                  <th className="py-1 px-2.5 text-center font-bold border border-cyan-500/20 text-xs text-cyan-400">BRAND</th>
-                  <th className="py-1 px-2.5 text-center font-bold border border-cyan-500/20 text-xs text-cyan-400">SERIAL NUMBER</th>
-                  <th className="py-1 px-2.5 text-center font-bold border border-cyan-500/20 text-xs text-cyan-400">MONTH</th>
-                  <th className="py-1 px-2.5 text-center font-bold border border-cyan-500/20 text-xs text-cyan-400">YEAR</th>
-                  <th className="py-1 px-2.5 text-center font-bold border border-cyan-500/20 text-xs text-cyan-400">CERT EXPIRY DATE</th>
-                  <th className="py-1 px-2.5 text-center font-bold border border-cyan-500/20 text-xs text-cyan-400">REMARKS 2026</th>
+                <tr className="h-7 sm:h-8">
+                  <th className="py-0.5 px-2 sm:py-1 sm:px-2.5 text-center font-bold border border-cyan-500/20 text-xs text-cyan-400">NO</th>
+                  <th className="py-0.5 px-2 sm:py-1 sm:px-2.5 text-center font-bold border border-cyan-500/20 text-xs text-cyan-400">LOCATION</th>
+                  <th className="py-0.5 px-2 sm:py-1 sm:px-2.5 text-center font-bold border border-cyan-500/20 text-xs text-cyan-400">TYPE ABC</th>
+                  <th className="py-0.5 px-2 sm:py-1 sm:px-2.5 text-center font-bold border border-cyan-500/20 text-xs text-cyan-400">TYPE CO2</th>
+                  <th className="py-0.5 px-2 sm:py-1 sm:px-2.5 text-center font-bold border border-cyan-500/20 text-xs text-cyan-400">BRAND</th>
+                  <th className="py-0.5 px-2 sm:py-1 sm:px-2.5 text-center font-bold border border-cyan-500/20 text-xs text-cyan-400">SERIAL NUMBER</th>
+                  <th className="py-0.5 px-2 sm:py-1 sm:px-2.5 text-center font-bold border border-cyan-500/20 text-xs text-cyan-400">MONTH</th>
+                  <th className="py-0.5 px-2 sm:py-1 sm:px-2.5 text-center font-bold border border-cyan-500/20 text-xs text-cyan-400">YEAR</th>
+                  <th className="py-0.5 px-2 sm:py-1 sm:px-2.5 text-center font-bold border border-cyan-500/20 text-xs text-cyan-400">CERT EXPIRY DATE</th>
+                  <th className="py-0.5 px-2 sm:py-1 sm:px-2.5 text-center font-bold border border-cyan-500/20 text-xs text-cyan-400">REMARKS 2026</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-cyan-500/10 text-xs text-white">
                 {filteredData.length === 0 ? (
-                  <tr className="h-8">
+                  <tr className="h-7 sm:h-8">
                     <td colSpan={10} className="py-6 text-center text-xs text-white border border-cyan-500/20">
                       No fire extinguisher records found matching "{searchQuery}"
                     </td>
@@ -273,7 +275,7 @@ export const SafetyEquipmentPage: React.FC<SafetyEquipmentPageProps> = ({ onBack
                       <tr
                         key={`fe-row-${item.id}-${rIdx}`} 
                         onClick={() => setSelectedFEId(isSelected ? null : item.id)}
-                        className={`h-8 transition-colors cursor-pointer select-none ${
+                        className={`h-7 sm:h-8 transition-colors cursor-pointer select-none ${
                           isSelected
                             ? '!bg-cyan-600 !text-white font-bold [&>td]:!bg-cyan-600 [&>td]:!text-white [&>td]:!border-cyan-400/40 [&_*]:!text-white shadow-md'
                             : rIdx % 2 === 0
@@ -281,31 +283,31 @@ export const SafetyEquipmentPage: React.FC<SafetyEquipmentPageProps> = ({ onBack
                             : 'bg-slate-900/80 hover:bg-cyan-950/40'
                         }`}
                       >
-                        <td className="py-1 px-2 text-center font-mono font-medium border border-cyan-500/20 leading-none">
+                        <td className="py-0.5 px-1.5 sm:py-1 sm:px-2 text-center font-mono font-medium border border-cyan-500/20 leading-tight">
                           {item.no || '-'}
                         </td>
-                        <td className="py-1 px-2 text-center font-medium border border-cyan-500/20 leading-none">
+                        <td className="py-0.5 px-1.5 sm:py-1 sm:px-2 text-center font-medium border border-cyan-500/20 leading-tight">
                           {item.location || '-'}
                         </td>
-                        <td className="py-1 px-2 text-center border border-cyan-500/20 leading-none font-bold text-xs text-cyan-400">
+                        <td className="py-0.5 px-1.5 sm:py-1 sm:px-2 text-center border border-cyan-500/20 leading-tight font-bold text-xs text-cyan-400">
                           {item.typeABC || '-'}
                         </td>
-                        <td className="py-1 px-2 text-center border border-cyan-500/20 leading-none font-bold text-xs text-cyan-400">
+                        <td className="py-0.5 px-1.5 sm:py-1 sm:px-2 text-center border border-cyan-500/20 leading-tight font-bold text-xs text-cyan-400">
                           {item.typeCO2 || '-'}
                         </td>
-                        <td className="py-1 px-2 text-center font-medium border border-cyan-500/20 leading-none">
+                        <td className="py-0.5 px-1.5 sm:py-1 sm:px-2 text-center font-medium border border-cyan-500/20 leading-tight">
                           {item.brand || '-'}
                         </td>
-                        <td className="py-1 px-2 text-center font-mono border border-cyan-500/20 leading-none">
+                        <td className="py-0.5 px-1.5 sm:py-1 sm:px-2 text-center font-mono border border-cyan-500/20 leading-tight">
                           {item.serialNumber || '-'}
                         </td>
-                        <td className="py-1 px-2 text-center font-mono border border-cyan-500/20 leading-none">
+                        <td className="py-0.5 px-1.5 sm:py-1 sm:px-2 text-center font-mono border border-cyan-500/20 leading-tight">
                           {item.month || '-'}
                         </td>
-                        <td className="py-1 px-2 text-center font-mono font-medium border border-cyan-500/20 leading-none">
+                        <td className="py-0.5 px-1.5 sm:py-1 sm:px-2 text-center font-mono font-medium border border-cyan-500/20 leading-tight">
                           {item.year || '-'}
                         </td>
-                        <td className="py-1 px-2 whitespace-nowrap font-mono font-bold border border-cyan-500/20 text-center leading-none">
+                        <td className="py-0.5 px-1.5 sm:py-1 sm:px-2 whitespace-nowrap font-mono font-bold border border-cyan-500/20 text-center leading-tight">
                           <span className={
                             expiryStatus === 'expired'
                               ? 'inline-flex items-center gap-1 text-red-300 font-extrabold'
@@ -318,7 +320,7 @@ export const SafetyEquipmentPage: React.FC<SafetyEquipmentPageProps> = ({ onBack
                             {expiryStatus === 'warning' && <span className="text-[10px] px-1 py-0.2 rounded bg-amber-500 text-black font-sans uppercase font-bold">&lt;1 MO</span>}
                           </span>
                         </td>
-                        <td className="py-1 px-2 text-center border border-cyan-500/20 leading-none">
+                        <td className="py-0.5 px-1.5 sm:py-1 sm:px-2 text-center border border-cyan-500/20 leading-tight">
                           {item.remarks || '-'}
                         </td>
                       </tr>
