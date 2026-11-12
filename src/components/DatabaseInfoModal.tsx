@@ -78,8 +78,8 @@ const DATABASE_CONNECTIONS: DatabaseConnectionItem[] = [
     connector: 'PapaParse (v5.5.4) + HTTP Fetch API (GViz CSV)',
     spreadsheetId: '1o9P6GnlsAwSJEUYHxITt1Opz973uX37MLBiv0LdFdIs',
     sheetName: 'FIRST AID KIT INSPECTION',
-    range: 'A4:Y22',
-    url: 'https://docs.google.com/spreadsheets/d/1o9P6GnlsAwSJEUYHxITt1Opz973uX37MLBiv0LdFdIs/gviz/tq?tqx=out:csv&sheet=FIRST%20AID%20KIT%20INSPECTION&range=A4:Y22',
+    range: 'A4:Y25',
+    url: 'https://docs.google.com/spreadsheets/d/1o9P6GnlsAwSJEUYHxITt1Opz973uX37MLBiv0LdFdIs/gviz/tq?tqx=out:csv&sheet=FIRST%20AID%20KIT%20INSPECTION&range=A4:Y25',
     codeReference: 'src/utils/gasBridge.ts -> fetchFirstAidKitRegisterData()'
   },
   {

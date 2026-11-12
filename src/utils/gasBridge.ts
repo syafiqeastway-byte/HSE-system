@@ -506,11 +506,11 @@ export async function fetchFirstAidCertData(requireAuth: boolean = false): Promi
   }
 }
 
-// 10b. First Aid Kit Register Table Data (Google Sheet range A4:Y22)
+// 10b. First Aid Kit Register Table Data (Google Sheet range A4:Y25)
 export async function fetchFirstAidKitRegisterData(): Promise<FirstAidKitTableData> {
   const SPREADSHEET_ID = '1o9P6GnlsAwSJEUYHxITt1Opz973uX37MLBiv0LdFdIs';
   const SHEET_NAME = 'FIRST AID KIT INSPECTION';
-  const url = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(SHEET_NAME)}&range=A4:Y22`;
+  const url = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(SHEET_NAME)}&range=A4:Y25`;
 
   const standardHeaders = [
     'NO', 'MODELS/PLACE', 'PLATE NO', 'LOCATION', 'CODE', 'LAST INSPECTION',
