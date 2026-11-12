@@ -182,106 +182,30 @@ export function fetchDemeritData(): Promise<{ logs: typeof MOCK_DEMERIT_LOGS; ma
 
 // 9. Inspection Data
 export async function fetchInspectionData(): Promise<InspectionRecord[]> {
-  const SPREADSHEET_ID_ORIGINAL = '1o9P6GnlsAwSJEUYHxITt1Opz973uX37MLBiv0LdFdIs';
-  const GID_ORIGINAL = '582761149';
-  const urlOriginal = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID_ORIGINAL}/gviz/tq?tqx=out:csv&gid=${GID_ORIGINAL}&range=B:I`;
-
-  // New Google Sheet requested:
+  // Google Sheet:
   // spreadsheet_id: 1HLebePp1L31C-nZk6HgTxDwy6kXktNHDdbEdGcMvbbA
   // sheet_name: Records
-  // Range / Columns:
-  // NO: A5
-  // DATE: E5
-  // LOCATION: D5
-  // TYPE OF INSPECTION: tulis "Workplace"
-  // INSPECTOR: C5
-  // REMARK: G5
-  // PDF: BF
-  const SPREADSHEET_ID_NEW = '1HLebePp1L31C-nZk6HgTxDwy6kXktNHDdbEdGcMvbbA';
-  const SHEET_NAME_NEW = 'Records';
-  const urlNew = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID_NEW}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(SHEET_NAME_NEW)}`;
+  // Range: row 2 onwards until current data
+  // Columns:
+  // Form No (A): No
+  // Nama (C): Inspector
+  // Kawasan (D): Location
+  // Tarikh (E): Date
+  // Catitan Keseluruhan (G): Remark
+  // PDF (BF): Document URL
+  const SPREADSHEET_ID = '1HLebePp1L31C-nZk6HgTxDwy6kXktNHDdbEdGcMvbbA';
+  const SHEET_NAME = 'Records';
+  const url = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(SHEET_NAME)}`;
 
-  let originalRecords: InspectionRecord[] = [];
-  let newRecords: InspectionRecord[] = [];
+  let records: InspectionRecord[] = [];
 
-  // 1. Fetch original table records
   try {
-    const resOrig = await fetchWithTimeout(urlOriginal, 8000);
-    if (resOrig.ok) {
-      const csvText = await resOrig.text();
+    const res = await fetchWithTimeout(url, 8000);
+    if (res.ok) {
+      const csvText = await res.text();
       if (!csvText.includes('<!DOCTYPE html>') && !csvText.includes('google-signin-button')) {
-        originalRecords = await new Promise((resolve) => {
+        records = await new Promise((resolve) => {
           Papa.parse(csvText, {
-            header: false,
-            skipEmptyLines: true,
-            complete: (results) => {
-              const parsed: InspectionRecord[] = [];
-              if (results.data && results.data.length > 0) {
-                results.data.forEach((row: any, index: number) => {
-                  if (row.length > 0 && (row[1]?.trim() !== '' || row[0]?.trim() !== '')) {
-                    const sheetNo = (row[0] || '').trim();
-                    const date = (row[1] || '').trim();
-                    const day = (row[2] || '').trim();
-                    const location = (row[3] || '').trim();
-                    const typeOfInspection = (row[4] || '').trim();
-                    const inspector = (row[5] || '').trim();
-                    const remark = (row[6] || '').trim();
-                    const documentUrl = (row[7] || '').trim();
-
-                    const isHeaderRow =
-                      sheetNo.toUpperCase() === 'NO' ||
-                      sheetNo.toUpperCase() === 'NO.' ||
-                      date.toUpperCase() === 'DATE' ||
-                      date.toUpperCase() === 'TARIKH' ||
-                      typeOfInspection.toUpperCase() === 'TYPE OF INSPECTION';
-
-                    if (!isHeaderRow && (date !== '' || location !== '' || inspector !== '' || sheetNo !== '')) {
-                      parsed.push({
-                        id: `INSP-ORIG-${index}-${sheetNo || index}`,
-                        date,
-                        day,
-                        location,
-                        typeOfInspection,
-                        inspector,
-                        remark,
-                        documentUrl,
-
-                        // Compatibility fallbacks
-                        locationFacility: location,
-                        inspectorName: inspector,
-                        type: typeOfInspection,
-                        totalChecked: 0,
-                        compliantCount: 0,
-                        complianceRate: '-',
-                        status: 'Passed'
-                      });
-                    }
-                  }
-                });
-              }
-              resolve(parsed);
-            },
-            error: () => resolve([])
-          });
-        });
-      }
-    }
-  } catch (err) {
-    console.warn(`Error fetching original inspection data with GID: ${GID_ORIGINAL}`, err);
-  }
-
-  if (originalRecords.length === 0) {
-    originalRecords = await callGasFunction<InspectionRecord[]>('getInspectionData', MOCK_INSPECTION_RECORDS);
-  }
-
-  // 2. Fetch new records from Records sheet (Row 5 onwards: A5, E5, D5, C5, G5, BF5...)
-  try {
-    const resNew = await fetchWithTimeout(urlNew, 8000);
-    if (resNew.ok) {
-      const csvNewText = await resNew.text();
-      if (!csvNewText.includes('<!DOCTYPE html>') && !csvNewText.includes('google-signin-button')) {
-        newRecords = await new Promise((resolve) => {
-          Papa.parse(csvNewText, {
             header: false,
             skipEmptyLines: true,
             complete: (results) => {
@@ -289,8 +213,8 @@ export async function fetchInspectionData(): Promise<InspectionRecord[]> {
               if (results.data && results.data.length > 0) {
                 const headerRow = results.data[0] as string[];
 
-                // Column indices:
-                // NO: A (index 0)
+                // Column indices defaults:
+                // NO / Form No: A (index 0)
                 let noIdx = 0;
                 // INSPECTOR: C (index 2)
                 let inspectorIdx = 2;
@@ -315,8 +239,8 @@ export async function fetchInspectionData(): Promise<InspectionRecord[]> {
                   });
                 }
 
-                // Range starts from row 5 onwards (slice 4 because index 0 is Row 1, index 1 is Row 2, index 2 is Row 3, index 3 is Row 4, index 4 is Row 5)
-                const dataRows = results.data.slice(4);
+                // Take data from row 2 until current data (slice 1 skips header row 1)
+                const dataRows = results.data.slice(1);
 
                 dataRows.forEach((row: any, index: number) => {
                   if (row && row.length > 0) {
@@ -327,12 +251,12 @@ export async function fetchInspectionData(): Promise<InspectionRecord[]> {
                     const remark = (row[remarkIdx] || '').trim();
                     const documentUrl = (row[pdfIdx] || '').trim();
 
-                    // Skip empty rows
-                    if (!rawDate && !location && !inspector && !remark && !documentUrl) {
+                    // Skip completely empty rows
+                    if (!rawDate && !location && !inspector && !remark && !documentUrl && !sheetNo) {
                       return;
                     }
 
-                    // Format date: format YYYY-MM-DD or DD/MM/YYYY to DD-MM-YY to match existing rows
+                    // Format date: format YYYY-MM-DD or DD/MM/YYYY to DD-MM-YY to match display
                     let date = rawDate;
                     let day = '';
                     if (/^\d{4}-\d{2}-\d{2}$/.test(rawDate)) {
@@ -352,14 +276,14 @@ export async function fetchInspectionData(): Promise<InspectionRecord[]> {
                       date = `${dd}-${mm}-${yyyy.slice(2)}`;
                     }
 
-                    const rowNum = originalRecords.length + index + 1;
+                    const rowNum = index + 1;
 
                     parsed.push({
-                      id: `INSP-RECORDS-${index + 5}-${sheetNo || rowNum}`,
+                      id: `INSP-${index + 2}-${sheetNo || rowNum}`,
                       date,
                       day,
                       location,
-                      typeOfInspection: 'Workplace', // User requirement: TYPE OF INSPECTION: tulis "Workplace"
+                      typeOfInspection: 'Workplace',
                       inspector,
                       remark,
                       documentUrl,
@@ -384,14 +308,14 @@ export async function fetchInspectionData(): Promise<InspectionRecord[]> {
       }
     }
   } catch (err) {
-    console.warn(`Error fetching new inspection records from sheet ${SHEET_NAME_NEW}:`, err);
+    console.warn(`Error fetching inspection records from sheet ${SHEET_NAME}:`, err);
   }
 
-  // If new records fetch returned empty (e.g. offline preview), provide fallback for Row 5
-  if (newRecords.length === 0) {
-    newRecords = [
+  // Fallback data if fetch failed (e.g. offline / disconnected)
+  if (records.length === 0) {
+    records = [
       {
-        id: 'INSP-RECORDS-5-fallback',
+        id: 'INSP-2-fallback-1',
         date: '07-09-26',
         day: 'Mon',
         location: 'Utara stor',
@@ -406,12 +330,28 @@ export async function fetchInspectionData(): Promise<InspectionRecord[]> {
         compliantCount: 0,
         complianceRate: '-',
         status: 'Passed'
+      },
+      {
+        id: 'INSP-3-fallback-2',
+        date: '09-10-26',
+        day: 'Fri',
+        location: 'IJOK WAREHOUSE',
+        typeOfInspection: 'Workplace',
+        inspector: 'MUHAMMAD SYAFIQ ASHRAF BIN ZAINAL ABIDIN',
+        remark: 'secara keseluruhan,tempat kerja dalam keadaan yang memuaskan,perlu tambah baik lagi dan cuba kekalkan persekitaran kerja ',
+        documentUrl: 'https://drive.google.com/file/d/10MFJq6ByVUj2G7eJSwYjDoC31WNVKULZ/view?usp=drivesdk',
+        locationFacility: 'IJOK WAREHOUSE',
+        inspectorName: 'MUHAMMAD SYAFIQ ASHRAF BIN ZAINAL ABIDIN',
+        type: 'Workplace',
+        totalChecked: 0,
+        compliantCount: 0,
+        complianceRate: '-',
+        status: 'Passed'
       }
     ];
   }
 
-  // Combine: original table is preserved, new records are appended to the next rows
-  return [...originalRecords, ...newRecords];
+  return records;
 }
 
 // 9b. Fire Extinguisher Inspection Data Fallback Data from Google Sheets

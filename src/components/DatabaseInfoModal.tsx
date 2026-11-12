@@ -31,10 +31,9 @@ const DATABASE_CONNECTIONS: DatabaseConnectionItem[] = [
     tableName: 'INSPECTION RECORDS (Workplace Inspections)',
     category: 'Google Sheets',
     connector: 'PapaParse (v5.5.4) + HTTP Fetch API (GViz CSV)',
-    spreadsheetId: '1o9P6GnlsAwSJEUYHxITt1Opz973uX37MLBiv0LdFdIs & 1HLebePp1L31C-nZk6HgTxDwy6kXktNHDdbEdGcMvbbA',
-    sheetName: 'Original GID 582761149 (Range B:I) & New Sheet: Records (Row 5+)',
-    gid: '582761149',
-    range: 'B:I & Records Sheet A5:BF',
+    spreadsheetId: '1HLebePp1L31C-nZk6HgTxDwy6kXktNHDdbEdGcMvbbA',
+    sheetName: 'Records',
+    range: 'Row 2 onwards (Row 2:Current)',
     url: 'https://docs.google.com/spreadsheets/d/1HLebePp1L31C-nZk6HgTxDwy6kXktNHDdbEdGcMvbbA/gviz/tq?tqx=out:csv&sheet=Records',
     codeReference: 'src/utils/gasBridge.ts -> fetchInspectionData()'
   },
