@@ -166,7 +166,7 @@ export const EmergencyPlanPage: React.FC<EmergencyPlanPageProps> = ({
             <span className="material-symbols-outlined text-2xl">shield_person</span>
           </div>
           <div>
-            <div className="text-[11px] font-bold text-white uppercase">CIVIL DEFENCE FORCE (APM)</div>
+            <div className="text-[11px] font-bold text-white uppercase">ANGKATAN PERTAHANAN AWAM MALAYSIA (APM)</div>
             <div className="text-base font-extrabold text-white font-mono">03-33710820</div>
           </div>
         </div>
