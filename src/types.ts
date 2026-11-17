@@ -105,6 +105,21 @@ export interface FireExtinguisherRecord {
   remarks: string;
 }
 
+export interface FireExtinguisherQuotationRecord {
+  id: string;
+  no: string;
+  provider: string;
+  pic: string;
+  quotationDate: string;
+  location: string;
+  certRenew: string;
+  refill: string;
+  labour: string;
+  transportationFee: string;
+  total: string;
+  invoiceDocUrl: string;
+}
+
 export interface InspectionRecord {
   id: string;
   date: string;

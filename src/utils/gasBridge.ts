@@ -10,7 +10,7 @@ import {
   INITIAL_DAYS_WITHOUT_INCIDENT
 } from '../data/mockData';
 import Papa from 'papaparse';
-import { FirstAidCert, InspectionRecord, FireExtinguisherRecord, FirstAidKitTableData } from '../types';
+import { FirstAidCert, InspectionRecord, FireExtinguisherRecord, FireExtinguisherQuotationRecord, FirstAidKitTableData } from '../types';
 
 declare global {
   interface Window {
@@ -442,6 +442,82 @@ export async function fetchFireExtinguisherData(): Promise<FireExtinguisherRecor
   } catch (err) {
     console.warn(`Error fetching Fire Extinguisher data with GID: ${GID}`, err);
     return FALLBACK_FIRE_EXTINGUISHER_RECORDS;
+  }
+}
+
+// 9c. Fire Extinguisher Quotation Data (Google Sheet range M9:W dynamically for auto-updates on new rows)
+export const FALLBACK_FIRE_EXTINGUISHER_QUOTATIONS: FireExtinguisherQuotationRecord[] = [
+  { id: 'FEQ-10-1', no: '1', provider: 'EXPERT FIRE', pic: '', quotationDate: '14.1.26', location: 'IJOK', certRenew: '23', refill: '40', labour: 'NA', transportationFee: 'NA', total: 'RM1015', invoiceDocUrl: 'https://drive.google.com/file/d/1-gnaSsrLz5qPfVapXZrKPT5nWhfeXMSz/view?usp=drive_link' },
+  { id: 'FEQ-11-2', no: '2', provider: 'VOLCANO FIRE', pic: 'LOW', quotationDate: '4.11.26', location: 'PENANG', certRenew: '30', refill: '60', labour: 'NA', transportationFee: 'NA', total: 'RM260', invoiceDocUrl: 'https://drive.google.com/file/d/1tSRjRExbUZ4wdG2zTAPghTt0yo1ej8n-/view?usp=drive_link' },
+  { id: 'FEQ-12-3', no: '3', provider: 'ACE FIRE', pic: 'CHEAH', quotationDate: '4.11.26', location: 'PENANG', certRenew: '40', refill: '50', labour: 'NA', transportationFee: 'NA', total: 'RM370', invoiceDocUrl: '' },
+  { id: 'FEQ-13-4', no: '4', provider: 'EXPERT FIRE', pic: 'AISHA', quotationDate: '5.11.26', location: 'PENANG', certRenew: '50', refill: '40', labour: 'NA', transportationFee: '100', total: 'RM540', invoiceDocUrl: '' },
+  { id: 'FEQ-14-5', no: '5', provider: 'API FIRE', pic: 'KOK FAI', quotationDate: '4.11.26', location: 'PENANG', certRenew: '30', refill: '75', labour: '15', transportationFee: 'NA', total: 'RM442.20', invoiceDocUrl: '' },
+];
+
+export async function fetchFireExtinguisherQuotations(): Promise<FireExtinguisherQuotationRecord[]> {
+  const SPREADSHEET_ID = '1o9P6GnlsAwSJEUYHxITt1Opz973uX37MLBiv0LdFdIs';
+  const SHEET_NAME = 'FIRE EXTINGUISHER';
+  const GID = '1996690139';
+  // Use open-ended range M9:W so any new rows added below M9:W14 are automatically retrieved
+  const url = `https://docs.google.com/spreadsheets/d/${SPREADSHEET_ID}/gviz/tq?tqx=out:csv&sheet=${encodeURIComponent(SHEET_NAME)}&gid=${GID}&range=M9:W`;
+
+  try {
+    const res = await fetch(url, { cache: 'no-store' });
+    if (!res.ok) throw new Error('Network response was not ok');
+    const csvText = await res.text();
+
+    if (csvText.includes('<!DOCTYPE html>') || csvText.includes('google-signin-button')) {
+      throw new Error('Returned HTML instead of CSV data');
+    }
+
+    return new Promise((resolve) => {
+      Papa.parse(csvText, {
+        header: false,
+        skipEmptyLines: true,
+        complete: (results) => {
+          const records: FireExtinguisherQuotationRecord[] = [];
+          if (results.data && results.data.length > 0) {
+            results.data.forEach((row: any, index: number) => {
+              if (!row || row.every((c: any) => !c || String(c).trim() === '')) {
+                return;
+              }
+
+              const noVal = (row[0] ?? '').toString().trim();
+              const providerVal = (row[1] ?? '').toString().trim();
+              const quotationDateVal = (row[3] ?? '').toString().trim();
+
+              // Skip header row (Row 9: NO, PROVIDER, PIC, QUOTATION DATE...)
+              const isHeader =
+                noVal.toUpperCase() === 'NO' &&
+                (providerVal.toUpperCase() === 'PROVIDER' || quotationDateVal.toUpperCase().includes('QUOTATION'));
+              if (isHeader) {
+                return;
+              }
+
+              records.push({
+                id: `FEQ-${index + 9}-${noVal || index}`,
+                no: noVal,
+                provider: providerVal,
+                pic: (row[2] ?? '').toString().trim(),
+                quotationDate: quotationDateVal,
+                location: (row[4] ?? '').toString().trim(),
+                certRenew: (row[5] ?? '').toString().trim(),
+                refill: (row[6] ?? '').toString().trim(),
+                labour: (row[7] ?? '').toString().trim(),
+                transportationFee: (row[8] ?? '').toString().trim(),
+                total: (row[9] ?? '').toString().trim(),
+                invoiceDocUrl: (row[10] ?? '').toString().trim(),
+              });
+            });
+          }
+          resolve(records.length > 0 ? records : FALLBACK_FIRE_EXTINGUISHER_QUOTATIONS);
+        },
+        error: () => resolve(FALLBACK_FIRE_EXTINGUISHER_QUOTATIONS)
+      });
+    });
+  } catch (err) {
+    console.warn(`Error fetching Fire Extinguisher Quotation data with GID: ${GID}`, err);
+    return FALLBACK_FIRE_EXTINGUISHER_QUOTATIONS;
   }
 }
 

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import * as XLSX from 'xlsx';
-import { FireExtinguisherRecord } from '../types';
-import { fetchFireExtinguisherData } from '../utils/gasBridge';
+import { FireExtinguisherRecord, FireExtinguisherQuotationRecord } from '../types';
+import { fetchFireExtinguisherData, fetchFireExtinguisherQuotations } from '../utils/gasBridge';
 import { formatToPreviewUrl } from '../utils/formatDriveUrl';
 import { useAutoRefresh } from '../hooks/useAutoRefresh';
 
@@ -65,9 +65,12 @@ function getExpiryStatus(rawDate?: string): 'expired' | 'warning' | 'valid' | 'n
 
 export const SafetyEquipmentPage: React.FC<SafetyEquipmentPageProps> = ({ onBackToHome }) => {
   const [fireExtinguishers, setFireExtinguishers] = useState<FireExtinguisherRecord[]>([]);
+  const [quotations, setQuotations] = useState<FireExtinguisherQuotationRecord[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadingQuotations, setLoadingQuotations] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedFEId, setSelectedFEId] = useState<string | null>(null);
+  const [selectedQuoteId, setSelectedQuoteId] = useState<string | null>(null);
   const [isRefreshing, setIsRefreshing] = useState(false);
 
   const loadData = (isBackground: boolean = false) => {
@@ -76,22 +79,31 @@ export const SafetyEquipmentPage: React.FC<SafetyEquipmentPageProps> = ({ onBack
       setIsRefreshing(true);
     } else {
       setLoading(true);
+      setLoadingQuotations(true);
     }
 
-    fetchFireExtinguisherData()
-      .then((data) => {
-        if (!isMounted) return;
-        setFireExtinguishers(data);
-      })
-      .catch((err) => {
-        console.warn('Error fetching Fire Extinguisher data:', err);
-      })
-      .finally(() => {
-        if (isMounted) {
-          setLoading(false);
-          setIsRefreshing(false);
-        }
-      });
+    Promise.all([
+      fetchFireExtinguisherData()
+        .then((data) => {
+          if (isMounted) setFireExtinguishers(data);
+        })
+        .catch((err) => {
+          console.warn('Error fetching Fire Extinguisher data:', err);
+        }),
+      fetchFireExtinguisherQuotations()
+        .then((data) => {
+          if (isMounted) setQuotations(data);
+        })
+        .catch((err) => {
+          console.warn('Error fetching Fire Extinguisher Quotation data:', err);
+        }),
+    ]).finally(() => {
+      if (isMounted) {
+        setLoading(false);
+        setLoadingQuotations(false);
+        setIsRefreshing(false);
+      }
+    });
 
     return () => {
       isMounted = false;
@@ -332,6 +344,128 @@ export const SafetyEquipmentPage: React.FC<SafetyEquipmentPageProps> = ({ onBack
           </div>
         </div>
       )}
+
+      {/* FIRE EXTINGUISHER QUOTATION Section */}
+      <div className="space-y-3">
+        <div className="glass-card p-4 sm:p-5 flex items-center justify-between gap-3">
+          <h3 className="text-sm sm:text-base font-bold text-white flex items-center gap-2">
+            <span className="material-symbols-outlined text-amber-400 text-lg sm:text-xl">request_quote</span>
+            <span>FIRE EXTINGUISHER QUOTATION</span>
+          </h3>
+          <button
+            onClick={() => loadData(true)}
+            disabled={isRefreshing}
+            className="p-1.5 sm:p-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white transition-colors border border-cyan-500/20 flex-shrink-0 flex items-center justify-center"
+            title="Refresh Quotation Data from Google Sheets"
+          >
+            <span className={`material-symbols-outlined text-lg sm:text-xl ${isRefreshing ? 'animate-spin text-cyan-400' : ''}`}>
+              sync
+            </span>
+          </button>
+        </div>
+
+        {loadingQuotations ? (
+          <div className="p-10 text-center flex flex-col items-center justify-center glass-card">
+            <span className="material-symbols-outlined text-3xl text-cyan-400 animate-spin">sync</span>
+            <span className="text-xs text-slate-400 mt-2">Loading Fire Extinguisher Quotations...</span>
+          </div>
+        ) : (
+          <div className="glass-card overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full border-collapse border border-cyan-500/20 text-center text-xs whitespace-nowrap bg-transparent">
+                <thead className="bg-slate-950/95 text-cyan-400 border-b-2 border-cyan-500/40">
+                  <tr className="h-7 sm:h-8">
+                    <th className="py-0.5 px-2 sm:py-1 sm:px-2.5 text-center font-bold border border-cyan-500/20 text-xs text-cyan-400">NO</th>
+                    <th className="py-0.5 px-2 sm:py-1 sm:px-2.5 text-center font-bold border border-cyan-500/20 text-xs text-cyan-400">PROVIDER</th>
+                    <th className="py-0.5 px-2 sm:py-1 sm:px-2.5 text-center font-bold border border-cyan-500/20 text-xs text-cyan-400">PIC</th>
+                    <th className="py-0.5 px-2 sm:py-1 sm:px-2.5 text-center font-bold border border-cyan-500/20 text-xs text-cyan-400">QUOTATION DATE</th>
+                    <th className="py-0.5 px-2 sm:py-1 sm:px-2.5 text-center font-bold border border-cyan-500/20 text-xs text-cyan-400">LOCATION</th>
+                    <th className="py-0.5 px-2 sm:py-1 sm:px-2.5 text-center font-bold border border-cyan-500/20 text-xs text-cyan-400">CERT RENEW (1 UNIT)</th>
+                    <th className="py-0.5 px-2 sm:py-1 sm:px-2.5 text-center font-bold border border-cyan-500/20 text-xs text-cyan-400">REFILL (1 UNIT)</th>
+                    <th className="py-0.5 px-2 sm:py-1 sm:px-2.5 text-center font-bold border border-cyan-500/20 text-xs text-cyan-400">LABOUR</th>
+                    <th className="py-0.5 px-2 sm:py-1 sm:px-2.5 text-center font-bold border border-cyan-500/20 text-xs text-cyan-400">TRANSPORTATION FEE</th>
+                    <th className="py-0.5 px-2 sm:py-1 sm:px-2.5 text-center font-bold border border-cyan-500/20 text-xs text-cyan-400">TOTAL</th>
+                    <th className="py-0.5 px-2 sm:py-1 sm:px-2.5 text-center font-bold border border-cyan-500/20 text-xs text-cyan-400">INVOICE DOC</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-cyan-500/10 text-xs text-white">
+                  {quotations.length === 0 ? (
+                    <tr className="h-7 sm:h-8">
+                      <td colSpan={11} className="py-6 text-center text-xs text-white border border-cyan-500/20">
+                        No quotation records found
+                      </td>
+                    </tr>
+                  ) : (
+                    quotations.map((q, qIdx) => {
+                      const isSelected = selectedQuoteId === q.id;
+                      return (
+                        <tr
+                          key={`feq-row-${q.id}-${qIdx}`}
+                          onClick={() => setSelectedQuoteId(isSelected ? null : q.id)}
+                          className={`h-7 sm:h-8 transition-colors cursor-pointer select-none ${
+                            isSelected
+                              ? '!bg-cyan-600 !text-white font-bold [&>td]:!bg-cyan-600 [&>td]:!text-white [&>td]:!border-cyan-400/40 [&_*]:!text-white shadow-md'
+                              : qIdx % 2 === 0
+                              ? 'bg-slate-900/40 hover:bg-cyan-950/30'
+                              : 'bg-slate-900/80 hover:bg-cyan-950/40'
+                          }`}
+                        >
+                          <td className="py-0.5 px-1.5 sm:py-1 sm:px-2 text-center font-mono font-medium border border-cyan-500/20 leading-tight">
+                            {q.no || '-'}
+                          </td>
+                          <td className="py-0.5 px-1.5 sm:py-1 sm:px-2 text-center font-medium border border-cyan-500/20 leading-tight">
+                            {q.provider || '-'}
+                          </td>
+                          <td className="py-0.5 px-1.5 sm:py-1 sm:px-2 text-center border border-cyan-500/20 leading-tight">
+                            {q.pic || '-'}
+                          </td>
+                          <td className="py-0.5 px-1.5 sm:py-1 sm:px-2 text-center font-mono border border-cyan-500/20 leading-tight">
+                            {q.quotationDate || '-'}
+                          </td>
+                          <td className="py-0.5 px-1.5 sm:py-1 sm:px-2 text-center font-medium border border-cyan-500/20 leading-tight">
+                            {q.location || '-'}
+                          </td>
+                          <td className="py-0.5 px-1.5 sm:py-1 sm:px-2 text-center font-mono border border-cyan-500/20 leading-tight">
+                            {q.certRenew || '-'}
+                          </td>
+                          <td className="py-0.5 px-1.5 sm:py-1 sm:px-2 text-center font-mono border border-cyan-500/20 leading-tight">
+                            {q.refill || '-'}
+                          </td>
+                          <td className="py-0.5 px-1.5 sm:py-1 sm:px-2 text-center font-mono border border-cyan-500/20 leading-tight">
+                            {q.labour || '-'}
+                          </td>
+                          <td className="py-0.5 px-1.5 sm:py-1 sm:px-2 text-center font-mono border border-cyan-500/20 leading-tight">
+                            {q.transportationFee || '-'}
+                          </td>
+                          <td className="py-0.5 px-1.5 sm:py-1 sm:px-2 text-center font-mono font-bold text-emerald-300 border border-cyan-500/20 leading-tight">
+                            {q.total || '-'}
+                          </td>
+                          <td className="py-0.5 px-1.5 sm:py-1 sm:px-2 text-center border border-cyan-500/20 leading-tight">
+                            {q.invoiceDocUrl ? (
+                              <a
+                                href={formatToPreviewUrl(q.invoiceDocUrl)}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                onClick={(e) => e.stopPropagation()}
+                                className="inline-flex items-center justify-center gap-1 px-2 py-0.5 rounded bg-cyan-600/80 hover:bg-cyan-500 text-white text-[11px] font-bold transition-colors underline decoration-cyan-200/70 underline-offset-2"
+                                title="View Quotation Document"
+                              >
+                                Doc
+                              </a>
+                            ) : (
+                              <span className="text-slate-500">-</span>
+                            )}
+                          </td>
+                        </tr>
+                      );
+                    })
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

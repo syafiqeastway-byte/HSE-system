@@ -27,6 +27,18 @@ const DATABASE_CONNECTIONS: DatabaseConnectionItem[] = [
     codeReference: 'src/utils/gasBridge.ts -> fetchFireExtinguisherData()'
   },
   {
+    id: 'fe-quotation',
+    tableName: 'FIRE EXTINGUISHER QUOTATION',
+    category: 'Google Sheets',
+    connector: 'PapaParse (v5.5.4) + HTTP Fetch API (GViz CSV)',
+    spreadsheetId: '1o9P6GnlsAwSJEUYHxITt1Opz973uX37MLBiv0LdFdIs',
+    sheetName: 'FIRE EXTINGUISHER',
+    gid: '1996690139',
+    range: 'M9:W (auto-updates new rows)',
+    url: 'https://docs.google.com/spreadsheets/d/1o9P6GnlsAwSJEUYHxITt1Opz973uX37MLBiv0LdFdIs/gviz/tq?tqx=out:csv&sheet=FIRE%20EXTINGUISHER&gid=1996690139&range=M9:W',
+    codeReference: 'src/utils/gasBridge.ts -> fetchFireExtinguisherQuotations()'
+  },
+  {
     id: 'inspection-records',
     tableName: 'INSPECTION RECORDS (Workplace Inspections)',
     category: 'Google Sheets',
